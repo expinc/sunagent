@@ -16,7 +16,24 @@ Run ```sunagentd``` to start the process.
 
 ## Configuration
 
-TBD
+Configuration is defined by *config.conf*.
+
+*GO* section defines behaviors of the process. They are all go related parameters since SunAgent is implemented by go:
+
+* gomaxprocs: The maximum processors used.
+
+*HTTP* section defines the parameters of the HTTP server who exposes RESTful APIs:
+
+* ip: IP address of the HTTP server. This option is introduced because there may be multiple network adaptors with different IP addresses in the node.
+* port: Port number of the HTTP server.
+* auth: The type of authorization. Valid values are *none*, *basic*.
+* user: User of the basic authorization.
+* password: Password of the basic authorization.
+
+*LOG* sectino defines behaviors of logging.
+
+* level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
+* filesizelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
 
 ## API Reference
 

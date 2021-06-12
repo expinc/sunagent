@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
-go build -o gen/sunagent cmd/sunagent.go
+mkdir -p gen
+go build -o gen/sunagentd cmd/sunagentd.go
 cp config.conf gen/

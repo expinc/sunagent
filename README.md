@@ -6,7 +6,7 @@ Clients of SunAgent could get system information, execute scripts, create files,
 
 A node infer to some computing resource. It may be a host, a virtual machine, or a container. Different kind of node could do different operations. For example, you cannot call systemctl in docker container without setting docker entrypoint as /usr/sbin/init. SunAgent provides functionalities that work on a host, though some of them may fail in a container.
 
-SunAgent exposes its functionality by common protocals. Currently there is only RESTful APIs.
+SunAgent exposes its functionality by common protocals. Currently there is only HTTP APIs.
 
 ## Build & Run
 
@@ -22,7 +22,7 @@ Configuration is defined by *config.conf*.
 
 * gomaxprocs: The maximum processors used.
 
-*HTTP* section defines the parameters of the HTTP server who exposes RESTful APIs:
+*HTTP* section defines the parameters of the HTTP server who exposes HTTP APIs:
 
 * ip: IP address of the HTTP server. This option is introduced because there may be multiple network adaptors with different IP addresses in the node.
 * port: Port number of the HTTP server.

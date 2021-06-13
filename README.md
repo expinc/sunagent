@@ -37,11 +37,7 @@ Configuration is defined by *config.conf*.
 
 ## API Reference
 
-TBD
-
-## Configurable Shell Command Execution
-
-TBD
+Please refer to [here](docs/API_REFERENCE.md).
 
 ## Extensibility
 

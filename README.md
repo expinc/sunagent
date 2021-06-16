@@ -33,7 +33,7 @@ Configuration is defined by *config.conf*.
 *LOG* sectino defines behaviors of logging.
 
 * level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
-* filesizelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
+* filelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
 
 ## API Reference
 

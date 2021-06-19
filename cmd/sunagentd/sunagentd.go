@@ -1,6 +1,7 @@
 package main
 
 import (
+	"expinc/sunagent/http"
 	"expinc/sunagent/log"
 	"os"
 
@@ -29,4 +30,12 @@ func main() {
 	}
 	log.SetRotateFileOutput("logs/"+procName+".log", fileLimitMb)
 	log.Info(procName)
+
+	// start HTTP server
+	ip := config.Section("HTTP").Key("ip").String()
+	port := uint16(config.Section("HTTP").Key("port").MustUint())
+	server := http.New(ip, port)
+	if err := server.Serve(); err != nil {
+		exit(1, err)
+	}
 }

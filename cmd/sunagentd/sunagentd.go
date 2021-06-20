@@ -33,9 +33,9 @@ func main() {
 
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()
-	port := uint16(config.Section("HTTP").Key("port").MustUint())
+	port := config.Section("HTTP").Key("port").MustUint()
 	server := http.New(ip, port)
-	if err := server.Serve(); err != nil {
+	if err := server.Run(); err != nil {
 		exit(1, err)
 	}
 }

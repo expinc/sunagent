@@ -22,7 +22,7 @@ For a failed textual response, the response body example is:
     "successful": false,
     "status": 500,
     "traceId": "Trace ID",
-    "message": "Error message"
+    "data": "Error message"
 }
 ```
 

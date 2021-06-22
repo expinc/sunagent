@@ -16,6 +16,12 @@ func exit(status int, msg interface{}) {
 }
 
 func main() {
+	defer func() {
+		if p := recover(); nil != p {
+			log.Fatal(p)
+		}
+	}()
+
 	// load config
 	config, err := ini.Load("config.conf")
 	if nil != err {

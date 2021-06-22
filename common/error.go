@@ -28,3 +28,7 @@ func New(code int, msg string) error {
 func (err Error) Error() string {
 	return fmt.Sprintf("%d - %s", err.code, err.msg)
 }
+
+func (err Error) Code() int {
+	return err.code
+}

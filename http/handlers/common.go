@@ -1,8 +1,10 @@
 package handlers
 
-import "github.com/gin-gonic/gin"
+import (
+	"expinc/sunagent/common"
 
-const TraceIdHeader = "traceId"
+	"github.com/gin-gonic/gin"
+)
 
 type TextualResponse struct {
 	Successful bool        `json:"successful"`
@@ -15,7 +17,7 @@ func respondSuccessfulJson(context *gin.Context, status int, data interface{}) {
 	response := &TextualResponse{
 		Successful: true,
 		Status:     status,
-		TraceId:    context.Value(TraceIdHeader).(string),
+		TraceId:    context.Value(common.TraceIdContextKey).(string),
 		Data:       data,
 	}
 	context.Set("status", status)
@@ -26,7 +28,7 @@ func respondFailedJson(context *gin.Context, status int, err error) {
 	response := &TextualResponse{
 		Successful: false,
 		Status:     status,
-		TraceId:    context.Value(TraceIdHeader).(string),
+		TraceId:    context.Value(common.TraceIdContextKey).(string),
 		Data:       err.Error(),
 	}
 	context.Set("status", status)

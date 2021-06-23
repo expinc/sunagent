@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/base64"
+	"expinc/sunagent/common"
 	"expinc/sunagent/http/handlers"
 	"expinc/sunagent/log"
 	"fmt"
@@ -44,11 +45,11 @@ func generateTraceId() string {
 
 func handlerProxy(handler gin.HandlerFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		traceId := context.Request.Header.Get(handlers.TraceIdHeader)
+		traceId := context.Request.Header.Get(common.TraceIdContextKey)
 		if "" == traceId {
 			traceId = generateTraceId()
 		}
-		context.Set(handlers.TraceIdHeader, traceId)
+		context.Set(common.TraceIdContextKey, traceId)
 
 		log.Info(fmt.Sprintf(
 			"Start handling request: method=%s, URL=%s, traceId=%s",

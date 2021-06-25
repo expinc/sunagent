@@ -2,10 +2,12 @@ package http
 
 import (
 	"encoding/base64"
+	"errors"
 	"expinc/sunagent/common"
 	"expinc/sunagent/http/handlers"
 	"expinc/sunagent/log"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -34,7 +36,22 @@ func New(ip string, port uint) *Server {
 func (server *Server) Run() error {
 	log.Info(fmt.Sprintf("Starting HTTP server: IP=%s, port=%d", server.ip, server.port))
 	server.engine = gin.New()
+
+	// register panic recover function
+	recoverFunc := func(ctx *gin.Context, errObj interface{}) {
+		var err error
+		var ok bool
+		if err, ok = errObj.(common.Error); !ok {
+			err = errors.New(fmt.Sprintf("%v", errObj))
+		}
+
+		log.Error(err)
+		handlers.RespondFailedJson(ctx, http.StatusInternalServerError, err)
+	}
+	server.engine.Use(gin.CustomRecovery(recoverFunc))
+
 	server.registerHandlers()
+
 	return server.engine.Run(fmt.Sprintf("%s:%d", server.ip, server.port))
 }
 

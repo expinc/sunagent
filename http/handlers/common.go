@@ -36,7 +36,7 @@ func respondSuccessfulJson(context *gin.Context, status int, data interface{}) {
 	context.JSON(response.Status, response)
 }
 
-func respondFailedJson(context *gin.Context, status int, err error) {
+func RespondFailedJson(context *gin.Context, status int, err error) {
 	response := &TextualResponse{
 		Successful: false,
 		Status:     status,

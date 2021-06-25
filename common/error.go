@@ -18,7 +18,7 @@ type Error struct {
 	msg  string
 }
 
-func New(code int, msg string) error {
+func NewError(code int, msg string) error {
 	return Error{
 		code: code,
 		msg:  msg,

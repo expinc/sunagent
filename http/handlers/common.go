@@ -1,10 +1,22 @@
 package handlers
 
 import (
+	"context"
 	"expinc/sunagent/common"
 
 	"github.com/gin-gonic/gin"
 )
+
+// create standard context from gin.Context to support request cancellation like Done()
+// functions called by handlers should use context this function returns instead of gin.Context
+func createCancellableContext(ginCtx *gin.Context) context.Context {
+	if nil != ginCtx {
+		traceId := ginCtx.Value(common.TraceIdContextKey)
+		return context.WithValue(context.Background(), common.TraceIdContextKey, traceId)
+	} else {
+		return context.Background()
+	}
+}
 
 type TextualResponse struct {
 	Successful bool        `json:"successful"`

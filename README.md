@@ -10,9 +10,23 @@ SunAgent exposes its functionality by common protocals. Currently there is only 
 
 ## Build & Run
 
-Run ```make.sh``` to build the executable. The executable and other files necessary to run it will be output to path *gen*.
+Run below command to build the executable. The executable and other files necessary to run it will be output to path *gen*.
+```
+# Linux:
+./make.sh
 
-Run ```sunagentd``` to start the process.
+# Windows:
+make.bat
+```
+
+Run below command to start the process.
+```
+# Linux:
+./gen/sunagentd
+
+# Windows:
+gen\sunagentd.exe
+```
 
 ## Configuration
 

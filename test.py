@@ -3,6 +3,7 @@
 import argparse
 import os
 import platform
+import psutil
 import subprocess
 
 TEST_OUT_DIR = os.path.join("gen", "test")
@@ -12,6 +13,11 @@ def parse_args():
     parser.add_argument("-t", "--type", required=False, choices=["unit", "func"])
 
     return parser.parse_args()
+
+def kill_proc(name):
+    for proc in psutil.process_iter(["name"]):
+        if proc.info["name"] == name:
+            proc.kill()
 
 def unit_test():
     print("=====================")
@@ -50,6 +56,12 @@ def func_test():
 
     print("Running test cases...")
     subprocess.check_call("python -m pytest", shell=True)
+
+    print("Stopping executable...")
+    if "Linux" == sys_type:
+        kill_proc("sunagentd")
+    elif "Windows" == sys_type:
+        kill_proc("sunagentd.exe")
 
 if __name__ == "__main__":
     args = parse_args()

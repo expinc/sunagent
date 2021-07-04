@@ -1,2 +1,3 @@
 gen/
 go.sum
+__pycache__

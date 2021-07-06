@@ -1,14 +1,14 @@
 package main
 
 import (
+	"expinc/sunagent/common"
 	"expinc/sunagent/http"
 	"expinc/sunagent/log"
+	"fmt"
 	"os"
 
 	"github.com/go-ini/ini"
 )
-
-const procName = "sunagentd"
 
 func exit(status int, msg interface{}) {
 	log.Fatal(msg)
@@ -34,8 +34,8 @@ func main() {
 	if nil != err {
 		exit(1, err)
 	}
-	log.SetRotateFileOutput("logs/"+procName+".log", fileLimitMb)
-	log.Info(procName)
+	log.SetRotateFileOutput("logs/"+common.ProcName+".log", fileLimitMb)
+	log.Info(fmt.Sprintf("%s started: pid=%d", common.ProcName, common.Pid))
 
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()
@@ -44,4 +44,7 @@ func main() {
 	if err := server.Run(); err != nil {
 		exit(1, err)
 	}
+
+	// successful exit
+	log.Info(fmt.Sprintf("%s stopped: pid=%d", common.ProcName, common.Pid))
 }

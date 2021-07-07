@@ -12,8 +12,12 @@ import (
 func main() {
 	defer func() {
 		if p := recover(); nil != p {
+			log.Error(fmt.Sprintf("%s panicked: pid=%d", common.ProcName, common.Pid))
 			log.Fatal(p)
 		}
+	}()
+	defer func() {
+		log.Info(fmt.Sprintf("%s stopped: pid=%d", common.ProcName, common.Pid))
 	}()
 
 	// load config
@@ -38,7 +42,4 @@ func main() {
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}
-
-	// successful exit
-	log.Info(fmt.Sprintf("%s stopped: pid=%d", common.ProcName, common.Pid))
 }

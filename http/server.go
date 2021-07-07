@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"encoding/base64"
 	"errors"
 	"expinc/sunagent/common"
@@ -8,6 +9,8 @@ import (
 	"expinc/sunagent/log"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -19,11 +22,20 @@ func init() {
 	gin.SetMode(gin.ReleaseMode)
 }
 
+type stopInfo struct {
+	waitSec int64
+	err     error
+}
+
 type Server struct {
 	ip   string
 	port uint
 
 	engine *gin.Engine
+
+	// channel element values as gracefully stopping seconds
+	// after the gracefully stopping seconds, server will be stopped gracefully
+	quit chan int64
 }
 
 func New(ip string, port uint) *Server {
@@ -50,9 +62,38 @@ func (server *Server) Run() error {
 	}
 	server.engine.Use(gin.CustomRecovery(recoverFunc))
 
+	// register handlers
 	server.registerHandlers()
 
-	return server.engine.Run(fmt.Sprintf("%s:%d", server.ip, server.port))
+	// starting HTTP server
+	srv := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", server.ip, server.port),
+		Handler: server.engine,
+	}
+	server.quit = make(chan int64, 1)
+	srvErr := make(chan error, 1)
+	go func() {
+		var err error
+		if err = srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+			log.Info("HTTP server stopped")
+		}
+
+		if err == http.ErrServerClosed {
+			err = nil
+		}
+		srvErr <- err
+	}()
+
+	// stopping HTTP server
+	waitSec := <-server.quit
+	log.Info("Stopping HTTP server...")
+	stopCtx, cancel := context.WithTimeout(context.Background(), time.Duration(waitSec)*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(stopCtx); err != nil {
+		log.Error(fmt.Sprintf("Server forced to shutdown: %s", err))
+	}
+
+	return <-srvErr
 }
 
 func generateTraceId() string {
@@ -84,4 +125,21 @@ func handlerProxy(handler gin.HandlerFunc) gin.HandlerFunc {
 
 func (server *Server) registerHandlers() {
 	server.engine.GET(urlPrefix+"/info", handlerProxy(handlers.GetInfo))
+	server.engine.POST(urlPrefix+"/terminate", handlerProxy(server.terminate))
+}
+
+func (server *Server) terminate(ctx *gin.Context) {
+	handlers.RespondSuccessfulJson(ctx, http.StatusNoContent, nil)
+	waitSecVals, ok := ctx.Request.URL.Query()["waitSec"]
+
+	// wait for 3 seconds for gracefully stop by default
+	waitSec := int64(3)
+	if ok {
+		var err error
+		waitSec, err = strconv.ParseInt(waitSecVals[0], 10, 64)
+		if nil != err {
+			waitSec = 0
+		}
+	}
+	server.quit <- waitSec
 }

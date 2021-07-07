@@ -5,15 +5,9 @@ import (
 	"expinc/sunagent/http"
 	"expinc/sunagent/log"
 	"fmt"
-	"os"
 
 	"github.com/go-ini/ini"
 )
-
-func exit(status int, msg interface{}) {
-	log.Fatal(msg)
-	os.Exit(status)
-}
 
 func main() {
 	defer func() {
@@ -25,14 +19,14 @@ func main() {
 	// load config
 	config, err := ini.Load("config.conf")
 	if nil != err {
-		exit(1, err)
+		log.Fatal(err)
 	}
 
 	// init log
 	log.SetLevel(config.Section("LOG").Key("level").String())
 	fileLimitMb, err := config.Section("LOG").Key("filelimitmb").Int()
 	if nil != err {
-		exit(1, err)
+		log.Fatal(err)
 	}
 	log.SetRotateFileOutput("logs/"+common.ProcName+".log", fileLimitMb)
 	log.Info(fmt.Sprintf("%s started: pid=%d", common.ProcName, common.Pid))
@@ -42,7 +36,7 @@ func main() {
 	port := config.Section("HTTP").Key("port").MustUint()
 	server := http.New(ip, port)
 	if err := server.Run(); err != nil {
-		exit(1, err)
+		log.Fatal(err)
 	}
 
 	// successful exit

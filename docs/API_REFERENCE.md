@@ -74,11 +74,9 @@ Stop SunAgent process.
 
 Method: ```POST /terminate```
 
-Response:
+Parameters:
 
-```
-SunAgent is terminating...
-```
+* waitSec: Waiting seconds for gracefully stopping (default is 3). If it is exceeded, SunAgent will be stopped forcibly.
 
 ## File Management
 

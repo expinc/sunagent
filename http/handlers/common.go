@@ -25,7 +25,7 @@ type TextualResponse struct {
 	Data       interface{} `json:"data"`
 }
 
-func respondSuccessfulJson(context *gin.Context, status int, data interface{}) {
+func RespondSuccessfulJson(context *gin.Context, status int, data interface{}) {
 	response := &TextualResponse{
 		Successful: true,
 		Status:     status,

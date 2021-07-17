@@ -86,12 +86,12 @@ Get metadata of files. If the specified file is a directory and parameter *list*
 
 Response field *size* is calculated by bytes. The format of response field *mode* is platform dependent.
 
-Method: ```HEAD /files```
+Method: ```GET /fileMeta```
 
 Parameters:
 
 * path: Absolute path to the file.
-* list: Whether list all the files within the *path* if it is a directory. Valid values: *true* (default), *false*.
+* list: Whether list all the files within the *path* if it is a directory. Valid values: *false* (default), *true*.
 
 Response:
 

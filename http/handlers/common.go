@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 	"expinc/sunagent/common"
+	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,4 +47,9 @@ func RespondFailedJson(context *gin.Context, status int, err error) {
 	}
 	context.Set("status", status)
 	context.JSON(response.Status, response)
+}
+
+func RespondMissingParams(context *gin.Context, params []string) {
+	err := common.NewError(common.ErrorInvalidParameter, "Missing parameter: "+strings.Join(params, ", "))
+	RespondFailedJson(context, http.StatusBadRequest, err)
 }

@@ -124,8 +124,12 @@ func handlerProxy(handler gin.HandlerFunc) gin.HandlerFunc {
 }
 
 func (server *Server) registerHandlers() {
+	// management
 	server.engine.GET(urlPrefix+"/info", handlerProxy(handlers.GetInfo))
 	server.engine.POST(urlPrefix+"/terminate", handlerProxy(server.terminate))
+
+	// files
+	server.engine.GET(urlPrefix+"/fileMeta", handlerProxy(handlers.GetFileMeta))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

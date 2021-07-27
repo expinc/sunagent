@@ -1,6 +1,8 @@
 package log
 
 import (
+	"context"
+	"expinc/sunagent/common"
 	"sync"
 	"time"
 
@@ -69,4 +71,24 @@ func Error(obj interface{}) {
 
 func Fatal(obj interface{}) {
 	logger.Fatal(obj)
+}
+
+func DebugCtx(ctx context.Context, obj interface{}) {
+	logger.WithField(common.TraceIdContextKey, ctx.Value(common.TraceIdContextKey)).Debug(obj)
+}
+
+func InfoCtx(ctx context.Context, obj interface{}) {
+	logger.WithField(common.TraceIdContextKey, ctx.Value(common.TraceIdContextKey)).Info(obj)
+}
+
+func WarnCtx(ctx context.Context, obj interface{}) {
+	logger.WithField(common.TraceIdContextKey, ctx.Value(common.TraceIdContextKey)).Warn(obj)
+}
+
+func ErrorCtx(ctx context.Context, obj interface{}) {
+	logger.WithField(common.TraceIdContextKey, ctx.Value(common.TraceIdContextKey)).Error(obj)
+}
+
+func FatalCtx(ctx context.Context, obj interface{}) {
+	logger.WithField(common.TraceIdContextKey, ctx.Value(common.TraceIdContextKey)).Fatal(obj)
 }

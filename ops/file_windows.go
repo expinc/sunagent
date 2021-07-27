@@ -1,15 +1,16 @@
 package ops
 
 import (
+	"context"
 	"expinc/sunagent/log"
 	"os"
 
 	"golang.org/x/sys/windows"
 )
 
-func getOwner(info os.FileInfo) string {
+func getOwner(ctx context.Context, info os.FileInfo) string {
 	errorReturn := func(err error) string {
-		log.Error(err)
+		log.ErrorCtx(ctx, err)
 		return ""
 	}
 

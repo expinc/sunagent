@@ -1,6 +1,7 @@
 package ops
 
 import (
+	"context"
 	"expinc/sunagent/log"
 	"io/fs"
 	"io/ioutil"
@@ -16,23 +17,23 @@ type FileMeta struct {
 	Mode             string    `json:"mode"`
 }
 
-func fileInfoToMeta(info fs.FileInfo) (meta FileMeta) {
+func fileInfoToMeta(ctx context.Context, info fs.FileInfo) (meta FileMeta) {
 	meta.Name = info.Name()
 	meta.Size = info.Size()
 	meta.LastModifiedTime = info.ModTime()
 	meta.Mode = info.Mode().String()
-	meta.Owner = getOwner(info)
+	meta.Owner = getOwner(ctx, info)
 	return
 }
 
-func GetFileMetas(path string, listIfDir bool) (metas []FileMeta, err error) {
+func GetFileMetas(ctx context.Context, path string, listIfDir bool) (metas []FileMeta, err error) {
 	metas = make([]FileMeta, 0)
 
 	// Get file info of the path
 	var pathInfo os.FileInfo
 	pathInfo, err = os.Stat(path)
 	if nil != err {
-		log.Error(err)
+		log.ErrorCtx(ctx, err)
 		return
 	}
 
@@ -44,13 +45,13 @@ func GetFileMetas(path string, listIfDir bool) (metas []FileMeta, err error) {
 		infos = []fs.FileInfo{pathInfo}
 	}
 	if nil != err {
-		log.Error(err)
+		log.ErrorCtx(ctx, err)
 		return
 	}
 
 	// Get meta of listed files
 	for _, info := range infos {
-		metas = append(metas, fileInfoToMeta(info))
+		metas = append(metas, fileInfoToMeta(ctx, info))
 	}
 
 	return

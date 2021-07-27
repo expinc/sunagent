@@ -16,7 +16,7 @@ func GetFileMeta(ctx *gin.Context) {
 
 	_, listIfDir := ctx.Request.URL.Query()["list"]
 
-	metas, err := ops.GetFileMetas(path[0], listIfDir)
+	metas, err := ops.GetFileMetas(createCancellableContext(ctx), path[0], listIfDir)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err)
 	} else {

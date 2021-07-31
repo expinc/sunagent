@@ -10,7 +10,7 @@ import (
 )
 
 type FileMeta struct {
-	Name             string    `json:"version"`
+	Name             string    `json:"name"`
 	Size             int64     `json:"size"`
 	LastModifiedTime time.Time `json:"lastModifiedTime"`
 	Owner            string    `json:"owner"`

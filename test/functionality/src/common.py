@@ -5,13 +5,6 @@ from assertpy import assert_that
 HOST = "127.0.0.1"
 PORT = 5000
 
-# params should be a dict of key-value pairs
-def url_with_params(url, params):
-    # paramStr = [e[0] + "=" + urllib.parse.quote(e[1]) for e in params.items()]
-    # FIXME: quote param string
-    paramStr = [e[0] + "=" + e[1] for e in params.items()]
-    return url + "?" + "&".join(paramStr)
-
 def assert_successful_response(response, status, data=None):
     body = response.read()
     body = json.loads(body)

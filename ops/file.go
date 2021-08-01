@@ -2,7 +2,6 @@ package ops
 
 import (
 	"context"
-	"expinc/sunagent/common"
 	"expinc/sunagent/log"
 	"io/fs"
 	"io/ioutil"
@@ -35,7 +34,6 @@ func GetFileMetas(ctx context.Context, path string, listIfDir bool) (metas []Fil
 	pathInfo, err = os.Stat(path)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
-		err = common.NewError(common.ErrorNotFound, err.Error())
 		return
 	}
 
@@ -56,5 +54,13 @@ func GetFileMetas(ctx context.Context, path string, listIfDir bool) (metas []Fil
 		metas = append(metas, fileInfoToMeta(ctx, info))
 	}
 
+	return
+}
+
+func GetFileContent(ctx context.Context, path string) (content []byte, err error) {
+	content, err = ioutil.ReadFile(path)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+	}
 	return
 }

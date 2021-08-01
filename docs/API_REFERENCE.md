@@ -120,7 +120,7 @@ Get the binary content of the specified file.
 
 It may fail to get the content of some system files, etc., device files in linux.
 
-Method: ```GET /files```
+Method: ```GET /file```
 
 Parameters:
 
@@ -132,7 +132,7 @@ Response: The binary content of the specified file.
 
 Create a file. It will fail if the file already exists or the parent directory does not exist.
 
-Method: ```POST /files```
+Method: ```POST /file```
 
 Parameters:
 
@@ -157,7 +157,7 @@ Response:
 
 Change the content of a file. Create it if not exists.
 
-Method: ```PUT /files```
+Method: ```PUT /file```
 
 Parameters:
 
@@ -182,7 +182,7 @@ Response:
 
 Delete a file. If the specified path is a directory, the files under it will also be deleted if parameter *recursive* is true, otherwise it will fail.
 
-Method: ```DELETE /files```
+Method: ```DELETE /file```
 
 Parameters:
 

@@ -21,8 +21,12 @@ REGULAR_FILE_MODE_PATTERN = r"^-((r|-)(w|-)(x|-)){3}$"
 DIRECTORY_MODE_PATTERN = r"^d((r|-)(w|-)(x|-)){3}$"
 
 LINUX_DIR_SIZE = 4096
+NON_EXIST_FILE = "dummy"
 
 class TestFile:
+
+    # cases of get file meta
+
     def test_get_file_meta_text_file(self):
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
@@ -114,9 +118,9 @@ class TestFile:
             response = conn.getresponse()
 
             data = common.get_successful_response(response, HTTPStatus.OK)
-            assert_that(4).is_equal_to(len(data))
+            assert_that(5).is_equal_to(len(data))
             files = [f["name"] for f in data]
-            expected_files = ["binary", "shell.sh", "text.txt", "中文.txt"]
+            expected_files = ["binary", "empty", "shell.sh", "text.txt", "中文.txt"]
             for expected_file in expected_files:
                 assert_that(files).contains(expected_file)
         finally:
@@ -125,12 +129,110 @@ class TestFile:
     def test_get_file_meta_non_exist(self):
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            path = os.path.join(TEST_DATA_PATH, "non-exist")
+            path = os.path.join(TEST_DATA_PATH, NON_EXIST_FILE)
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/fileMeta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 
+            common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
+        finally:
+            conn.close()
+
+    def test_get_file_meta_empty_file(self):
+        try:
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            path = os.path.join(TEST_DATA_PATH, "empty")
+            params = urllib.parse.urlencode({"path":path})
+            url = "/api/v1/fileMeta?" + params
+            conn.request("GET", url)
+            response = conn.getresponse()
+
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            assert_that(1).is_equal_to(len(data))
+            assert_that("empty").is_equal_to(data[0]["name"])
+            assert_that(0).is_equal_to(data[0]["size"])
+            assert_that(data[0]["lastModifiedTime"]).matches(TIMESTAMP_PATTERN)
+            if "Linux" == platform.system():
+                assert_that(data[0]["owner"]).is_true()
+            assert_that(data[0]["mode"]).matches(REGULAR_FILE_MODE_PATTERN)
+        finally:
+            conn.close()
+
+    # cases of get file content
+
+    def test_get_file_content_text_file(self):
+        try:
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            path = os.path.join(TEST_DATA_PATH, "text.txt")
+            params = urllib.parse.urlencode({"path":path})
+            url = "/api/v1/file?" + params
+            conn.request("GET", url)
+            response = conn.getresponse()
+
+            data = common.get_binary_response(response, HTTPStatus.OK)
+            with open(path, "rb") as f:
+                content = f.read()
+                assert_that(data).is_equal_to(content)
+        finally:
+            conn.close()
+
+    def test_get_file_content_unicode_file(self):
+        try:
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            path = os.path.join(TEST_DATA_PATH, "中文.txt")
+            params = urllib.parse.urlencode({"path":path})
+            url = "/api/v1/file?" + params
+            conn.request("GET", url)
+            response = conn.getresponse()
+
+            data = common.get_binary_response(response, HTTPStatus.OK)
+            with open(path, "rb") as f:
+                content = f.read()
+                assert_that(data).is_equal_to(content)
+        finally:
+            conn.close()
+
+    def test_get_file_content_binary_file(self):
+        try:
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            path = os.path.join(TEST_DATA_PATH, "binary")
+            params = urllib.parse.urlencode({"path":path})
+            url = "/api/v1/file?" + params
+            conn.request("GET", url)
+            response = conn.getresponse()
+
+            data = common.get_binary_response(response, HTTPStatus.OK)
+            with open(path, "rb") as f:
+                content = f.read()
+                assert_that(data).is_equal_to(content)
+        finally:
+            conn.close()
+
+    def test_get_file_content_empty_file(self):
+        try:
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            path = os.path.join(TEST_DATA_PATH, "empty")
+            params = urllib.parse.urlencode({"path":path})
+            url = "/api/v1/file?" + params
+            conn.request("GET", url)
+            response = conn.getresponse()
+
+            data = common.get_binary_response(response, HTTPStatus.OK)
+            with open(path, "rb") as f:
+                content = f.read()
+                assert_that(data).is_equal_to(content)
+        finally:
+            conn.close()
+
+    def test_get_file_content_not_exist(self):
+        try:
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            path = os.path.join(TEST_DATA_PATH, NON_EXIST_FILE)
+            params = urllib.parse.urlencode({"path":path})
+            url = "/api/v1/file?" + params
+            conn.request("GET", url)
+            response = conn.getresponse()
             common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
         finally:
             conn.close()

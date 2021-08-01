@@ -2,7 +2,9 @@ package ops
 
 import (
 	"context"
+	"expinc/sunagent/common"
 	"expinc/sunagent/log"
+	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -61,6 +63,38 @@ func GetFileContent(ctx context.Context, path string) (content []byte, err error
 	content, err = ioutil.ReadFile(path)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
+	}
+	return
+}
+
+func WriteFile(ctx context.Context, path string, content []byte, isDir bool, overwrite bool) (meta FileMeta, err error) {
+	if false == overwrite {
+		// check if file exists
+		_, err = os.Stat(path)
+		if nil == err {
+			err = common.NewError(common.ErrorUnexpected, fmt.Sprintf("%s already exists", path))
+			log.ErrorCtx(ctx, err)
+			return
+		}
+		if !os.IsNotExist(err) {
+			log.ErrorCtx(ctx, err)
+			return
+		}
+	}
+
+	if false == isDir {
+		err = ioutil.WriteFile(path, content, fs.ModePerm)
+	} else {
+		err = os.MkdirAll(path, fs.ModeDir)
+	}
+
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+	} else {
+		metas, err := GetFileMetas(ctx, path, false)
+		if err == nil {
+			meta = metas[0]
+		}
 	}
 	return
 }

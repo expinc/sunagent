@@ -137,7 +137,7 @@ Method: ```POST /file```
 Parameters:
 
 * path: Absolute path to the file.
-* directory: If the file is a directory.
+* isDir: If the file is a directory.
 
 Body: Binary content of the file if it is a regular file.
 

@@ -2,6 +2,7 @@
 
 import common
 import http.client
+from http import HTTPStatus
 
 class TestManage:
     def test_get_info(self):
@@ -11,6 +12,6 @@ class TestManage:
             response = conn.getresponse()
             
             expected_data = {"version": "1.0.0"}
-            common.assert_successful_response(response, 200, expected_data)
+            common.assert_successful_response(response, HTTPStatus.OK, expected_data)
         finally:
             conn.close()

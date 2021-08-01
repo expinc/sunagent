@@ -55,7 +55,11 @@ def func_test():
         subprocess.check_call("start gen\sunagentd.exe", shell=True)
 
     print("Running test cases...")
-    subprocess.check_call("python -m pytest", shell=True)
+    try:
+        subprocess.check_call("python -m pytest", shell=True)
+        print("Test succeeded")
+    except subprocess.CalledProcessError as err:
+        print("Test failed!")
 
     print("Stopping executable...")
     if "Linux" == sys_type:

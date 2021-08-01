@@ -61,7 +61,7 @@ To run tests, use *test.py*:
 * Run ```python test.py -t func``` to run functionality test.
 * Run ```python test.py``` to run all tests.
 
-Note: *test.py* requires python 3.8 and pytest.
+Note: *test.py* requires python 3.8 and packages illustrated in *requirements.txt*.
 
 ## Extensibility
 

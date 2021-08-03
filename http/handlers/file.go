@@ -50,7 +50,7 @@ func GetFileContent(ctx *gin.Context) {
 	}
 }
 
-func CreateFile(ctx *gin.Context) {
+func writeFile(ctx *gin.Context, overwrite bool) {
 	path, ok := ctx.Request.URL.Query()["path"]
 	if !ok {
 		RespondMissingParams(ctx, []string{"path"})
@@ -68,10 +68,18 @@ func CreateFile(ctx *gin.Context) {
 		RespondFailedJson(ctx, http.StatusBadRequest, err)
 	}
 
-	meta, err := ops.WriteFile(createCancellableContext(ctx), path[0], content, isDir, false)
+	meta, err := ops.WriteFile(createCancellableContext(ctx), path[0], content, isDir, overwrite)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, meta)
 	}
+}
+
+func CreateFile(ctx *gin.Context) {
+	writeFile(ctx, false)
+}
+
+func OverwriteFile(ctx *gin.Context) {
+	writeFile(ctx, true)
 }

@@ -11,6 +11,7 @@ TEST_OUT_DIR = os.path.join("gen", "test")
 def parse_args():
     parser = argparse.ArgumentParser(description='Run tests')
     parser.add_argument("-t", "--type", required=False, choices=["unit", "func"])
+    parser.add_argument("-p", "--part", required=False)
 
     return parser.parse_args()
 
@@ -34,7 +35,7 @@ def unit_test():
     os.system(cmd)
     print("See {} for coverage report".format(coverage_report))
 
-def func_test():
+def func_test(part):
     print("=====================")
     print("Starting functionality test...")
 
@@ -55,8 +56,11 @@ def func_test():
         subprocess.check_call("start gen\sunagentd.exe", shell=True)
 
     print("Running test cases...")
+    cmd = "python -m pytest"
+    if part:
+        cmd += " " + part
     try:
-        subprocess.check_call("python -m pytest", shell=True)
+        subprocess.check_call(cmd, shell=True)
         print("Test succeeded")
     except subprocess.CalledProcessError as err:
         print("Test failed!")
@@ -73,7 +77,7 @@ if __name__ == "__main__":
     if "unit" == args.type:
         unit_test()
     elif "func" == args.type:
-        func_test()
+        func_test(args.part)
     else:
         unit_test()
         func_test()

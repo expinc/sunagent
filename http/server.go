@@ -133,6 +133,7 @@ func (server *Server) registerHandlers() {
 	server.engine.GET(urlPrefix+"/file", handlerProxy(handlers.GetFileContent))
 	server.engine.POST(urlPrefix+"/file", handlerProxy(handlers.CreateFile))
 	server.engine.PUT(urlPrefix+"/file", handlerProxy(handlers.OverwriteFile))
+	server.engine.DELETE(urlPrefix+"/file", handlerProxy(handlers.DeleteFile))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

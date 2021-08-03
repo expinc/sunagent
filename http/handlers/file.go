@@ -83,3 +83,28 @@ func CreateFile(ctx *gin.Context) {
 func OverwriteFile(ctx *gin.Context) {
 	writeFile(ctx, true)
 }
+
+func DeleteFile(ctx *gin.Context) {
+	path, ok := ctx.Request.URL.Query()["path"]
+	if !ok {
+		RespondMissingParams(ctx, []string{"path"})
+		return
+	}
+
+	recursiveStr, ok := ctx.Request.URL.Query()["recursive"]
+	recursive := false
+	if ok {
+		recursive, _ = strconv.ParseBool(recursiveStr[0])
+	}
+
+	err := ops.DeleteFile(createCancellableContext(ctx), path[0], recursive)
+	if nil != err {
+		status := http.StatusInternalServerError
+		if os.IsNotExist(err) {
+			status = http.StatusNotFound
+		}
+		RespondFailedJson(ctx, status, err)
+	} else {
+		RespondSuccessfulJson(ctx, http.StatusOK, nil)
+	}
+}

@@ -98,3 +98,21 @@ func WriteFile(ctx context.Context, path string, content []byte, isDir bool, ove
 	}
 	return
 }
+
+func DeleteFile(ctx context.Context, path string, recursive bool) error {
+	// Get file info of the path
+	pathInfo, err := os.Stat(path)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// execute removal
+	if !pathInfo.IsDir() || !recursive {
+		err = os.Remove(path)
+	} else {
+		err = os.RemoveAll(path)
+	}
+
+	return err
+}

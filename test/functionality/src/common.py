@@ -21,6 +21,15 @@ DIRECTORY_MODE_PATTERN = r"^d((r|-)(w|-)(x|-)){3}$"
 
 LINUX_DIR_SIZE = 4096
 
+# dummy python process script
+TEST_EXE_PATH = os.path.join(os.getcwd(), "test", "functionality", "exe")
+TEST_DUMMY_PROC = os.path.join(TEST_EXE_PATH, "dummy-proc.py")
+
+# there are 2 python processes for test script:
+# 1. test.py
+# 2. pytest
+TEST_SCRIPT_PYTHON_PROC_COUNT = 2
+
 def assert_successful_response(response, status, data=None):
     assert_that(status).is_equal_to(response.status)
 

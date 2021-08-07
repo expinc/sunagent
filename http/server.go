@@ -137,6 +137,7 @@ func (server *Server) registerHandlers() {
 
 	// processes
 	server.engine.GET(urlPrefix+"/processes/:pidOrName", handlerProxy(handlers.GetProcInfo))
+	server.engine.POST(urlPrefix+"/processes/:pidOrName/kill", handlerProxy(handlers.KillProc))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

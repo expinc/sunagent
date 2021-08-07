@@ -5,6 +5,7 @@ import (
 	"expinc/sunagent/common"
 	"expinc/sunagent/log"
 	"fmt"
+	"syscall"
 	"time"
 
 	"github.com/shirou/gopsutil/process"
@@ -80,6 +81,22 @@ func GetProcInfosByName(ctx context.Context, name string) (infos []ProcInfo, err
 	if 0 == len(infos) {
 		err = common.NewError(common.ErrorNotFound, fmt.Sprintf("No process named %s", name))
 		log.ErrorCtx(ctx, err)
+	}
+	return
+}
+
+func KillProcByPid(ctx context.Context, pid int32, signal int) (err error) {
+	proc, err := process.NewProcess(pid)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		err = common.NewError(common.ErrorNotFound, err.Error())
+		return
+	}
+
+	if 0 == signal {
+		err = proc.Kill()
+	} else {
+		err = proc.SendSignal(syscall.Signal(signal))
 	}
 	return
 }

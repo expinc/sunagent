@@ -128,12 +128,15 @@ func (server *Server) registerHandlers() {
 	server.engine.GET(urlPrefix+"/info", handlerProxy(handlers.GetInfo))
 	server.engine.POST(urlPrefix+"/terminate", handlerProxy(server.terminate))
 
-	// files
+	// file
 	server.engine.GET(urlPrefix+"/fileMeta", handlerProxy(handlers.GetFileMeta))
 	server.engine.GET(urlPrefix+"/file", handlerProxy(handlers.GetFileContent))
 	server.engine.POST(urlPrefix+"/file", handlerProxy(handlers.CreateFile))
 	server.engine.PUT(urlPrefix+"/file", handlerProxy(handlers.OverwriteFile))
 	server.engine.DELETE(urlPrefix+"/file", handlerProxy(handlers.DeleteFile))
+
+	// processes
+	server.engine.GET(urlPrefix+"/processes/:pidOrName", handlerProxy(handlers.GetProcInfo))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

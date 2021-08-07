@@ -197,7 +197,7 @@ Get basic information of some processes.
 
 If the path parameter is pid, only information of one process with the specified pid will be returned. If the path parameter is process name, information of a number of processes with the specified process name will be returned.
 
-Method: ```GET /process/{pid or name}```
+Method: ```GET /processes/{pid or name}```
 
 Response:
 

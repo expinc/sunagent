@@ -205,6 +205,7 @@ Response:
 [
     {
         "pid": 1024,
+        "name": "ProcessName",
         "cmd": "StartCommand",
         "startTime": "YYYY-MM-DDThh:mm:ss",
         "elapsedSeconds": 3600,

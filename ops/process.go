@@ -12,6 +12,7 @@ import (
 
 type ProcInfo struct {
 	Pid            int32     `json:"pid"`
+	Name           string    `json:"name"`
 	Cmd            string    `json:"cmd"`
 	StartTime      time.Time `json:"startTime"`
 	ElapsedSeconds int64     `json:"elapsedSeconds"`
@@ -23,6 +24,10 @@ func proc2ProcInfo(ctx context.Context, proc *process.Process) (info ProcInfo) {
 	// because the process existance has already been confirmed
 	var err1 error
 	info.Pid = proc.Pid
+	info.Name, err1 = proc.Name()
+	if nil != err1 {
+		log.ErrorCtx(ctx, err1)
+	}
 	info.Cmd, err1 = proc.Cmdline()
 	if nil != err1 {
 		log.ErrorCtx(ctx, err1)

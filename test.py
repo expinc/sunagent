@@ -80,4 +80,4 @@ if __name__ == "__main__":
         func_test(args.part)
     else:
         unit_test()
-        func_test()
+        func_test(None)

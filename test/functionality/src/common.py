@@ -31,33 +31,33 @@ TEST_DUMMY_PROC = os.path.join(TEST_EXE_PATH, "dummy-proc.py")
 TEST_SCRIPT_PYTHON_PROC_COUNT = 2
 
 def assert_successful_response(response, status, data=None):
-    assert_that(status).is_equal_to(response.status)
+    assert_that(response.status).is_equal_to(status)
 
     body = response.read()
     body = json.loads(body)
 
-    assert_that(status).is_equal_to(body["status"])
-    assert_that(True).is_equal_to(body["successful"])
+    assert_that(body["status"]).is_equal_to(status)
+    assert_that(body["successful"]).is_equal_to(True)
     if data:
-        assert_that(data).is_equal_to(body["data"])
+        assert_that(body["data"]).is_equal_to(data)
 
 def assert_failed_response(response, status, data=None):
-    assert_that(status).is_equal_to(response.status)
+    assert_that(response.status).is_equal_to(status)
 
     body = response.read()
     body = json.loads(body)
 
-    assert_that(status).is_equal_to(body["status"])
-    assert_that(False).is_equal_to(body["successful"])
+    assert_that(body["status"]).is_equal_to(status)
+    assert_that(body["successful"]).is_equal_to(False)
     if data:
-        assert_that(data).is_equal_to(body["data"])
+        assert_that(body["data"]).is_equal_to(data)
 
 def get_successful_response(response, status):
-    assert_that(status).is_equal_to(response.status)
+    assert_that(response.status).is_equal_to(status)
     body = response.read()
     body = json.loads(body)
     return body["data"]
 
 def get_binary_response(response, status):
-    assert_that(status).is_equal_to(response.status)
+    assert_that(response.status).is_equal_to(status)
     return response.read()

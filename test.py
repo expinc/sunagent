@@ -56,7 +56,7 @@ def func_test(part):
         subprocess.check_call("start gen\sunagentd.exe", shell=True)
 
     print("Running test cases...")
-    cmd = "python -m pytest"
+    cmd = "python -m pytest --capture=tee-sys"
     if part:
         cmd += " " + part
     try:

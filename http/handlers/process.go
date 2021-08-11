@@ -102,3 +102,55 @@ func KillProc(ctx *gin.Context) {
 		RespondFailedJson(ctx, status, err)
 	}
 }
+
+func TermProc(ctx *gin.Context) {
+	// Get pid or name
+	pidOrNameStr, ok := ctx.Params.Get("pidOrName")
+	if !ok {
+		RespondMissingParams(ctx, []string{"pidOrName"})
+		return
+	}
+
+	// Get signal
+	signal := int64(0)
+	if "linux" == runtime.GOOS {
+		signal = int64(syscall.SIGTERM)
+	}
+
+	// Execute operation
+	pid, err := strconv.ParseInt(pidOrNameStr, 10, 32)
+	var pids []int64
+	if nil == err {
+		err = ops.KillProcByPid(createCancellableContext(ctx), int32(pid), int(signal))
+		if nil == err {
+			pids = append(pids, pid)
+		}
+	} else {
+		var infos []ops.ProcInfo
+		infos, err = ops.GetProcInfosByName(createCancellableContext(ctx), pidOrNameStr)
+		for _, info := range infos {
+			pid = int64(info.Pid)
+			err = ops.KillProcByPid(createCancellableContext(ctx), int32(pid), int(signal))
+			if nil == err {
+				pids = append(pids, pid)
+			} else {
+				errMsg := fmt.Sprintf("Failed to kill process %d because %s. Killed: %s", pid, err.Error(), fmt.Sprint(pids))
+				err = common.NewError(common.ErrorUnexpected, errMsg)
+				break
+			}
+		}
+	}
+
+	// Render response
+	if nil == err {
+		RespondSuccessfulJson(ctx, http.StatusOK, pids)
+	} else {
+		status := http.StatusInternalServerError
+		if internalErr, ok := err.(common.Error); ok {
+			if common.ErrorNotFound == internalErr.Code() {
+				status = http.StatusNotFound
+			}
+		}
+		RespondFailedJson(ctx, status, err)
+	}
+}

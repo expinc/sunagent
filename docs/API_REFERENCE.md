@@ -237,6 +237,21 @@ Response:
 ]
 ```
 
+### Terminate Process
+
+Terminate a process. For windows, it is equivalent to kill process. For linux, it is equivalent to kill process by signal *SIGKILL*.
+
+Method: ```POST /processes/{pid or name}/terminate```
+
+Response:
+
+```json
+[
+    1024,
+    2048
+]
+```
+
 ## System Information
 
 ### Get Node Information

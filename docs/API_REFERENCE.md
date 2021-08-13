@@ -265,6 +265,7 @@ Response:
 ```json
 {
     "hostName": "host name",
+    "bootTime": "boot time",
     "osType": "operating system type, e.g., linux, windows",
     "osFamily": "operating system family, e.g., debian, rhel",
     "osVersion": "operating system release version",

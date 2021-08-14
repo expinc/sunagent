@@ -8,6 +8,7 @@ import (
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
+	"github.com/shirou/gopsutil/mem"
 )
 
 type NodeInfo struct {
@@ -32,6 +33,13 @@ type CpuStat struct {
 	Load1  float64   `json:"load1"`
 	Load5  float64   `json:"load5"`
 	Load15 float64   `json:"load15"`
+}
+
+type MemStat struct {
+	Total     uint64 `json:"total"`
+	Available uint64 `json:"available"`
+	Used      uint64 `json:"used"`
+	Free      uint64 `json:"free"`
 }
 
 var (
@@ -90,5 +98,18 @@ func GetCpuStat(ctx context.Context, perCpu bool) (stat CpuStat, err error) {
 	stat.Load1 = loads.Load1
 	stat.Load5 = loads.Load5
 	stat.Load15 = loads.Load15
+	return
+}
+
+func GetMemStat(ctx context.Context) (stat MemStat, err error) {
+	memStat, err := mem.VirtualMemory()
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+	stat.Total = memStat.Total
+	stat.Available = memStat.Available
+	stat.Used = memStat.Used
+	stat.Free = memStat.Free
 	return
 }

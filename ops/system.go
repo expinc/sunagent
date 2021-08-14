@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
@@ -40,6 +41,15 @@ type MemStat struct {
 	Available uint64 `json:"available"`
 	Used      uint64 `json:"used"`
 	Free      uint64 `json:"free"`
+}
+
+type DiskInfo struct {
+	Device     string `json:"device"`
+	MountPoint string `json:"mountPoint"`
+	FileSystem string `json:"fileSystem"`
+	Total      uint64 `json:"total"`
+	Free       uint64 `json:"free"`
+	Used       uint64 `json:"used"`
 }
 
 var (
@@ -111,5 +121,32 @@ func GetMemStat(ctx context.Context) (stat MemStat, err error) {
 	stat.Available = memStat.Available
 	stat.Used = memStat.Used
 	stat.Free = memStat.Free
+	return
+}
+
+func GetDiskInfo(ctx context.Context) (infos []DiskInfo, err error) {
+	partitions, err := disk.Partitions(false)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+
+	for _, partition := range partitions {
+		var stat *disk.UsageStat
+		stat, err = disk.Usage(partition.Mountpoint)
+		if nil != err {
+			log.ErrorCtx(ctx, err)
+			return
+		}
+		info := DiskInfo{
+			Device:     partition.Device,
+			MountPoint: partition.Mountpoint,
+			FileSystem: partition.Fstype,
+			Total:      stat.Total,
+			Free:       stat.Free,
+			Used:       stat.Used,
+		}
+		infos = append(infos, info)
+	}
 	return
 }

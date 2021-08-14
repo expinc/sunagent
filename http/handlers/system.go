@@ -41,3 +41,12 @@ func GetMemStat(ctx *gin.Context) {
 		RespondSuccessfulJson(ctx, http.StatusOK, stat)
 	}
 }
+
+func GetDiskInfo(ctx *gin.Context) {
+	info, err := ops.GetDiskInfo(createCancellableContext(ctx))
+	if nil != err {
+		RespondFailedJson(ctx, http.StatusInternalServerError, err)
+	} else {
+		RespondSuccessfulJson(ctx, http.StatusOK, info)
+	}
+}

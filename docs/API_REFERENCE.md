@@ -284,11 +284,10 @@ Response:
 
 ```json
 {
-    "count": 12,
-    "vendorId": "vendor ID, e.g., GenuineIntel",
-    "model": "model",
     "modelName": "model name, e.g., Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
-    "Mhz": "frequency in Mhz"
+    "vendorId": "vendor ID, e.g., GenuineIntel",
+    "Mhz": "frequency in Mhz",
+    "count": 12
 }
 ```
 

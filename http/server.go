@@ -143,6 +143,7 @@ func (server *Server) registerHandlers() {
 	// system
 	server.engine.GET(urlPrefix+"/sys/info", handlerProxy(handlers.GetNodeInfo))
 	server.engine.GET(urlPrefix+"/sys/cpus/info", handlerProxy(handlers.GetCpuInfo))
+	server.engine.GET(urlPrefix+"/sys/cpus/stats", handlerProxy(handlers.GetCpuStat))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

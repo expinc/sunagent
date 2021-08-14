@@ -2,10 +2,12 @@ package ops
 
 import (
 	"context"
+	"expinc/sunagent/log"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/load"
 )
 
 type NodeInfo struct {
@@ -23,6 +25,13 @@ type CpuInfo struct {
 	VendorId  string  `json:"vendorId"`
 	Mhz       float64 `json:"mhz"`
 	Count     int32   `json:"count"`
+}
+
+type CpuStat struct {
+	Usages []float64 `json:"usages"`
+	Load1  float64   `json:"load1"`
+	Load5  float64   `json:"load5"`
+	Load15 float64   `json:"load15"`
 }
 
 var (
@@ -63,4 +72,23 @@ func GetNodeInfo(ctx context.Context) NodeInfo {
 
 func GetCpuInfo(ctx context.Context) CpuInfo {
 	return cpuInfo
+}
+
+func GetCpuStat(ctx context.Context, perCpu bool) (stat CpuStat, err error) {
+	usages, err := cpu.Percent(time.Second, perCpu)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+	stat.Usages = usages
+
+	loads, err := load.Avg()
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+	stat.Load1 = loads.Load1
+	stat.Load5 = loads.Load5
+	stat.Load15 = loads.Load15
+	return
 }

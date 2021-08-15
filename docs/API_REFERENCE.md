@@ -365,6 +365,8 @@ Response:
 
 ### Get Network Information
 
+Get network interface information.
+
 Method: ```GET /sys/net/info```
 
 Response:
@@ -373,19 +375,19 @@ Response:
 [
     {
         "name": "network adaptor name, e.g., eth0, lo0",
-        "mtu": 65535,
+        "maxTransmissionUnit": 65535,
         "hardwareAddress": "MAC address",
-        "addresses": [
-            "127.0.0.1"
+        "ipAddresses": [
+            "127.0.0.1/8"
         ]
     },
     {
         "name": "network adaptor name, e.g., eth0, lo0",
-        "mtu": 1500,
+        "maxTransmissionUnit": 1500,
         "hardwareAddress": "MAC address",
-        "addresses": [
-            "172.10.10.10",
-            "192.168.0.3"
+        "ipAddresses": [
+            "172.10.10.10/24",
+            "fe80::d987:8873:f85f:e621/64"
         ]
     }
 ]

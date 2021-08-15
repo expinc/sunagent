@@ -10,6 +10,7 @@ import (
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
+	"github.com/shirou/gopsutil/net"
 )
 
 type NodeInfo struct {
@@ -50,6 +51,13 @@ type DiskInfo struct {
 	Total      uint64 `json:"total"`
 	Free       uint64 `json:"free"`
 	Used       uint64 `json:"used"`
+}
+
+type NetInfo struct {
+	Name                string   `json:"name"`
+	MaxTransmissionUnit int      `json:"maxTransmissionUnit"`
+	HardwareAddress     string   `json:"hardwareAddress"`
+	IpAddresses         []string `json:"ipAddresses"`
 }
 
 var (
@@ -145,6 +153,29 @@ func GetDiskInfo(ctx context.Context) (infos []DiskInfo, err error) {
 			Total:      stat.Total,
 			Free:       stat.Free,
 			Used:       stat.Used,
+		}
+		infos = append(infos, info)
+	}
+	return
+}
+
+func GetNetInfo(ctx context.Context) (infos []NetInfo, err error) {
+	stats, err := net.Interfaces()
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+	for _, stat := range stats {
+		addresses := make([]string, len(stat.Addrs))
+		for i, address := range stat.Addrs {
+			addresses[i] = address.Addr
+		}
+
+		info := NetInfo{
+			Name:                stat.Name,
+			MaxTransmissionUnit: stat.MTU,
+			HardwareAddress:     stat.HardwareAddr,
+			IpAddresses:         addresses,
 		}
 		infos = append(infos, info)
 	}

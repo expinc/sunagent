@@ -146,6 +146,7 @@ func (server *Server) registerHandlers() {
 	server.engine.GET(urlPrefix+"/sys/cpus/stats", handlerProxy(handlers.GetCpuStat))
 	server.engine.GET(urlPrefix+"/sys/mem/stats", handlerProxy(handlers.GetMemStat))
 	server.engine.GET(urlPrefix+"/sys/disks/stats", handlerProxy(handlers.GetDiskInfo))
+	server.engine.GET(urlPrefix+"/sys/net/info", handlerProxy(handlers.GetNetInfo))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

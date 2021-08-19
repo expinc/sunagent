@@ -20,20 +20,23 @@ def kill_proc(name):
         if proc.info["name"] == name:
             proc.kill()
 
-def unit_test():
+def unit_test(part):
     print("=====================")
     print("Starting unit test...")
     cover_profile = os.path.join(TEST_OUT_DIR, "cover-profile")
-    test_log = os.path.join(TEST_OUT_DIR, "unit-test.log")
-    cmd = "go test -v -coverpkg=./... ./... -coverprofile {} > {}".format(cover_profile, test_log)
+    if part:
+        cmd = "go test -v {} -coverpkg=./... ./... -coverprofile {}".format(part, cover_profile)
+    else:
+        cmd = "go test -v -coverpkg=./... ./... -coverprofile {}".format(cover_profile)
     os.system(cmd)
-    print("Unit test finished. See {} for test log".format(test_log))
 
     print("Generating coverage report...")
     coverage_report = os.path.join(TEST_OUT_DIR, "unit-test.html")
     cmd = "go tool cover -html {} -o {}".format(cover_profile, coverage_report)
     os.system(cmd)
     print("See {} for coverage report".format(coverage_report))
+
+    print("Unit test finished.")
 
 def func_test(part):
     print("=====================")
@@ -74,10 +77,11 @@ def func_test(part):
 if __name__ == "__main__":
     args = parse_args()
     os.makedirs(TEST_OUT_DIR, exist_ok=True)
+    os.environ["TEST_ARTIFACT_DIR"] = os.path.join(os.getcwd(), "test")
     if "unit" == args.type:
-        unit_test()
+        unit_test(args.part)
     elif "func" == args.type:
         func_test(args.part)
     else:
-        unit_test()
+        unit_test(args.part)
         func_test(None)

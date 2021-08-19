@@ -11,6 +11,7 @@ const (
 	ErrorUnauthorized         = 4
 	ErrorNotAllowed           = 5
 	ErrorInsufficientResource = 6
+	ErrorTimeout              = 7
 )
 
 type Error struct {

@@ -54,6 +54,13 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 		return
 	}
 	scriptFilePath := filepath.Join(common.CurrentDir, uuid.New().String())
+	params := []string{scriptFilePath}
+	// windows cmd must have parameter /C to execute the .bat file as script
+	// parameter /Q is also added to avoid printing command lines
+	if ("cmd" == program || "cmd.exe" == program) && "windows" == nodeInfo.OsType {
+		scriptFilePath += ".bat"
+		params = []string{"/Q", "/C", scriptFilePath}
+	}
 	err = ioutil.WriteFile(scriptFilePath, []byte(script), fs.ModePerm)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -74,7 +81,7 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 	if separateOutput {
 		var stdout []byte
 		var stderr []byte
-		stdout, stderr, err = command.CheckSeparateOutput(program, []string{scriptFilePath}, timeout)
+		stdout, stderr, err = command.CheckSeparateOutput(program, params, timeout)
 		separateResult := SeparateScriptResult{
 			Stdout: string(stdout),
 			Stderr: string(stderr),
@@ -89,7 +96,7 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 		result = separateResult
 	} else {
 		var output []byte
-		output, err = command.CheckCombinedOutput(program, []string{scriptFilePath}, timeout)
+		output, err = command.CheckCombinedOutput(program, params, timeout)
 		combinedResult := CombinedScriptResult{
 			Output: string(output),
 		}

@@ -1,6 +1,9 @@
 package common
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 const (
 	Version           = "1.0.0"
@@ -9,5 +12,7 @@ const (
 )
 
 var (
-	Pid = os.Getpid()
+	Pid           = os.Getpid()
+	CurrentDir, _ = os.Getwd()
+	TmpFolder     = filepath.Join(CurrentDir, "tmp")
 )

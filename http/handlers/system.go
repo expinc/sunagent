@@ -27,7 +27,7 @@ func GetCpuStat(ctx *gin.Context) {
 
 	stat, err := ops.GetCpuStat(createCancellableContext(ctx), perCpu)
 	if nil != err {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err)
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, stat)
 	}
@@ -36,7 +36,7 @@ func GetCpuStat(ctx *gin.Context) {
 func GetMemStat(ctx *gin.Context) {
 	stat, err := ops.GetMemStat(createCancellableContext(ctx))
 	if nil != err {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err)
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, stat)
 	}
@@ -45,7 +45,7 @@ func GetMemStat(ctx *gin.Context) {
 func GetDiskInfo(ctx *gin.Context) {
 	info, err := ops.GetDiskInfo(createCancellableContext(ctx))
 	if nil != err {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err)
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, info)
 	}
@@ -54,7 +54,7 @@ func GetDiskInfo(ctx *gin.Context) {
 func GetNetInfo(ctx *gin.Context) {
 	info, err := ops.GetNetInfo(createCancellableContext(ctx))
 	if nil != err {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err)
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, info)
 	}

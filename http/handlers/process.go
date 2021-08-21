@@ -43,7 +43,7 @@ func GetProcInfo(ctx *gin.Context) {
 				status = http.StatusNotFound
 			}
 		}
-		RespondFailedJson(ctx, status, err)
+		RespondFailedJson(ctx, status, err, nil)
 	}
 }
 
@@ -99,7 +99,7 @@ func KillProc(ctx *gin.Context) {
 				status = http.StatusNotFound
 			}
 		}
-		RespondFailedJson(ctx, status, err)
+		RespondFailedJson(ctx, status, err, nil)
 	}
 }
 
@@ -151,6 +151,6 @@ func TermProc(ctx *gin.Context) {
 				status = http.StatusNotFound
 			}
 		}
-		RespondFailedJson(ctx, status, err)
+		RespondFailedJson(ctx, status, err, nil)
 	}
 }

@@ -25,7 +25,7 @@ func GetFileMeta(ctx *gin.Context) {
 		if os.IsNotExist(err) {
 			status = http.StatusNotFound
 		}
-		RespondFailedJson(ctx, status, err)
+		RespondFailedJson(ctx, status, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, metas)
 	}
@@ -44,7 +44,7 @@ func GetFileContent(ctx *gin.Context) {
 		if os.IsNotExist(err) {
 			status = http.StatusNotFound
 		}
-		RespondFailedJson(ctx, status, err)
+		RespondFailedJson(ctx, status, err, nil)
 	} else {
 		RespondBinary(ctx, http.StatusOK, content)
 	}
@@ -65,12 +65,12 @@ func writeFile(ctx *gin.Context, overwrite bool) {
 
 	content, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
-		RespondFailedJson(ctx, http.StatusBadRequest, err)
+		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 	}
 
 	meta, err := ops.WriteFile(createCancellableContext(ctx), path[0], content, isDir, overwrite)
 	if nil != err {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err)
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, meta)
 	}
@@ -103,7 +103,7 @@ func DeleteFile(ctx *gin.Context) {
 		if os.IsNotExist(err) {
 			status = http.StatusNotFound
 		}
-		RespondFailedJson(ctx, status, err)
+		RespondFailedJson(ctx, status, err, nil)
 	} else {
 		RespondSuccessfulJson(ctx, http.StatusOK, nil)
 	}

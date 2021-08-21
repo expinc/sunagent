@@ -25,6 +25,7 @@ type JsonResponse struct {
 	Status     int         `json:"status"`
 	TraceId    string      `json:"traceId"`
 	Data       interface{} `json:"data"`
+	Error      string      `json:"error"`
 }
 
 func RespondSuccessfulJson(context *gin.Context, status int, data interface{}) {
@@ -33,17 +34,19 @@ func RespondSuccessfulJson(context *gin.Context, status int, data interface{}) {
 		Status:     status,
 		TraceId:    context.Value(common.TraceIdContextKey).(string),
 		Data:       data,
+		Error:      "",
 	}
 	context.Set("status", status)
 	context.JSON(response.Status, response)
 }
 
-func RespondFailedJson(context *gin.Context, status int, err error) {
+func RespondFailedJson(context *gin.Context, status int, err error, data interface{}) {
 	response := &JsonResponse{
 		Successful: false,
 		Status:     status,
 		TraceId:    context.Value(common.TraceIdContextKey).(string),
-		Data:       err.Error(),
+		Data:       data,
+		Error:      err.Error(),
 	}
 	context.Set("status", status)
 	context.JSON(response.Status, response)
@@ -51,7 +54,7 @@ func RespondFailedJson(context *gin.Context, status int, err error) {
 
 func RespondMissingParams(context *gin.Context, params []string) {
 	err := common.NewError(common.ErrorInvalidParameter, "Missing parameter: "+strings.Join(params, ", "))
-	RespondFailedJson(context, http.StatusBadRequest, err)
+	RespondFailedJson(context, http.StatusBadRequest, err, nil)
 }
 
 func RespondBinary(context *gin.Context, status int, content []byte) {

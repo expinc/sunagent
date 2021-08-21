@@ -58,7 +58,7 @@ func (server *Server) Run() error {
 		}
 
 		log.Error(err)
-		handlers.RespondFailedJson(ctx, http.StatusInternalServerError, err)
+		handlers.RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	}
 	server.engine.Use(gin.CustomRecovery(recoverFunc))
 
@@ -147,6 +147,9 @@ func (server *Server) registerHandlers() {
 	server.engine.GET(urlPrefix+"/sys/mem/stats", handlerProxy(handlers.GetMemStat))
 	server.engine.GET(urlPrefix+"/sys/disks/stats", handlerProxy(handlers.GetDiskInfo))
 	server.engine.GET(urlPrefix+"/sys/net/info", handlerProxy(handlers.GetNetInfo))
+
+	// script
+	server.engine.POST(urlPrefix+"/script/execute", handlerProxy(handlers.ExecScript))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

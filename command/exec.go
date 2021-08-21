@@ -6,7 +6,10 @@ import (
 	"time"
 )
 
-const DefaultTimeout = 60 * time.Second
+const (
+	DefaultTimeout = 60 * time.Second
+	NoTimeout      = (1<<63 - 1) * time.Nanosecond
+)
 
 // Execute command "program" with arguments "args".
 // Stop the command process after "timeout" and return common.Error with code ErrorTimeout.

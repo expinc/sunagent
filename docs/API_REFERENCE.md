@@ -4,25 +4,15 @@ All APIs are exposed by url prefix */api/v1*. For example, to get basic informat
 
 Trace ID could be specified by request header *traceId*. Otherwise, SunAgent will generate a trace ID for each request.
 
-For a successful textual response, the response body example is:
+For a textual response, the response body example is:
 
 ```json
 {
     "successful": true,
     "status": 200,
     "traceId": "Trace ID",
-    "data": "Payload object of the response"
-}
-```
-
-For a failed textual response, the response body example is:
-
-```json
-{
-    "successful": false,
-    "status": 500,
-    "traceId": "Trace ID",
-    "data": "Error message"
+    "data": "Payload object of the response",
+    "error": "error message if error occurs, otherwise empty"
 }
 ```
 
@@ -403,20 +393,31 @@ Parameters:
 
 * program: The program to execute the script, e.g., bash, python.
 * separateOutput: *false* to return all output together (default). *true* to return stdout and stderr separately.
-* waitSeconds: Seconds to wait for the script execution to complete. The default value is 60.
-* killIfOvertime: *false* to do nothing if the script execution is overtime (default). *true* to kill the script execution process if overtime.
+* waitSeconds: Seconds to wait for the script execution to complete. If timeout, the script process will be killed. The default value is 60. Set it as 0 if wait until the script completes execution.
 
 Body: script content.
 
 Response:
 
-When *separateOutput=false*, it will be all output content.
+When *separateOutput=false*, it will be like below:
+
+```json
+{
+    "output": "combined stdout and stderr",
+    "exitStatus": 0,
+    "error": "error message if error occurs, otherwise empty"
+}
+```
 
 When *separateOutput=true*, it will be like below:
 
 ```json
 {
     "stdout": "stdout content",
-    "stderr": "stderr content"
+    "stderr": "stderr content",
+    "exitStatus": 0,
+    "error": "error message if error occurs, otherwise empty"
 }
 ```
+
+**Note: *exitStatus* will be 0 if timeout.**

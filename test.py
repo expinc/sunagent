@@ -45,7 +45,7 @@ def func_test(part):
     print("Making executable...")
     sys_type = platform.system()
     if "Linux" == sys_type:
-        subprocess.check_call(["./make.sh"])
+        subprocess.check_call(["sh", "make.sh"])
     elif "Windows" == sys_type:
         subprocess.check_call(["make.bat"])
     else:

@@ -12,8 +12,8 @@ TEST_DATA_PATH = os.path.join(os.getcwd(), "test", "functionality", "data", TEST
 # where temporary file directory
 TEST_TMP_DIR = os.path.join(os.getcwd(), "tmp")
 
-# sample: "2021-07-31T22:44:17.7724489+08:00"
-TIMESTAMP_PATTERN = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+\+\d{2}:\d{2}$"
+# sample: "2021-07-31T22:44:17.7724489+08:00" or "2021-07-31T22:44:17.7724489Z" RFC3339
+TIMESTAMP_PATTERN = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|(\+\d{2}:\d{2}))$"
 # sample: "-rw-rw-rw-"
 REGULAR_FILE_MODE_PATTERN = r"^-((r|-)(w|-)(x|-)){3}$"
 # sample: "drwxrwxrwx"

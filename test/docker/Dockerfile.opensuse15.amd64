@@ -1,0 +1,28 @@
+FROM opensuse/leap:15.2
+
+# context must be the root path of source repository
+WORKDIR /home/dev
+
+# copy source repository from context
+COPY * sunagent/
+
+# install golang
+RUN zypper -n install wget gzip tar \
+    && wget https://golang.google.cn/dl/go1.16.7.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.7.linux-amd64.tar.gz \
+    && ln -sf /usr/local/go/bin/go /usr/bin/go
+
+# install python 3 and test dependencies
+RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tar.xz \
+    && zypper -n install --type pattern devel_C_C++ \
+    && zypper -n install libffi-devel libopenssl-devel bluez-devel tk-devel valgrind-devel libexpat-devel sqlite3-devel readline-devel readline-devel-32bit libbz2-devel libexpat-devel libbz2-devel readline-devel sqlite3-devel \
+    && tar xvf Python-3.8.11.tar.xz \
+    && cd Python-3.8.11 \
+    && ./configure --with-ensurepip=install \
+    && make -j 8 \
+    && make altinstall \
+    && ln -sf /usr/local/bin/python3.8 /usr/bin/python3 \
+    && ln -sf /usr/local/bin/python3.8 /usr/bin/python \
+    && ln -sf /usr/local/bin/pip3.8 /usr/bin/pip \
+    && cd .. \
+    && pip install -r sunagent/requirements.txt

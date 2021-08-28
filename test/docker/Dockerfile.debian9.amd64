@@ -1,0 +1,28 @@
+FROM debian:stretch
+
+# context must be the root path of source repository
+WORKDIR /home/dev
+
+# copy source repository from context
+COPY * sunagent/
+
+# install golang
+RUN apt update \
+    && apt-get install -y wget \
+    && wget https://golang.google.cn/dl/go1.16.7.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.7.linux-amd64.tar.gz \
+    && ln -sf /usr/local/go/bin/go /usr/bin/go
+
+# install python 3 and test dependencies
+RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tar.xz \
+    && apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev curl libbz2-dev \
+    && tar xvf Python-3.8.11.tar.xz \
+    && cd Python-3.8.11 \
+    && ./configure --with-ensurepip=install \
+    && make -j 8 \
+    && make altinstall \
+    && ln -sf /usr/local/bin/python3.8 /usr/bin/python3 \
+    && ln -sf /usr/local/bin/python3.8 /usr/bin/python \
+    && ln -sf /usr/local/bin/pip3.8 /usr/bin/pip \
+    && cd .. \
+    && pip install -r sunagent/requirements.txt

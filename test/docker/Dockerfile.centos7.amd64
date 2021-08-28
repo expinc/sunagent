@@ -4,7 +4,7 @@ FROM centos:centos7.6.1810
 WORKDIR /home/dev
 
 # copy source repository from context
-COPY * sunagent/
+COPY . sunagent/
 
 # install golang
 RUN yum install wget -y \

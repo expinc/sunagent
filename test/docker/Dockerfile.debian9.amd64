@@ -4,7 +4,7 @@ FROM debian:stretch
 WORKDIR /home/dev
 
 # copy source repository from context
-COPY * sunagent/
+COPY . sunagent/
 
 # install golang
 RUN apt update \

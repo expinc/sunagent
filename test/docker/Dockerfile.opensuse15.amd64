@@ -4,7 +4,7 @@ FROM opensuse/leap:15.2
 WORKDIR /home/dev
 
 # copy source repository from context
-COPY * sunagent/
+COPY . sunagent/
 
 # install golang
 RUN zypper -n install wget gzip tar \

@@ -18,7 +18,7 @@ type spellImpl struct {
 	timeout time.Duration
 }
 
-func NewSpell(program string, args []string, timeout time.Duration) (spell Spell, err error) {
+func newSpell(program string, args []string, timeout time.Duration) (spell Spell, err error) {
 	err = nil
 	if "" == strings.TrimSpace(program) {
 		err = common.NewError(common.ErrorInvalidParameter, "No program specified for the spell")

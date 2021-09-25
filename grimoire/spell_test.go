@@ -24,9 +24,9 @@ func TestCast_NoArg(t *testing.T) {
 		err   error
 	)
 	if "windows" == hostInfo.OS {
-		spell, err = NewSpell("tasklist", []string{}, command.DefaultTimeout)
+		spell, err = newSpell("tasklist", []string{}, command.DefaultTimeout)
 	} else {
-		spell, err = NewSpell("echo", []string{}, command.DefaultTimeout)
+		spell, err = newSpell("echo", []string{}, command.DefaultTimeout)
 	}
 	assert.Equal(t, nil, err)
 
@@ -42,7 +42,7 @@ func TestCast_NoArg(t *testing.T) {
 }
 
 func TestCast_WithArgs(t *testing.T) {
-	spell, err := NewSpell("python", []string{echoScript, "{}", "{}", "{}"}, command.DefaultTimeout)
+	spell, err := newSpell("python", []string{echoScript, "{}", "{}", "{}"}, command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 
 	// three positional args. only specify first two
@@ -56,7 +56,7 @@ func TestCast_WithArgs(t *testing.T) {
 }
 
 func TestCast_WithBraces(t *testing.T) {
-	spell, err := NewSpell("python", []string{echoScript, "{{}}", "}{"}, command.DefaultTimeout)
+	spell, err := newSpell("python", []string{echoScript, "{{}}", "}{"}, command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 
 	output, err := spell.Cast()

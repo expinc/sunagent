@@ -1,0 +1,11 @@
+arcanes:
+  arcane1:
+    program: sh
+    timeout: 60
+    spells:
+      spell1:
+        args: echo spell1
+      spell2:
+        args: [echo, spell2]
+      spell3:
+        args: echo spell3

@@ -4,6 +4,7 @@ import (
 	"expinc/sunagent/common"
 	"expinc/sunagent/http"
 	"expinc/sunagent/log"
+	"expinc/sunagent/ops"
 	"fmt"
 
 	"github.com/go-ini/ini"
@@ -34,6 +35,12 @@ func main() {
 	}
 	log.SetRotateFileOutput("logs/"+common.ProcName+".log", fileLimitMb)
 	log.Info(fmt.Sprintf("%s started: pid=%d", common.ProcName, common.Pid))
+
+	// load grimoire
+	err = ops.ReloadGrimoireFromFile()
+	if nil != err {
+		log.Fatal(err)
+	}
 
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()

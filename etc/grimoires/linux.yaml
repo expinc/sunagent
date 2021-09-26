@@ -1,0 +1,21 @@
+arcanes:
+  get-package:
+    program: sh
+    timeout: 60
+    spells:
+      debian:
+        args: dpkg -s {}
+      rhel:
+        args: rpm -qi {}
+      suse:
+        args: rpm -qi {}
+  install-package:
+    program: sh
+    timeout: 600
+    spells:
+      debian:
+        args: apt-get install -y {}
+      rhel:
+        args: yum -y install {}
+      suse:
+        args: zypper -n install {}

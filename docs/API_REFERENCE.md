@@ -40,7 +40,12 @@ For a binary response, the response body is the binary content.
     - [Get Disk Information](#get-disk-information)
     - [Get Network Information](#get-network-information)
 * [Script Execution](#script-execution)
-    - [Execute script](#execute-script)
+    - [Execute Script](#execute-script)
+* [Package Management](#package-management)
+    - [Query Package](#query-package)
+    - [Install Package](#install-package)
+    - [Upgrade Package](#upgrade-package)
+    - [Uninstall Package](#uninstall-package)
 
 ## SunAgent Management
 
@@ -421,3 +426,68 @@ When *separateOutput=true*, it will be like below:
 ```
 
 **Note: *exitStatus* will be 0 if timeout.**
+
+## Package Management
+
+**Note: Windows is not supported**
+
+### Query Package
+
+Method: ```GET /package/{name}```
+
+Response:
+
+```json
+{
+    "name": "package name",
+    "version": "package version",
+    "architecture": "package architecture",
+    "summary": "package summary"
+}
+```
+
+### Install Package
+
+Install a package. It will fail if the package has already been installed.
+
+Method: ```POST /package/{name}```
+
+Parameters:
+
+* path: Package file path. This parameter works only if the url parameter *name* is not specified.
+
+Response:
+
+```json
+{
+    "name": "package name",
+    "version": "package version",
+    "architecture": "package architecture",
+    "summary": "package summary"
+}
+```
+
+### Upgrade Package
+
+Upgrade a Package. The package will be installed if it is not installed. The package will be upgraded if the installed version is older than the target package. Nothing will do if the package has already been installed.
+
+Method: ```PUT /package/{name}```
+
+Parameters:
+
+* path: Package file path. This parameter works only if the url parameter *name* is not specified.
+
+Response:
+
+```json
+{
+    "name": "package name",
+    "version": "package version",
+    "architecture": "package architecture",
+    "summary": "package summary"
+}
+```
+
+### Uninstall Package
+
+Method: ```DELETE /package/{name}```

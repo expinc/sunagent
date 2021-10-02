@@ -25,7 +25,7 @@ func TestSetSpell_Ordinary(t *testing.T) {
 	assert.Equal(t, nil, err)
 	err = arcane.SetSpell("spell2", "date")
 	assert.Equal(t, nil, err)
-	err = arcane.SetSpell("spell3", "")
+	err = arcane.SetSpell("spell3", "ls")
 	assert.Equal(t, nil, err)
 
 	var spell Spell
@@ -44,7 +44,7 @@ func TestSetSpell_ReplaceExisting(t *testing.T) {
 	arcane, _ := NewArcane("arcane", command.DefaultTimeout)
 	arcane.SetSpell("spell1", "echo hello")
 	arcane.SetSpell("spell2", "date")
-	arcane.SetSpell("spell3", "")
+	arcane.SetSpell("spell3", "ls")
 
 	// assert original spell
 	spell, err := arcane.GetSpell("spell2")
@@ -64,6 +64,12 @@ func TestSetSpell_ReplaceExisting(t *testing.T) {
 	assert.Equal(t, true, ok)
 	assert.Equal(t, 1, len(impl.args))
 	assert.Equal(t, "top", impl.args[0])
+}
+
+func TestSetSpell_Empty(t *testing.T) {
+	arcane, _ := NewArcane("arcane", command.DefaultTimeout)
+	err := arcane.SetSpell("spell1", " \t\r\n")
+	assert.Equal(t, common.ErrorInvalidParameter, err.(common.Error).Code())
 }
 
 func TestGetSpell_Ordinary(t *testing.T) {

@@ -39,20 +39,20 @@ func (spell *spellImpl) Cast(args ...string) (output []byte, err error) {
 	// example 1: "echo {}" with arg "hello" will get "echo hello"
 	// example 2: "echo {{}}" will get "echo {}"
 	// example 3: "echo {}" with no arg will get "echo "
-	actualArgs := make([]string, len(args), len(args))
+	actualArgs := make([]string, len(spell.args)-1, len(spell.args)-1)
 	i := 0
 	for j := 0; j < len(actualArgs); j++ {
-		if "{}" == spell.args[j] {
+		if "{}" == spell.args[j+1] {
 			if i < len(args) {
 				actualArgs[j] = args[i]
 				i++
 			} else {
 				actualArgs[j] = ""
 			}
-		} else if "{{}}" == spell.args[j] {
+		} else if "{{}}" == spell.args[j+1] {
 			actualArgs[j] = "{}"
 		} else {
-			actualArgs[j] = spell.args[j]
+			actualArgs[j] = spell.args[j+1]
 		}
 	}
 

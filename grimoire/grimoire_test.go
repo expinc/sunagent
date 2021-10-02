@@ -4,7 +4,7 @@ import (
 	"expinc/sunagent/command"
 	"expinc/sunagent/common"
 	"os"
-	"path"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -21,11 +21,11 @@ var (
 )
 
 func init() {
-	ordinaryGrimoire = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "ordinary.yaml")
-	invalidYaml = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-yaml.yaml")
-	invalidGrimoire = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-grimoire.yaml")
-	invalidArcane = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-arcane.yaml")
-	invalidSpell = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-spell.yaml")
+	ordinaryGrimoire = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "ordinary.yaml")
+	invalidYaml = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-yaml.yaml")
+	invalidGrimoire = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-grimoire.yaml")
+	invalidArcane = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-arcane.yaml")
+	invalidSpell = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "data", "grimoires", "invalid-spell.yaml")
 }
 
 func TestGrimoire_SetArcane_Ordinary(t *testing.T) {

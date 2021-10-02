@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -30,9 +30,9 @@ var (
 )
 
 func init() {
-	sleepScript = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "dummy-proc.py")
-	outputScript = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "output-script.py")
-	failScript = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "fail-script.py")
+	sleepScript = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "dummy-proc.py")
+	outputScript = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "output-script.py")
+	failScript = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "fail-script.py")
 
 	combinedOutput = "stdout 1\nstderr 1\nstdout 2\nstderr 2\n"
 	combinedFail = "start script\nexit with 1\n"

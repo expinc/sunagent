@@ -42,7 +42,7 @@ For a binary response, the response body is the binary content.
 * [Script Execution](#script-execution)
     - [Execute Script](#execute-script)
 * [Package Management](#package-management)
-    - [Query Package](#query-package)
+    - [Get Package Information](#get-package-information)
     - [Install Package](#install-package)
     - [Upgrade Package](#upgrade-package)
     - [Uninstall Package](#uninstall-package)
@@ -431,7 +431,7 @@ When *separateOutput=true*, it will be like below:
 
 **Note: Windows is not supported**
 
-### Query Package
+### Get Package Information
 
 Method: ```GET /package/{name}```
 

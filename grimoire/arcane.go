@@ -15,13 +15,12 @@ type Arcane interface {
 
 type arcaneImpl struct {
 	name    string
-	program string
 	timeout time.Duration
 	spells  map[string]Spell
 }
 
 func (arcane *arcaneImpl) SetSpell(index string, args string) error {
-	spell, err := newSpell(arcane.program, strings.Fields(args), arcane.timeout)
+	spell, err := newSpell(strings.Fields(args), arcane.timeout)
 	if nil == err {
 		arcane.spells[index] = spell
 	}
@@ -39,20 +38,15 @@ func (arcane *arcaneImpl) GetSpell(index string) (spell Spell, err error) {
 	return
 }
 
-func NewArcane(name string, program string, timeout time.Duration) (arcane Arcane, err error) {
+func NewArcane(name string, timeout time.Duration) (arcane Arcane, err error) {
 	err = nil
 	if "" == strings.TrimSpace(name) {
 		err = common.NewError(common.ErrorInvalidParameter, "No name specified for the arcane")
 		return
 	}
-	if "" == strings.TrimSpace(program) {
-		err = common.NewError(common.ErrorInvalidParameter, "No program specified for the arcane")
-		return
-	}
 
 	arcane = &arcaneImpl{
 		name:    name,
-		program: program,
 		timeout: timeout,
 		spells:  make(map[string]Spell),
 	}

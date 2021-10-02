@@ -1,6 +1,5 @@
 arcanes:
   arcane1:
-    program: sh
     timeout: [60]
     spells:
       spell1:

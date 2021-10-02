@@ -32,11 +32,11 @@ func TestGrimoire_SetArcane_Ordinary(t *testing.T) {
 	grimoire := grimoireImpl{
 		arcanes: make(map[string]Arcane),
 	}
-	err := grimoire.SetArcane("arcane1", "sh", command.DefaultTimeout)
+	err := grimoire.SetArcane("arcane1", command.DefaultTimeout)
 	assert.Equal(t, nil, err)
-	err = grimoire.SetArcane("arcane2", "bash", command.DefaultTimeout)
+	err = grimoire.SetArcane("arcane2", command.DefaultTimeout)
 	assert.Equal(t, nil, err)
-	err = grimoire.SetArcane("arcane3", "zsh", command.DefaultTimeout)
+	err = grimoire.SetArcane("arcane3", command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 }
 
@@ -44,15 +44,7 @@ func TestGrimoire_SetArcane_NoName(t *testing.T) {
 	grimoire := grimoireImpl{
 		arcanes: make(map[string]Arcane),
 	}
-	err := grimoire.SetArcane(" \t\r\n", "sh", command.DefaultTimeout)
-	assert.Equal(t, common.ErrorInvalidParameter, err.(common.Error).Code())
-}
-
-func TestGrimoire_SetArcane_NoProgram(t *testing.T) {
-	grimoire := grimoireImpl{
-		arcanes: make(map[string]Arcane),
-	}
-	err := grimoire.SetArcane("arcane", " \t\r\n", command.DefaultTimeout)
+	err := grimoire.SetArcane(" \t\r\n", command.DefaultTimeout)
 	assert.Equal(t, common.ErrorInvalidParameter, err.(common.Error).Code())
 }
 
@@ -60,28 +52,28 @@ func TestGrimoire_GetArcane_Ordinary(t *testing.T) {
 	grimoire := grimoireImpl{
 		arcanes: make(map[string]Arcane),
 	}
-	grimoire.SetArcane("arcane1", "sh", command.DefaultTimeout)
-	grimoire.SetArcane("arcane2", "bash", command.DefaultTimeout)
-	grimoire.SetArcane("arcane3", "zsh", command.DefaultTimeout)
+	grimoire.SetArcane("arcane1", command.DefaultTimeout)
+	grimoire.SetArcane("arcane2", command.DefaultTimeout)
+	grimoire.SetArcane("arcane3", command.DefaultTimeout)
 
 	arcane, err := grimoire.GetArcane("arcane1")
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "sh", arcane.(*arcaneImpl).program)
+	assert.Equal(t, "arcane1", arcane.(*arcaneImpl).name)
 	arcane, err = grimoire.GetArcane("arcane2")
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "bash", arcane.(*arcaneImpl).program)
+	assert.Equal(t, "arcane2", arcane.(*arcaneImpl).name)
 	arcane, err = grimoire.GetArcane("arcane3")
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "zsh", arcane.(*arcaneImpl).program)
+	assert.Equal(t, "arcane3", arcane.(*arcaneImpl).name)
 }
 
 func TestGrimoire_GetArcane_NotExist(t *testing.T) {
 	grimoire := grimoireImpl{
 		arcanes: make(map[string]Arcane),
 	}
-	grimoire.SetArcane("arcane1", "sh", command.DefaultTimeout)
-	grimoire.SetArcane("arcane2", "bash", command.DefaultTimeout)
-	grimoire.SetArcane("arcane3", "zsh", command.DefaultTimeout)
+	grimoire.SetArcane("arcane1", command.DefaultTimeout)
+	grimoire.SetArcane("arcane2", command.DefaultTimeout)
+	grimoire.SetArcane("arcane3", command.DefaultTimeout)
 
 	arcane, err := grimoire.GetArcane("nonexist")
 	assert.Equal(t, common.ErrorNotFound, err.(common.Error).Code())
@@ -92,20 +84,20 @@ func TestGrimoire_SetArcane_ReplaceExisting(t *testing.T) {
 	grimoire := grimoireImpl{
 		arcanes: make(map[string]Arcane),
 	}
-	grimoire.SetArcane("arcane1", "sh", command.DefaultTimeout)
-	grimoire.SetArcane("arcane2", "bash", command.DefaultTimeout)
-	grimoire.SetArcane("arcane3", "zsh", command.DefaultTimeout)
+	grimoire.SetArcane("arcane1", command.DefaultTimeout)
+	grimoire.SetArcane("arcane2", command.DefaultTimeout)
+	grimoire.SetArcane("arcane3", command.DefaultTimeout)
 
 	arcane, err := grimoire.GetArcane("arcane2")
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "bash", arcane.(*arcaneImpl).program)
+	assert.Equal(t, command.DefaultTimeout, arcane.(*arcaneImpl).timeout)
 
-	err = grimoire.SetArcane("arcane2", "python", command.DefaultTimeout)
+	err = grimoire.SetArcane("arcane2", 9*time.Second)
 	assert.Equal(t, nil, err)
 
 	arcane, err = grimoire.GetArcane("arcane2")
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "python", arcane.(*arcaneImpl).program)
+	assert.Equal(t, 9*time.Second, arcane.(*arcaneImpl).timeout)
 }
 
 func TestNewGrimoireFromYamlBytes_Ordinary(t *testing.T) {

@@ -1,6 +1,5 @@
 arcanes:
   get-package:
-    program: sh
     timeout: 60
     spells:
       debian:
@@ -10,7 +9,6 @@ arcanes:
       suse:
         args: rpm -qi {}
   install-package:
-    program: sh
     timeout: 600
     spells:
       debian:

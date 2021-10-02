@@ -11,7 +11,7 @@ import (
 )
 
 type Grimoire interface {
-	SetArcane(name string, program string, timeout time.Duration) error
+	SetArcane(name string, timeout time.Duration) error
 	GetArcane(name string) (Arcane, error)
 }
 
@@ -19,15 +19,12 @@ type grimoireImpl struct {
 	arcanes map[string]Arcane
 }
 
-func (grimoire *grimoireImpl) SetArcane(name string, program string, timeout time.Duration) error {
+func (grimoire *grimoireImpl) SetArcane(name string, timeout time.Duration) error {
 	if "" == strings.TrimSpace(name) {
 		return common.NewError(common.ErrorInvalidParameter, "No name specified for the arcane")
 	}
-	if "" == strings.TrimSpace(program) {
-		return common.NewError(common.ErrorInvalidParameter, "No program specified for the arcane")
-	}
 
-	arcane, err := NewArcane(name, program, timeout)
+	arcane, err := NewArcane(name, timeout)
 	if nil == err {
 		grimoire.arcanes[name] = arcane
 	}
@@ -50,7 +47,6 @@ type SpellStruct struct {
 }
 
 type ArcaneStruct struct {
-	Program string                 `yaml:"program"`
 	Timeout uint                   `yaml:"timeout"`
 	Spells  map[string]SpellStruct `yaml:"spells"`
 }
@@ -81,7 +77,7 @@ func NewGrimoireFromYamlBytes(bytes []byte) (grimoire Grimoire, err error) {
 		arcanes: make(map[string]Arcane),
 	}
 	for arcaneName, arcaneStruct := range grimoireStruct.Arcanes {
-		err = grimoire.SetArcane(arcaneName, arcaneStruct.Program, time.Second*time.Duration(arcaneStruct.Timeout))
+		err = grimoire.SetArcane(arcaneName, time.Second*time.Duration(arcaneStruct.Timeout))
 		if nil != err {
 			return
 		}

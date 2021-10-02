@@ -9,24 +9,18 @@ import (
 )
 
 func TestNewArcane_Ordinary(t *testing.T) {
-	_, err := NewArcane("arcane", "sh", command.DefaultTimeout)
+	_, err := NewArcane("arcane", command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 }
 
 func TestNewArcane_NoName(t *testing.T) {
-	_, err := NewArcane(" \t\r\n", "sh", command.DefaultTimeout)
-	assert.NotEqual(t, nil, err)
-	assert.Equal(t, common.ErrorInvalidParameter, err.(common.Error).Code())
-}
-
-func TestNewArcane_NoProgram(t *testing.T) {
-	_, err := NewArcane("arcane", " \t\r\n", command.DefaultTimeout)
+	_, err := NewArcane(" \t\r\n", command.DefaultTimeout)
 	assert.NotEqual(t, nil, err)
 	assert.Equal(t, common.ErrorInvalidParameter, err.(common.Error).Code())
 }
 
 func TestSetSpell_Ordinary(t *testing.T) {
-	arcane, _ := NewArcane("arcane", "sh", command.DefaultTimeout)
+	arcane, _ := NewArcane("arcane", command.DefaultTimeout)
 	err := arcane.SetSpell("spell1", "echo hello")
 	assert.Equal(t, nil, err)
 	err = arcane.SetSpell("spell2", "date")
@@ -47,7 +41,7 @@ func TestSetSpell_Ordinary(t *testing.T) {
 }
 
 func TestSetSpell_ReplaceExisting(t *testing.T) {
-	arcane, _ := NewArcane("arcane", "sh", command.DefaultTimeout)
+	arcane, _ := NewArcane("arcane", command.DefaultTimeout)
 	arcane.SetSpell("spell1", "echo hello")
 	arcane.SetSpell("spell2", "date")
 	arcane.SetSpell("spell3", "")
@@ -73,7 +67,7 @@ func TestSetSpell_ReplaceExisting(t *testing.T) {
 }
 
 func TestGetSpell_Ordinary(t *testing.T) {
-	arcane, _ := NewArcane("arcane", "sh", command.DefaultTimeout)
+	arcane, _ := NewArcane("arcane", command.DefaultTimeout)
 	arcane.SetSpell("spell1", "echo hello")
 	arcane.SetSpell("spell2", "date")
 	arcane.SetSpell("spell3", "")
@@ -88,7 +82,7 @@ func TestGetSpell_Ordinary(t *testing.T) {
 }
 
 func TestGetSpell_NonExisting(t *testing.T) {
-	arcane, _ := NewArcane("arcane", "sh", command.DefaultTimeout)
+	arcane, _ := NewArcane("arcane", command.DefaultTimeout)
 	arcane.SetSpell("spell1", "echo hello")
 	arcane.SetSpell("spell2", "date")
 	arcane.SetSpell("spell3", "")

@@ -13,20 +13,18 @@ type Spell interface {
 }
 
 type spellImpl struct {
-	program string
 	args    []string
 	timeout time.Duration
 }
 
-func newSpell(program string, args []string, timeout time.Duration) (spell Spell, err error) {
+func newSpell(args []string, timeout time.Duration) (spell Spell, err error) {
 	err = nil
-	if "" == strings.TrimSpace(program) {
+	if 0 == len(args) || "" == strings.TrimSpace(args[0]) {
 		err = common.NewError(common.ErrorInvalidParameter, "No program specified for the spell")
 		return
 	}
 
 	spell = &spellImpl{
-		program: program,
 		args:    args,
 		timeout: timeout,
 	}
@@ -34,12 +32,14 @@ func newSpell(program string, args []string, timeout time.Duration) (spell Spell
 }
 
 func (spell *spellImpl) Cast(args ...string) (output []byte, err error) {
+	program := spell.args[0]
+
 	// {} in the spell will be replaced by the args in order
 	// to specify {} literally in the args, use {{}}
 	// example 1: "echo {}" with arg "hello" will get "echo hello"
 	// example 2: "echo {{}}" will get "echo {}"
 	// example 3: "echo {}" with no arg will get "echo "
-	actualArgs := make([]string, len(spell.args), len(spell.args))
+	actualArgs := make([]string, len(args), len(args))
 	i := 0
 	for j := 0; j < len(actualArgs); j++ {
 		if "{}" == spell.args[j] {
@@ -56,6 +56,6 @@ func (spell *spellImpl) Cast(args ...string) (output []byte, err error) {
 		}
 	}
 
-	output, err = command.CheckCombinedOutput(spell.program, actualArgs, spell.timeout)
+	output, err = command.CheckCombinedOutput(program, actualArgs, spell.timeout)
 	return
 }

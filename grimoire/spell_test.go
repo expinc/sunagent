@@ -3,7 +3,7 @@ package grimoire
 import (
 	"expinc/sunagent/command"
 	"os"
-	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/shirou/gopsutil/host"
@@ -15,7 +15,7 @@ var hostInfo *host.InfoStat
 
 func init() {
 	hostInfo, _ = host.Info()
-	echoScript = path.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "echo.py")
+	echoScript = filepath.Join(os.Getenv("TEST_ARTIFACT_DIR"), "functionality", "exe", "echo.py")
 }
 
 func TestCast_NoArg(t *testing.T) {
@@ -24,9 +24,9 @@ func TestCast_NoArg(t *testing.T) {
 		err   error
 	)
 	if "windows" == hostInfo.OS {
-		spell, err = newSpell("tasklist", []string{}, command.DefaultTimeout)
+		spell, err = newSpell([]string{"tasklist"}, command.DefaultTimeout)
 	} else {
-		spell, err = newSpell("echo", []string{}, command.DefaultTimeout)
+		spell, err = newSpell([]string{"echo"}, command.DefaultTimeout)
 	}
 	assert.Equal(t, nil, err)
 
@@ -42,7 +42,7 @@ func TestCast_NoArg(t *testing.T) {
 }
 
 func TestCast_WithArgs(t *testing.T) {
-	spell, err := newSpell("python", []string{echoScript, "{}", "{}", "{}"}, command.DefaultTimeout)
+	spell, err := newSpell([]string{echoScript, "python", "{}", "{}", "{}"}, command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 
 	// three positional args. only specify first two
@@ -56,7 +56,7 @@ func TestCast_WithArgs(t *testing.T) {
 }
 
 func TestCast_WithBraces(t *testing.T) {
-	spell, err := newSpell("python", []string{echoScript, "{{}}", "}{"}, command.DefaultTimeout)
+	spell, err := newSpell([]string{echoScript, "python", "{{}}", "}{"}, command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 
 	output, err := spell.Cast()

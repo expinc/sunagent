@@ -12,6 +12,7 @@ const (
 	ErrorNotAllowed           = 5
 	ErrorInsufficientResource = 6
 	ErrorTimeout              = 7
+	ErrorNotImplemented       = 8
 )
 
 type Error struct {

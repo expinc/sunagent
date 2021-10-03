@@ -150,6 +150,9 @@ func (server *Server) registerHandlers() {
 
 	// script
 	server.engine.POST(urlPrefix+"/script/execute", handlerProxy(handlers.ExecScript))
+
+	// package
+	server.engine.GET(urlPrefix+"/package/:name", handlerProxy(handlers.GetPackageInfo))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

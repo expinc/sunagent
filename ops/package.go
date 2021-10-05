@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
+	"strings"
 )
 
 type PackageInfo struct {
@@ -18,17 +19,41 @@ type PackageInfo struct {
 
 func getPackageInfoFromDpkg(ctx context.Context, cmdOutput string) (pkgInfo PackageInfo, err error) {
 	re := regexp.MustCompile(`Package: .*`)
-	pkgInfo.Name = re.FindString(cmdOutput)[9:]
+	entry := re.FindString(cmdOutput)
+	value := strings.Split(entry, ":")[1]
+	pkgInfo.Name = strings.TrimSpace(value)
 	re = regexp.MustCompile(`Version: .*`)
-	pkgInfo.Version = re.FindString(cmdOutput)[9:]
+	entry = re.FindString(cmdOutput)
+	value = strings.Split(entry, ":")[1]
+	pkgInfo.Version = strings.TrimSpace(value)
 	re = regexp.MustCompile(`Architecture: .*`)
-	pkgInfo.Architecture = re.FindString(cmdOutput)[14:]
+	entry = re.FindString(cmdOutput)
+	value = strings.Split(entry, ":")[1]
+	pkgInfo.Architecture = strings.TrimSpace(value)
 	re = regexp.MustCompile(`Description: .*`)
-	pkgInfo.Summary = re.FindString(cmdOutput)[13:]
+	entry = re.FindString(cmdOutput)
+	value = strings.Split(entry, ":")[1]
+	pkgInfo.Summary = strings.TrimSpace(value)
 	return
 }
 
 func getPackageInfoFromRpm(ctx context.Context, cmdOutput string) (pkgInfo PackageInfo, err error) {
+	re := regexp.MustCompile(`Name\s*: .*`)
+	entry := re.FindString(cmdOutput)
+	value := strings.Split(entry, ":")[1]
+	pkgInfo.Name = strings.TrimSpace(value)
+	re = regexp.MustCompile(`Version\s*: .*`)
+	entry = re.FindString(cmdOutput)
+	value = strings.Split(entry, ":")[1]
+	pkgInfo.Version = strings.TrimSpace(value)
+	re = regexp.MustCompile(`Architecture\s*: .*`)
+	entry = re.FindString(cmdOutput)
+	value = strings.Split(entry, ":")[1]
+	pkgInfo.Architecture = strings.TrimSpace(value)
+	re = regexp.MustCompile(`Summary\s*: .*`)
+	entry = re.FindString(cmdOutput)
+	value = strings.Split(entry, ":")[1]
+	pkgInfo.Summary = strings.TrimSpace(value)
 	return
 }
 

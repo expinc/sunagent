@@ -153,6 +153,7 @@ func (server *Server) registerHandlers() {
 
 	// package
 	server.engine.GET(urlPrefix+"/package/:name", handlerProxy(handlers.GetPackageInfo))
+	server.engine.POST(urlPrefix+"/package/:name", handlerProxy(handlers.InstallPackage))
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

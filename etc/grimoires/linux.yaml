@@ -12,7 +12,7 @@ arcanes:
     timeout: 600
     spells:
       debian:
-        args: apt-get install -y {}
+        args: apt install -y {}
       rhel:
         args: yum -y install {}
       suse:

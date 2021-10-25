@@ -28,3 +28,18 @@ func GetPackageInfo(ctx *gin.Context) {
 		RespondFailedJson(ctx, status, err, nil)
 	}
 }
+
+func InstallPackage(ctx *gin.Context) {
+	name, ok := ctx.Params.Get("name")
+	if !ok {
+		RespondMissingParams(ctx, []string{"name"})
+		return
+	}
+
+	pkgInfo, err := ops.InstallPackageByName(createCancellableContext(ctx), name)
+	if nil == err {
+		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
+	} else {
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
+	}
+}

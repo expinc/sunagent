@@ -96,3 +96,31 @@ func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err 
 	}
 	return
 }
+
+func InstallPackageByName(ctx context.Context, name string) (pkgInfo PackageInfo, err error) {
+	if "linux" != nodeInfo.OsType {
+		err = common.NewError(common.ErrorNotImplemented, "Package operations only support Linux systems")
+		return
+	}
+
+	_, err = GetPackageInfo(ctx, name)
+	if nil == err {
+		msg := fmt.Sprintf("Package \"%s\" is already installed", name)
+		err = common.NewError(common.ErrorUnexpected, msg)
+		return
+	}
+
+	output, err := castGrimoireArcane("install-package", name)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+
+		_, cmdFailed := err.(*exec.ExitError)
+		if cmdFailed {
+			err = common.NewError(common.ErrorUnexpected, string(output))
+		}
+		return
+	}
+
+	pkgInfo, err = GetPackageInfo(ctx, name)
+	return
+}

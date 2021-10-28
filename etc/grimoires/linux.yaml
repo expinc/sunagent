@@ -17,3 +17,8 @@ arcanes:
         args: yum -y install {}
       suse:
         args: zypper -n install {}
+  get-package-archive-info:
+    timeout: 60
+    spells:
+      debian:
+        args: dpkg -I {}

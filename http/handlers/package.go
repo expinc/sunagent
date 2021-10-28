@@ -30,13 +30,20 @@ func GetPackageInfo(ctx *gin.Context) {
 }
 
 func InstallPackage(ctx *gin.Context) {
-	name, ok := ctx.Params.Get("name")
+	byFile := false
+	nameOrPath, ok := ctx.Params.Get("name")
 	if !ok {
-		RespondMissingParams(ctx, []string{"name"})
-		return
+		path, ok := ctx.Request.URL.Query()["path"]
+		if ok {
+			nameOrPath = path[0]
+			byFile = true
+		} else {
+			RespondMissingParams(ctx, []string{"path"})
+			return
+		}
 	}
 
-	pkgInfo, err := ops.InstallPackageByName(createCancellableContext(ctx), name)
+	pkgInfo, err := ops.InstallPackage(createCancellableContext(ctx), nameOrPath, byFile)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
 	} else {

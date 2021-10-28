@@ -69,9 +69,24 @@ func getPackageInfoFromCmdOutput(ctx context.Context, cmdOutput string) (pkgInfo
 	return
 }
 
-func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err error) {
+func checkOsType() error {
 	if "linux" != nodeInfo.OsType {
-		err = common.NewError(common.ErrorNotImplemented, "Package operations only support Linux systems")
+		return common.NewError(common.ErrorNotImplemented, "Package operations only support Linux systems")
+	} else {
+		return nil
+	}
+}
+
+func getPackageArchiveInfo(ctx context.Context, path string) (pkgInfo PackageInfo, err error) {
+	output, err := castGrimoireArcane("get-package-archive-info", path)
+	if nil == err {
+		pkgInfo, err = getPackageInfoFromCmdOutput(ctx, string(output))
+	}
+	return
+}
+
+func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err error) {
+	if err = checkOsType(); nil != err {
 		return
 	}
 
@@ -97,12 +112,25 @@ func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err 
 	return
 }
 
-func InstallPackageByName(ctx context.Context, name string) (pkgInfo PackageInfo, err error) {
-	if "linux" != nodeInfo.OsType {
-		err = common.NewError(common.ErrorNotImplemented, "Package operations only support Linux systems")
+func InstallPackage(ctx context.Context, nameOrPath string, byFile bool) (pkgInfo PackageInfo, err error) {
+	if err = checkOsType(); nil != err {
 		return
 	}
 
+	// get package name
+	var name string
+	if !byFile {
+		name = nameOrPath
+	} else {
+		var archiveInfo PackageInfo
+		archiveInfo, err = getPackageArchiveInfo(ctx, nameOrPath)
+		if nil != err {
+			return
+		}
+		name = archiveInfo.Name
+	}
+
+	// check if package is already installed
 	_, err = GetPackageInfo(ctx, name)
 	if nil == err {
 		msg := fmt.Sprintf("Package \"%s\" is already installed", name)
@@ -110,7 +138,8 @@ func InstallPackageByName(ctx context.Context, name string) (pkgInfo PackageInfo
 		return
 	}
 
-	output, err := castGrimoireArcane("install-package", name)
+	// install package
+	output, err := castGrimoireArcane("install-package", nameOrPath)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
 
@@ -121,6 +150,7 @@ func InstallPackageByName(ctx context.Context, name string) (pkgInfo PackageInfo
 		return
 	}
 
+	// return package info
 	pkgInfo, err = GetPackageInfo(ctx, name)
 	return
 }

@@ -22,3 +22,7 @@ arcanes:
     spells:
       debian:
         args: dpkg -I {}
+      rhel:
+        args: rpm -qip {}
+      suse:
+        args: rpm -qip {}

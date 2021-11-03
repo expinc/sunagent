@@ -35,7 +35,7 @@ TEST_SCRIPT_PYTHON_PROC_COUNT = 2
 # OS family to package [name, file, URL]
 TEST_PKGS = {
     "ubuntu": ["glibc-doc-reference", "glibc-doc-reference_2.30-1ubuntu1_all.deb", "http://archive.ubuntu.com/ubuntu/pool/main/g/glibc-doc-reference/glibc-doc-reference_2.30-1ubuntu1_all.deb"],
-    "debian": ["glibc-doc-reference", "glibc-doc-reference_2.30-1ubuntu1_all.deb", "http://archive.ubuntu.com/ubuntu/pool/main/g/glibc-doc-reference/glibc-doc-reference_2.30-1ubuntu1_all.deb"],
+    "debian": ["glibc-doc", "glibc-doc_2.24-11+deb9u4_all.deb", "http://ftp.br.debian.org/debian/pool/main/g/glibc/glibc-doc_2.24-11+deb9u4_all.deb"],
     "centos": ["gdb-doc", "gdb-doc-7.6.1-120.el7.noarch.rpm", "http://mirror.centos.org/centos/7/os/x86_64/Packages/gdb-doc-7.6.1-120.el7.noarch.rpm"],
     "opensuse": ["git-doc", "git-doc-2.26.2-lp152.2.12.1.noarch.rpm", "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm"],
 }

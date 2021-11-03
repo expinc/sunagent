@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import common
 import http.client
 from http import HTTPStatus

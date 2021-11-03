@@ -55,56 +55,56 @@ func init() {
 }
 
 func TestCheckCall_Ordinary(t *testing.T) {
-	err := CheckCall("python", []string{sleepScript, "1"}, DefaultTimeout)
+	err := CheckCall("python3", []string{sleepScript, "1"}, DefaultTimeout)
 	assert.Equal(t, nil, err)
 }
 
 func TestCheckCall_Failure(t *testing.T) {
-	err := CheckCall("python", []string{sleepScript, "t"}, DefaultTimeout)
+	err := CheckCall("python3", []string{sleepScript, "t"}, DefaultTimeout)
 	assert.IsType(t, &exec.ExitError{}, err)
 }
 
 func TestCheckCall_Timeout(t *testing.T) {
-	err := CheckCall("python", []string{sleepScript, "10"}, 1*time.Second)
+	err := CheckCall("python3", []string{sleepScript, "10"}, 1*time.Second)
 	assert.IsType(t, common.Error{}, err)
 	assert.Equal(t, common.ErrorTimeout, err.(common.Error).Code())
 }
 
 func TestCheckCombinedOutput_Ordinary(t *testing.T) {
-	output, err := CheckCombinedOutput("python", []string{outputScript}, DefaultTimeout)
+	output, err := CheckCombinedOutput("python3", []string{outputScript}, DefaultTimeout)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, combinedOutput, string(output))
 }
 
 func TestCheckCombinedOutput_Failure(t *testing.T) {
-	output, err := CheckCombinedOutput("python", []string{failScript}, DefaultTimeout)
+	output, err := CheckCombinedOutput("python3", []string{failScript}, DefaultTimeout)
 	assert.IsType(t, &exec.ExitError{}, err)
 	assert.Equal(t, combinedFail, string(output))
 }
 
 func TestCheckCombinedOutput_Timeout(t *testing.T) {
-	output, err := CheckCombinedOutput("python", []string{sleepScript, "10"}, 1*time.Second)
+	output, err := CheckCombinedOutput("python3", []string{sleepScript, "10"}, 1*time.Second)
 	assert.IsType(t, common.Error{}, err)
 	assert.Equal(t, common.ErrorTimeout, err.(common.Error).Code())
 	assert.Equal(t, fmt.Sprintf(sleepOutputPattern, 10), string(output))
 }
 
 func TestCheckSeparateOutput_Ordinary(t *testing.T) {
-	stdout, stderr, err := CheckSeparateOutput("python", []string{outputScript}, DefaultTimeout)
+	stdout, stderr, err := CheckSeparateOutput("python3", []string{outputScript}, DefaultTimeout)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, separateOutputOut, string(stdout))
 	assert.Equal(t, separateOutputErr, string(stderr))
 }
 
 func TestCheckSeparateOutput_Failure(t *testing.T) {
-	stdout, stderr, err := CheckSeparateOutput("python", []string{failScript}, DefaultTimeout)
+	stdout, stderr, err := CheckSeparateOutput("python3", []string{failScript}, DefaultTimeout)
 	assert.IsType(t, &exec.ExitError{}, err)
 	assert.Equal(t, separateFailOut, string(stdout))
 	assert.Equal(t, separateFailErr, string(stderr))
 }
 
 func TestCheckSeparateOutput_Timeout(t *testing.T) {
-	stdout, stderr, err := CheckSeparateOutput("python", []string{sleepScript, "10"}, 1*time.Second)
+	stdout, stderr, err := CheckSeparateOutput("python3", []string{sleepScript, "10"}, 1*time.Second)
 	assert.IsType(t, common.Error{}, err)
 	assert.Equal(t, common.ErrorTimeout, err.(common.Error).Code())
 	assert.Equal(t, fmt.Sprintf(sleepOutputPattern, 10), string(stdout))

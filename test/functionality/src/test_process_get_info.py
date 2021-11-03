@@ -12,7 +12,7 @@ class TestGetProcInfo:
 
     @classmethod
     def setup_class(cls):
-        args = ["python", common.TEST_DUMMY_PROC, "60"]
+        args = ["python3", common.TEST_DUMMY_PROC, "60"]
         cls.dummy_proc1 = subprocess.Popen(args)
         cls.dummy_proc2 = subprocess.Popen(args)
 
@@ -48,9 +48,9 @@ class TestGetProcInfo:
     def test_get_by_name(self):
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            name = "python.exe"
+            name = "python3.exe"
             if "Linux" == platform.system():
-                name = "python"
+                name = "python3"
             url = "/api/v1/processes/" + name
             conn.request("GET", url)
             response = conn.getresponse()

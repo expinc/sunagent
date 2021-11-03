@@ -22,7 +22,6 @@ RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tar.xz \
     && make -j 8 \
     && make altinstall \
     && ln -sf /usr/local/bin/python3.8 /usr/bin/python3 \
-    && ln -sf /usr/local/bin/python3.8 /usr/bin/python \
     && ln -sf /usr/local/bin/pip3.8 /usr/bin/pip \
     && cd .. \
     && pip install -r sunagent/requirements.txt

@@ -17,7 +17,7 @@ class TestExecScript:
 
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            params = urllib.parse.urlencode({"program":"python"})
+            params = urllib.parse.urlencode({"program":"python3"})
             url = "/api/v1/script/execute?" + params
             conn.request("POST", url, scriptContent)
             response = conn.getresponse()
@@ -42,7 +42,7 @@ class TestExecScript:
 
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            params = urllib.parse.urlencode({"program":"python", "separateOutput":True})
+            params = urllib.parse.urlencode({"program":"python3", "separateOutput":True})
             url = "/api/v1/script/execute?" + params
             conn.request("POST", url, scriptContent)
             response = conn.getresponse()
@@ -70,7 +70,7 @@ class TestExecScript:
 
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            params = urllib.parse.urlencode({"program":"python"})
+            params = urllib.parse.urlencode({"program":"python3"})
             url = "/api/v1/script/execute?" + params
             conn.request("POST", url, scriptContent)
             response = conn.getresponse()
@@ -95,7 +95,7 @@ class TestExecScript:
 
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            params = urllib.parse.urlencode({"program":"python", "waitSeconds":1})
+            params = urllib.parse.urlencode({"program":"python3", "waitSeconds":1})
             url = "/api/v1/script/execute?" + params
             conn.request("POST", url, scriptContent)
             response = conn.getresponse()
@@ -117,7 +117,7 @@ class TestExecScript:
     def test_execute_cmd(self):
         try:
             # prepare script
-            scriptContent = "python --version"
+            scriptContent = "python3 --version"
 
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
@@ -139,7 +139,7 @@ class TestExecScript:
     def test_execute_sh(self):
         try:
             # prepare script
-            scriptContent = "python --version"
+            scriptContent = "python3 --version"
 
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)

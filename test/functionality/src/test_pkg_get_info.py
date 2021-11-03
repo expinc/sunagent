@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import common
 import distro
 import http.client

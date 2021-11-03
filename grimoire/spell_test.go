@@ -42,7 +42,7 @@ func TestCast_NoArg(t *testing.T) {
 }
 
 func TestCast_WithArgs(t *testing.T) {
-	spell, err := newSpell([]string{"python", echoScript, "{}", "{}"}, command.DefaultTimeout)
+	spell, err := newSpell([]string{"python3", echoScript, "{}", "{}"}, command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 
 	// three positional args. only specify first two
@@ -56,7 +56,7 @@ func TestCast_WithArgs(t *testing.T) {
 }
 
 func TestCast_WithBraces(t *testing.T) {
-	spell, err := newSpell([]string{"python", echoScript, "{{}}", "}{"}, command.DefaultTimeout)
+	spell, err := newSpell([]string{"python3", echoScript, "{{}}", "}{"}, command.DefaultTimeout)
 	assert.Equal(t, nil, err)
 
 	output, err := spell.Cast()

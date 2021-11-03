@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -59,7 +59,7 @@ def func_test(part):
         subprocess.check_call("start gen\sunagentd.exe", shell=True)
 
     print("Running test cases...")
-    cmd = "python -m pytest --capture=tee-sys"
+    cmd = "python3 -m pytest --capture=tee-sys"
     if part:
         cmd += " " + part
     try:

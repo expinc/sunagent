@@ -56,12 +56,14 @@ Please refer to [here](docs/API_REFERENCE.md).
 ## Test
 
 To run tests, use *test.py*:
-* Run ```python test.py -h``` to see the usage.
-* Run ```python test.py -t unit``` to run unit test.
-* Run ```python test.py -t func``` to run functionality test.
-* Run ```python test.py``` to run all tests.
+* Run ```python3 test.py -h``` to see the usage.
+* Run ```python3 test.py -t unit``` to run unit test.
+* Run ```python3 test.py -t func``` to run functionality test.
+* Run ```python3 test.py``` to run all tests.
 
-Note: *test.py* requires python 3.8 and packages illustrated in *requirements.txt*.
+Note:
+* *test.py* requires python 3.8 and packages illustrated in *requirements.txt*.
+* Your python 3 must use "python3" as the python executable name (either the binary file or a symbolic link to it) instead of "python". This restriction is to avoid disrupting RPM, which depends on python 2.
 
 ## Extensibility
 

@@ -13,7 +13,7 @@ class TestProcessTerminate:
         try:
             # launch process
             if "Linux" == platform.system():
-                args = ["python", common.TEST_DUMMY_PROC, "60", "dummyproc"]
+                args = ["python3", common.TEST_DUMMY_PROC, "60", "dummyproc"]
             else:
                 args = ["timeout", "60"]
             dummy_proc = subprocess.Popen(args)
@@ -56,7 +56,7 @@ class TestProcessTerminate:
         try:
             # launch process
             if "Linux" == platform.system():
-                args = ["python", common.TEST_DUMMY_PROC, "60", "dummyproc"]
+                args = ["python3", common.TEST_DUMMY_PROC, "60", "dummyproc"]
             else:
                 args = ["timeout", "60"]
             dummy_proc = subprocess.Popen(args)

@@ -43,7 +43,29 @@ func InstallPackage(ctx *gin.Context) {
 		}
 	}
 
-	pkgInfo, err := ops.InstallPackage(createCancellableContext(ctx), nameOrPath, byFile)
+	pkgInfo, err := ops.InstallPackage(createCancellableContext(ctx), nameOrPath, byFile, false)
+	if nil == err {
+		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
+	} else {
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
+	}
+}
+
+func UpgradePackage(ctx *gin.Context) {
+	byFile := false
+	nameOrPath, ok := ctx.Params.Get("name")
+	if !ok {
+		path, ok := ctx.Request.URL.Query()["path"]
+		if ok {
+			nameOrPath = path[0]
+			byFile = true
+		} else {
+			RespondMissingParams(ctx, []string{"path"})
+			return
+		}
+	}
+
+	pkgInfo, err := ops.InstallPackage(createCancellableContext(ctx), nameOrPath, byFile, true)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
 	} else {

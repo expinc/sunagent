@@ -112,7 +112,7 @@ func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err 
 	return
 }
 
-func InstallPackage(ctx context.Context, nameOrPath string, byFile bool) (pkgInfo PackageInfo, err error) {
+func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgradeIfAlreadyInstalled bool) (pkgInfo PackageInfo, err error) {
 	if err = checkOsType(); nil != err {
 		return
 	}
@@ -131,11 +131,13 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool) (pkgInf
 	}
 
 	// check if package is already installed
-	_, err = GetPackageInfo(ctx, name)
-	if nil == err {
-		msg := fmt.Sprintf("Package \"%s\" is already installed", name)
-		err = common.NewError(common.ErrorUnexpected, msg)
-		return
+	if !upgradeIfAlreadyInstalled {
+		_, err = GetPackageInfo(ctx, name)
+		if nil == err {
+			msg := fmt.Sprintf("Package \"%s\" is already installed", name)
+			err = common.NewError(common.ErrorUnexpected, msg)
+			return
+		}
 	}
 
 	// install package

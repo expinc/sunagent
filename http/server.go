@@ -155,6 +155,8 @@ func (server *Server) registerHandlers() {
 	server.engine.GET(urlPrefix+"/package/:name", handlerProxy(handlers.GetPackageInfo))
 	server.engine.POST(urlPrefix+"/package/:name", handlerProxy(handlers.InstallPackage)) // install by name
 	server.engine.POST(urlPrefix+"/package", handlerProxy(handlers.InstallPackage))       // install by file
+	server.engine.PUT(urlPrefix+"/package/:name", handlerProxy(handlers.UpgradePackage))  // upgrade by name
+	server.engine.PUT(urlPrefix+"/package", handlerProxy(handlers.UpgradePackage))        // upgrade by file
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

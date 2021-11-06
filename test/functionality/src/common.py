@@ -38,6 +38,7 @@ TEST_PKGS = {
     "debian": ["glibc-doc", "glibc-doc_2.24-11+deb9u4_all.deb", "http://ftp.br.debian.org/debian/pool/main/g/glibc/glibc-doc_2.24-11+deb9u4_all.deb"],
     "centos": ["gdb-doc", "gdb-doc-7.6.1-120.el7.noarch.rpm", "http://mirror.centos.org/centos/7/os/x86_64/Packages/gdb-doc-7.6.1-120.el7.noarch.rpm"],
     "opensuse": ["git-doc", "git-doc-2.26.2-lp152.2.12.1.noarch.rpm", "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm"],
+    "opensuse-leap": ["git-doc", "git-doc-2.26.2-lp152.2.12.1.noarch.rpm", "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm"],
 }
 
 def assert_successful_response(response, status, data=None):

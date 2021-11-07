@@ -72,3 +72,18 @@ func UpgradePackage(ctx *gin.Context) {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	}
 }
+
+func UninstallPackage(ctx *gin.Context) {
+	name, ok := ctx.Params.Get("name")
+	if !ok {
+		RespondMissingParams(ctx, []string{"name"})
+		return
+	}
+
+	err := ops.UninstallPackage(createCancellableContext(ctx), name)
+	if nil == err {
+		RespondSuccessfulJson(ctx, http.StatusNoContent, nil)
+	} else {
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
+	}
+}

@@ -159,3 +159,23 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 	}
 	return
 }
+
+func UninstallPackage(ctx context.Context, name string) error {
+	err := checkOsType()
+	if nil != err {
+		return err
+	}
+
+	_, err = GetPackageInfo(ctx, name)
+	if nil == err {
+		var output []byte
+		output, err = castGrimoireArcane("uninstall-package", name)
+		if nil != err {
+			_, cmdFailed := err.(*exec.ExitError)
+			if cmdFailed {
+				err = common.NewError(common.ErrorUnexpected, string(output))
+			}
+		}
+	}
+	return err
+}

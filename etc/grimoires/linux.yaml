@@ -26,3 +26,12 @@ arcanes:
         args: rpm -qip {}
       suse:
         args: rpm -qip {}
+  uninstall-package:
+    timeout: 600
+    spells:
+      debian:
+        args: dpkg -r {}
+      rhel:
+        args: rpm -e {}
+      suse:
+        args: rpm -e {}

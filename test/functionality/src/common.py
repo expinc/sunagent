@@ -2,6 +2,7 @@ import distro
 import json
 import os
 import platform
+import subprocess
 from assertpy import assert_that
 
 HOST = "127.0.0.1"
@@ -32,13 +33,38 @@ TEST_DUMMY_PROC = os.path.join(TEST_EXE_PATH, "dummy-proc.py")
 # 2. pytest
 TEST_SCRIPT_PYTHON_PROC_COUNT = 2
 
-# OS family to package [name, file, URL]
+# OS family to package {name, file, URL, newer-file, newer-URL}
 TEST_PKGS = {
-    "ubuntu": ["glibc-doc-reference", "glibc-doc-reference_2.30-1ubuntu1_all.deb", "http://archive.ubuntu.com/ubuntu/pool/main/g/glibc-doc-reference/glibc-doc-reference_2.30-1ubuntu1_all.deb"],
-    "debian": ["glibc-doc", "glibc-doc_2.24-11+deb9u4_all.deb", "http://ftp.br.debian.org/debian/pool/main/g/glibc/glibc-doc_2.24-11+deb9u4_all.deb"],
-    "centos": ["gdb-doc", "gdb-doc-7.6.1-120.el7.noarch.rpm", "http://mirror.centos.org/centos/7/os/x86_64/Packages/gdb-doc-7.6.1-120.el7.noarch.rpm"],
-    "opensuse": ["git-doc", "git-doc-2.26.2-lp152.2.12.1.noarch.rpm", "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm"],
-    "opensuse-leap": ["git-doc", "git-doc-2.26.2-lp152.2.12.1.noarch.rpm", "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm"],
+    "ubuntu": {
+        "name": "glibc-doc-reference",
+        "file": "glibc-doc-reference_2.30-1ubuntu1_all.deb",
+        "url": "http://archive.ubuntu.com/ubuntu/pool/main/g/glibc-doc-reference/glibc-doc-reference_2.30-1ubuntu1_all.deb",
+        "newFile": "glibc-doc-reference_2.33-0ubuntu1_all.deb",
+        "newUrl": "http://archive.ubuntu.com/ubuntu/pool/main/g/glibc-doc-reference/glibc-doc-reference_2.33-0ubuntu1_all.deb"},
+    "debian": {
+        "name": "glibc-doc",
+        "file": "glibc-doc_2.24-11+deb9u4_all.deb",
+        "url": "http://ftp.br.debian.org/debian/pool/main/g/glibc/glibc-doc_2.24-11+deb9u4_all.deb",
+        "newFile": "glibc-doc_2.28-10_all.deb",
+        "newUrl": "http://ftp.br.debian.org/debian/pool/main/g/glibc/glibc-doc_2.28-10_all.deb"},
+    "centos": {
+        "name": "gdb-doc",
+        "file": "gdb-doc-7.6.1-120.el7.noarch.rpm",
+        "url": "http://mirror.centos.org/centos/7/os/x86_64/Packages/gdb-doc-7.6.1-120.el7.noarch.rpm",
+        "newFile": "gdb-doc-8.2-15.el8.noarch.rpm",
+        "newUrl": "http://mirror.centos.org/centos/8/AppStream/aarch64/os/Packages/gdb-doc-8.2-15.el8.noarch.rpm"},
+    "opensuse": {
+        "name": "git-doc",
+        "file": "git-doc-2.26.2-lp152.2.12.1.noarch.rpm",
+        "url": "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm",
+        "newFile": "git-doc-2.33.1-1.1.noarch.rpm",
+        "newUrl": "https://ftp.lysator.liu.se/pub/opensuse/ports/aarch64/tumbleweed/repo/oss/noarch/git-doc-2.33.1-1.1.noarch.rpm"},
+    "opensuse-leap": {
+        "name": "git-doc",
+        "file": "git-doc-2.26.2-lp152.2.12.1.noarch.rpm",
+        "url": "https://ftp.lysator.liu.se/pub/opensuse/update/leap/15.2/oss/noarch/git-doc-2.26.2-lp152.2.12.1.noarch.rpm",
+        "newFile": "git-doc-2.33.1-1.1.noarch.rpm",
+        "newUrl": "https://ftp.lysator.liu.se/pub/opensuse/ports/aarch64/tumbleweed/repo/oss/noarch/git-doc-2.33.1-1.1.noarch.rpm"},
 }
 
 def assert_successful_response(response, status, data=None):
@@ -67,6 +93,14 @@ def get_successful_response(response, status):
     assert_that(response.status).is_equal_to(status)
     body = response.read()
     body = json.loads(body)
+    assert_that(body["successful"]).is_equal_to(True)
+    return body["data"]
+
+def get_failed_response(response, status):
+    assert_that(response.status).is_equal_to(status)
+    body = response.read()
+    body = json.loads(body)
+    assert_that(body["successful"]).is_equal_to(False)
     return body["data"]
 
 def get_binary_response(response, status):
@@ -104,3 +138,14 @@ def download_file(url, target_path):
         return 0 == os.system("wget -P {} {}".format(target_path, url))
     else:
         raise Exception("Not supported")
+
+def get_package_version(name):
+    if "ubuntu" == distro.id() or "debian" == distro.id():
+        output = subprocess.check_output("dpkg -s {} | grep Version".format(name), shell=True)
+    elif "centos" == distro.id() or "opensuse" in distro.id():
+        output = subprocess.check_output("rpm -qi {} | grep Version".format(name), shell=True)
+    else:
+        raise Exception("Not supported")
+
+    # format of output should be "Version : x.y.z"
+    return str(output).split(": ")[1]

@@ -131,13 +131,12 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 	}
 
 	// check if package is already installed
-	if !upgradeIfAlreadyInstalled {
-		_, err = GetPackageInfo(ctx, name)
-		if nil == err {
-			msg := fmt.Sprintf("Package \"%s\" is already installed", name)
-			err = common.NewError(common.ErrorUnexpected, msg)
-			return
-		}
+	var originPkgInfo PackageInfo
+	originPkgInfo, err = GetPackageInfo(ctx, name)
+	if !upgradeIfAlreadyInstalled && nil == err {
+		msg := fmt.Sprintf("Package \"%s\" is already installed", name)
+		err = common.NewError(common.ErrorUnexpected, msg)
+		return
 	}
 
 	// install package
@@ -154,5 +153,9 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 
 	// return package info
 	pkgInfo, err = GetPackageInfo(ctx, name)
+	if upgradeIfAlreadyInstalled && originPkgInfo.Version == pkgInfo.Version {
+		msg := "The selected package has lower version than the installed one. Downgrade is not supported"
+		err = common.NewError(common.ErrorUnexpected, msg)
+	}
 	return
 }

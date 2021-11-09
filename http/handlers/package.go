@@ -82,7 +82,7 @@ func UninstallPackage(ctx *gin.Context) {
 
 	err := ops.UninstallPackage(createCancellableContext(ctx), name)
 	if nil == err {
-		RespondSuccessfulJson(ctx, http.StatusNoContent, nil)
+		RespondSuccessfulJson(ctx, http.StatusOK, nil)
 	} else {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	}

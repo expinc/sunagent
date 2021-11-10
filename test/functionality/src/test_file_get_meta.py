@@ -16,7 +16,7 @@ class TestFileGetMeta:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             path = os.path.join(common.TEST_DATA_PATH, "text.txt")
             params = urllib.parse.urlencode({"path":path})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
             
@@ -36,7 +36,7 @@ class TestFileGetMeta:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             path = os.path.join(common.TEST_DATA_PATH, "中文.txt")
             params = urllib.parse.urlencode({"path":path})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 
@@ -56,7 +56,7 @@ class TestFileGetMeta:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             path = os.path.join(common.TEST_DATA_PATH, "binary")
             params = urllib.parse.urlencode({"path":path})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 
@@ -75,7 +75,7 @@ class TestFileGetMeta:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":common.TEST_DATA_PATH})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 
@@ -97,7 +97,7 @@ class TestFileGetMeta:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":common.TEST_DATA_PATH, "list":True})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 
@@ -115,7 +115,7 @@ class TestFileGetMeta:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             path = os.path.join(common.TEST_DATA_PATH, NON_EXIST_FILE)
             params = urllib.parse.urlencode({"path":path})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 
@@ -128,7 +128,7 @@ class TestFileGetMeta:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             path = os.path.join(common.TEST_DATA_PATH, "empty")
             params = urllib.parse.urlencode({"path":path})
-            url = "/api/v1/fileMeta?" + params
+            url = "/api/v1/file/meta?" + params
             conn.request("GET", url)
             response = conn.getresponse()
 

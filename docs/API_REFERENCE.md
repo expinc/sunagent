@@ -81,7 +81,7 @@ Get metadata of files. If the specified file is a directory and parameter *list*
 
 Response field *size* is calculated by bytes. The format of response field *mode* is platform dependent.
 
-Method: ```GET /fileMeta```
+Method: ```GET /file/meta```
 
 Parameters:
 

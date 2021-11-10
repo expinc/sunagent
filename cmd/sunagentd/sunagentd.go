@@ -5,6 +5,7 @@ import (
 	"expinc/sunagent/http"
 	"expinc/sunagent/log"
 	"expinc/sunagent/ops"
+	"flag"
 	"fmt"
 
 	"github.com/go-ini/ini"
@@ -22,7 +23,9 @@ func main() {
 	}()
 
 	// load config
-	config, err := ini.Load("config.conf")
+	configFile := flag.String("config", "config.conf", "Configuration file")
+	flag.Parse()
+	config, err := ini.Load(*configFile)
 	if nil != err {
 		log.Fatal(err)
 	}

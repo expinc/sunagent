@@ -54,9 +54,9 @@ def func_test(part):
     print("Starting executable...")
     sys_type = platform.system()
     if "Linux" == sys_type:
-        subprocess.check_call("gen/sunagentd &", shell=True)
+        subprocess.check_call("gen/sunagentd --config=gen/config.conf &", shell=True)
     elif "Windows" == sys_type:
-        subprocess.check_call("start gen\sunagentd.exe", shell=True)
+        subprocess.check_call("start gen\sunagentd.exe --config=gen/config.conf", shell=True)
 
     print("Running test cases...")
     cmd = "python3 -m pytest --capture=tee-sys"

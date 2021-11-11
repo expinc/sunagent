@@ -48,7 +48,15 @@ func main() {
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()
 	port := config.Section("HTTP").Key("port").MustUint()
-	server := http.New(ip, port)
+	authMethod := config.Section("HTTP").Key("auth").String()
+	var authCred interface{}
+	if "basic" == authMethod {
+		authCred = http.BasicAuthCred{
+			User:     config.Section("HTTP").Key("user").String(),
+			Password: config.Section("HTTP").Key("password").String(),
+		}
+	}
+	server := http.New(ip, port, authMethod, authCred)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

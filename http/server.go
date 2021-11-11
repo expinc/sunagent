@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -28,20 +29,30 @@ type stopInfo struct {
 }
 
 type Server struct {
-	ip   string
-	port uint
+	ip         string
+	port       uint
+	authMethod string
+	authCred   interface{}
 
-	engine *gin.Engine
+	engine         *gin.Engine
+	authMiddleware gin.HandlerFunc
 
 	// channel element values as gracefully stopping seconds
 	// after the gracefully stopping seconds, server will be stopped gracefully
 	quit chan int64
 }
 
-func New(ip string, port uint) *Server {
+type BasicAuthCred struct {
+	User     string
+	Password string
+}
+
+func New(ip string, port uint, authMethod string, authCred interface{}) *Server {
 	return &Server{
-		ip:   ip,
-		port: port,
+		ip:         ip,
+		port:       port,
+		authMethod: authMethod,
+		authCred:   authCred,
 	}
 }
 
@@ -63,7 +74,10 @@ func (server *Server) Run() error {
 	server.engine.Use(gin.CustomRecovery(recoverFunc))
 
 	// register handlers
-	server.registerHandlers()
+	err := server.registerHandlers()
+	if nil != err {
+		return err
+	}
 
 	// starting HTTP server
 	srv := &http.Server{
@@ -123,41 +137,85 @@ func handlerProxy(handler gin.HandlerFunc) gin.HandlerFunc {
 	}
 }
 
-func (server *Server) registerHandlers() {
+func (server *Server) initAuth() error {
+	if "" == strings.TrimSpace(server.authMethod) {
+		return nil
+	}
+
+	if "basic" == server.authMethod {
+		cred, ok := server.authCred.(BasicAuthCred)
+		invalidAuthCredMsg := "Invalid authentication credential type"
+		if !ok {
+			return common.NewError(common.ErrorInvalidParameter, invalidAuthCredMsg)
+		}
+		if "" == strings.TrimSpace(cred.User) || "" == strings.TrimSpace(cred.Password) {
+			return common.NewError(common.ErrorInvalidParameter, invalidAuthCredMsg)
+		}
+
+		server.authMiddleware = gin.BasicAuth(gin.Accounts{
+			cred.User: cred.Password,
+		})
+	} else {
+		msg := fmt.Sprintf("Invalid authentication method \"%s\"", server.authMethod)
+		return common.NewError(common.ErrorInvalidParameter, msg)
+	}
+
+	return nil
+}
+
+func (server *Server) registerHandlers() error {
+	if err := server.initAuth(); nil != err {
+		return err
+	}
+	var routerGroup *gin.RouterGroup
+	routerGroup = &server.engine.RouterGroup
+	middlewares := make([]gin.HandlerFunc, 0)
+	if nil != server.authMiddleware {
+		middlewares = append(middlewares, server.authMiddleware)
+	}
+
 	// management
-	server.engine.GET(urlPrefix+"/info", handlerProxy(handlers.GetInfo))
-	server.engine.POST(urlPrefix+"/terminate", handlerProxy(server.terminate))
+	routerGroup.GET(urlPrefix+"/info", handlerProxy(handlers.GetInfo))
+	routerGroup = server.engine.Group(urlPrefix+"/terminate", middlewares...)
+	routerGroup.POST("/", handlerProxy(server.terminate))
 
 	// file
-	server.engine.GET(urlPrefix+"/file/meta", handlerProxy(handlers.GetFileMeta))
-	server.engine.GET(urlPrefix+"/file", handlerProxy(handlers.GetFileContent))
-	server.engine.POST(urlPrefix+"/file", handlerProxy(handlers.CreateFile))
-	server.engine.PUT(urlPrefix+"/file", handlerProxy(handlers.OverwriteFile))
-	server.engine.DELETE(urlPrefix+"/file", handlerProxy(handlers.DeleteFile))
+	routerGroup = server.engine.Group(urlPrefix+"/file", middlewares...)
+	routerGroup.GET("/meta", handlerProxy(handlers.GetFileMeta))
+	routerGroup.GET("/", handlerProxy(handlers.GetFileContent))
+	routerGroup.POST("/", handlerProxy(handlers.CreateFile))
+	routerGroup.PUT("/", handlerProxy(handlers.OverwriteFile))
+	routerGroup.DELETE("/", handlerProxy(handlers.DeleteFile))
 
 	// processes
-	server.engine.GET(urlPrefix+"/processes/:pidOrName", handlerProxy(handlers.GetProcInfo))
-	server.engine.POST(urlPrefix+"/processes/:pidOrName/kill", handlerProxy(handlers.KillProc))
-	server.engine.POST(urlPrefix+"/processes/:pidOrName/terminate", handlerProxy(handlers.TermProc))
+	routerGroup = server.engine.Group(urlPrefix+"/processes", middlewares...)
+	routerGroup.GET("/:pidOrName", handlerProxy(handlers.GetProcInfo))
+	routerGroup.POST("/:pidOrName/kill", handlerProxy(handlers.KillProc))
+	routerGroup.POST("/:pidOrName/terminate", handlerProxy(handlers.TermProc))
 
 	// system
-	server.engine.GET(urlPrefix+"/sys/info", handlerProxy(handlers.GetNodeInfo))
-	server.engine.GET(urlPrefix+"/sys/cpus/info", handlerProxy(handlers.GetCpuInfo))
-	server.engine.GET(urlPrefix+"/sys/cpus/stats", handlerProxy(handlers.GetCpuStat))
-	server.engine.GET(urlPrefix+"/sys/mem/stats", handlerProxy(handlers.GetMemStat))
-	server.engine.GET(urlPrefix+"/sys/disks/stats", handlerProxy(handlers.GetDiskInfo))
-	server.engine.GET(urlPrefix+"/sys/net/info", handlerProxy(handlers.GetNetInfo))
+	routerGroup = server.engine.Group(urlPrefix+"/sys", middlewares...)
+	routerGroup.GET("/info", handlerProxy(handlers.GetNodeInfo))
+	routerGroup.GET("/cpus/info", handlerProxy(handlers.GetCpuInfo))
+	routerGroup.GET("/cpus/stats", handlerProxy(handlers.GetCpuStat))
+	routerGroup.GET("/mem/stats", handlerProxy(handlers.GetMemStat))
+	routerGroup.GET("/disks/stats", handlerProxy(handlers.GetDiskInfo))
+	routerGroup.GET("/net/info", handlerProxy(handlers.GetNetInfo))
 
 	// script
-	server.engine.POST(urlPrefix+"/script/execute", handlerProxy(handlers.ExecScript))
+	routerGroup = server.engine.Group(urlPrefix+"/script", middlewares...)
+	routerGroup.POST("/execute", handlerProxy(handlers.ExecScript))
 
 	// package
-	server.engine.GET(urlPrefix+"/package/:name", handlerProxy(handlers.GetPackageInfo))
-	server.engine.POST(urlPrefix+"/package/:name", handlerProxy(handlers.InstallPackage)) // install by name
-	server.engine.POST(urlPrefix+"/package", handlerProxy(handlers.InstallPackage))       // install by file
-	server.engine.PUT(urlPrefix+"/package/:name", handlerProxy(handlers.UpgradePackage))  // upgrade by name
-	server.engine.PUT(urlPrefix+"/package", handlerProxy(handlers.UpgradePackage))        // upgrade by file
-	server.engine.DELETE(urlPrefix+"/package/:name", handlerProxy(handlers.UninstallPackage))
+	routerGroup = server.engine.Group(urlPrefix+"/package", middlewares...)
+	routerGroup.GET("/:name", handlerProxy(handlers.GetPackageInfo))
+	routerGroup.POST("/:name", handlerProxy(handlers.InstallPackage)) // install by name
+	routerGroup.POST("/", handlerProxy(handlers.InstallPackage))      // install by file
+	routerGroup.PUT("/:name", handlerProxy(handlers.UpgradePackage))  // upgrade by name
+	routerGroup.PUT("/", handlerProxy(handlers.UpgradePackage))       // upgrade by file
+	routerGroup.DELETE("/:name", handlerProxy(handlers.UninstallPackage))
+
+	return nil
 }
 
 func (server *Server) terminate(ctx *gin.Context) {

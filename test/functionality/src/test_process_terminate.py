@@ -23,7 +23,7 @@ class TestProcessTerminate:
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/" + str(dummy_proc.pid) + "/terminate"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -44,7 +44,7 @@ class TestProcessTerminate:
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/" + str(32768) + "/terminate"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response
@@ -69,7 +69,7 @@ class TestProcessTerminate:
                 url = "/api/v1/processes/dummyproc/terminate"
             else:
                 url = "/api/v1/processes/timeout.exe/terminate"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response
@@ -90,7 +90,7 @@ class TestProcessTerminate:
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/non-exist/terminate"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response

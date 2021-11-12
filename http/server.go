@@ -177,15 +177,15 @@ func (server *Server) registerHandlers() error {
 	// management
 	routerGroup.GET(urlPrefix+"/info", handlerProxy(handlers.GetInfo))
 	routerGroup = server.engine.Group(urlPrefix+"/terminate", middlewares...)
-	routerGroup.POST("/", handlerProxy(server.terminate))
+	routerGroup.POST("", handlerProxy(server.terminate))
 
 	// file
 	routerGroup = server.engine.Group(urlPrefix+"/file", middlewares...)
 	routerGroup.GET("/meta", handlerProxy(handlers.GetFileMeta))
-	routerGroup.GET("/", handlerProxy(handlers.GetFileContent))
-	routerGroup.POST("/", handlerProxy(handlers.CreateFile))
-	routerGroup.PUT("/", handlerProxy(handlers.OverwriteFile))
-	routerGroup.DELETE("/", handlerProxy(handlers.DeleteFile))
+	routerGroup.GET("", handlerProxy(handlers.GetFileContent))
+	routerGroup.POST("", handlerProxy(handlers.CreateFile))
+	routerGroup.PUT("", handlerProxy(handlers.OverwriteFile))
+	routerGroup.DELETE("", handlerProxy(handlers.DeleteFile))
 
 	// processes
 	routerGroup = server.engine.Group(urlPrefix+"/processes", middlewares...)
@@ -210,9 +210,9 @@ func (server *Server) registerHandlers() error {
 	routerGroup = server.engine.Group(urlPrefix+"/package", middlewares...)
 	routerGroup.GET("/:name", handlerProxy(handlers.GetPackageInfo))
 	routerGroup.POST("/:name", handlerProxy(handlers.InstallPackage)) // install by name
-	routerGroup.POST("/", handlerProxy(handlers.InstallPackage))      // install by file
+	routerGroup.POST("", handlerProxy(handlers.InstallPackage))       // install by file
 	routerGroup.PUT("/:name", handlerProxy(handlers.UpgradePackage))  // upgrade by name
-	routerGroup.PUT("/", handlerProxy(handlers.UpgradePackage))       // upgrade by file
+	routerGroup.PUT("", handlerProxy(handlers.UpgradePackage))        // upgrade by file
 	routerGroup.DELETE("/:name", handlerProxy(handlers.UninstallPackage))
 
 	return nil

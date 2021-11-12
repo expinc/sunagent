@@ -25,7 +25,7 @@ class TestGetProcInfo:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/" + str(self.dummy_proc1.pid)
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             data = common.get_successful_response(response, HTTPStatus.OK)
@@ -39,7 +39,7 @@ class TestGetProcInfo:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/32768"
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()            
             common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
         finally:
@@ -52,7 +52,7 @@ class TestGetProcInfo:
             if "Linux" == platform.system():
                 name = "python3"
             url = "/api/v1/processes/" + name
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             data = common.get_successful_response(response, HTTPStatus.OK)
@@ -67,7 +67,7 @@ class TestGetProcInfo:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/non-exist"
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
         finally:

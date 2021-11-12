@@ -28,7 +28,7 @@ class TestFileDelete:
             path = os.path.join(common.TEST_TMP_DIR, "text.txt")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_successful_response(response, HTTPStatus.OK)
 
@@ -47,7 +47,7 @@ class TestFileDelete:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":dirPath})
             url = "/api/v1/file?" + params
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_successful_response(response, HTTPStatus.OK)
 
@@ -68,7 +68,7 @@ class TestFileDelete:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":dirPath})
             url = "/api/v1/file?" + params
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_failed_response(response, HTTPStatus.INTERNAL_SERVER_ERROR)
         finally:
@@ -86,7 +86,7 @@ class TestFileDelete:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":dirPath, "recursive":True})
             url = "/api/v1/file?" + params
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_successful_response(response, HTTPStatus.OK)
 
@@ -102,7 +102,7 @@ class TestFileDelete:
             path = os.path.join(common.TEST_TMP_DIR, "non-exist")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
         finally:

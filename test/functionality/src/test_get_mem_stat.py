@@ -8,7 +8,7 @@ class TestGetMemStat:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/sys/mem/stats"
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_successful_response(response, HTTPStatus.OK)
         finally:

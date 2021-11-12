@@ -30,7 +30,7 @@ class TestFileOverwrite:
             path = os.path.join(common.TEST_TMP_DIR, "text.txt")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("PUT", url, originContent)
+            conn.request("PUT", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -61,7 +61,7 @@ class TestFileOverwrite:
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
             new_content = b"this is new content\n"
-            conn.request("PUT", url, new_content)
+            conn.request("PUT", url, new_content, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -87,7 +87,7 @@ class TestFileOverwrite:
             path = os.path.join(common.TEST_TMP_DIR, "dir", "subdir")
             params = urllib.parse.urlencode({"path":path, "isDir":True})
             url = "/api/v1/file?" + params
-            conn.request("PUT", url)
+            conn.request("PUT", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -117,7 +117,7 @@ class TestFileOverwrite:
             path = os.path.join(common.TEST_TMP_DIR, "dir", "subdir")
             params = urllib.parse.urlencode({"path":path, "isDir":True})
             url = "/api/v1/file?" + params
-            conn.request("PUT", url)
+            conn.request("PUT", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 

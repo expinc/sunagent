@@ -8,7 +8,7 @@ class TestGetNodeInfo:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/sys/info"
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()            
             data = common.get_successful_response(response, HTTPStatus.OK)
             assert_that(data["bootTime"]).matches(common.TIMESTAMP_PATTERN)

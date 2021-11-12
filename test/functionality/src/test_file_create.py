@@ -30,7 +30,7 @@ class TestFileCreate:
             path = os.path.join(common.TEST_TMP_DIR, "text.txt")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("POST", url, originContent)
+            conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -61,7 +61,7 @@ class TestFileCreate:
             path = os.path.join(common.TEST_TMP_DIR, "中文.txt")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("POST", url, originContent)
+            conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -92,7 +92,7 @@ class TestFileCreate:
             path = os.path.join(common.TEST_TMP_DIR, "binary")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("POST", url, originContent)
+            conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -118,7 +118,7 @@ class TestFileCreate:
             path = os.path.join(common.TEST_TMP_DIR, "dir", "subdir")
             params = urllib.parse.urlencode({"path":path, "isDir":True})
             url = "/api/v1/file?" + params
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -145,7 +145,7 @@ class TestFileCreate:
             path = os.path.join(common.TEST_TMP_DIR, "empty")
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("POST", url, originContent)
+            conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             data = common.get_successful_response(response, HTTPStatus.OK)
 
@@ -175,7 +175,7 @@ class TestFileCreate:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":path})
             url = "/api/v1/file?" + params
-            conn.request("POST", url, "")
+            conn.request("POST", url, "", headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response
@@ -193,7 +193,7 @@ class TestFileCreate:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"path":path, "isDir":True})
             url = "/api/v1/file?" + params
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response

@@ -21,7 +21,7 @@ class TestPackageGetInfo:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/package/" + self.must_have_pkg
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             data = common.get_successful_response(response, HTTPStatus.OK)
@@ -36,7 +36,7 @@ class TestPackageGetInfo:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/package/" + "notexist"
-            conn.request("GET", url)
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             common.assert_failed_response(response, HTTPStatus.NOT_FOUND)

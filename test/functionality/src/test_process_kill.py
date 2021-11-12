@@ -27,7 +27,7 @@ class TestProcessKill:
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/" + str(dummy_proc.pid) + "/kill"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -49,7 +49,7 @@ class TestProcessKill:
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/" + str(32768) + "/kill"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response
@@ -72,7 +72,7 @@ class TestProcessKill:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"signal":SIG_USR1})
             url = "/api/v1/processes/" + str(dummy_proc.pid) + "/kill?" + params
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             if "Linux" == platform.system():
@@ -106,7 +106,7 @@ class TestProcessKill:
                 url = "/api/v1/processes/dummyproc/kill"
             else:
                 url = "/api/v1/processes/timeout.exe/kill"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response
@@ -128,7 +128,7 @@ class TestProcessKill:
             # send request
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/processes/non-exist/kill"
-            conn.request("POST", url)
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             # verify response

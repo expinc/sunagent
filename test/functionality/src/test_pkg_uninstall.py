@@ -16,7 +16,7 @@ class TestPackageInstall:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/package/" + test_package
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             common.assert_successful_response(response, HTTPStatus.OK)
@@ -31,7 +31,7 @@ class TestPackageInstall:
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             url = "/api/v1/package/nonexist"
-            conn.request("DELETE", url)
+            conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
             common.assert_failed_response(response, HTTPStatus.INTERNAL_SERVER_ERROR)

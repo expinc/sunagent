@@ -1,3 +1,4 @@
+import base64
 import distro
 import json
 import os
@@ -66,6 +67,8 @@ TEST_PKGS = {
         "newFile": "git-doc-2.33.1-1.1.noarch.rpm",
         "newUrl": "https://ftp.lysator.liu.se/pub/opensuse/ports/aarch64/tumbleweed/repo/oss/noarch/git-doc-2.33.1-1.1.noarch.rpm"},
 }
+
+BASIC_AUTH_TOKEN = base64.b64encode(b"admin:root").decode("ascii")
 
 def assert_successful_response(response, status, data=None):
     assert_that(response.status).is_equal_to(status)

@@ -19,7 +19,7 @@ class TestExecScript:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"program":"python3"})
             url = "/api/v1/script/execute?" + params
-            conn.request("POST", url, scriptContent)
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -44,7 +44,7 @@ class TestExecScript:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"program":"python3", "separateOutput":True})
             url = "/api/v1/script/execute?" + params
-            conn.request("POST", url, scriptContent)
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -72,7 +72,7 @@ class TestExecScript:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"program":"python3"})
             url = "/api/v1/script/execute?" + params
-            conn.request("POST", url, scriptContent)
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -97,7 +97,7 @@ class TestExecScript:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"program":"python3", "waitSeconds":1})
             url = "/api/v1/script/execute?" + params
-            conn.request("POST", url, scriptContent)
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -123,7 +123,7 @@ class TestExecScript:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"program":"cmd"})
             url = "/api/v1/script/execute?" + params
-            conn.request("POST", url, scriptContent)
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response
@@ -145,7 +145,7 @@ class TestExecScript:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
             params = urllib.parse.urlencode({"program":"sh"})
             url = "/api/v1/script/execute?" + params
-            conn.request("POST", url, scriptContent)
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             
             # verify response

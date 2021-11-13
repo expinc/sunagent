@@ -1,10 +1,8 @@
 import common
 import http.client
 import platform
-import psutil
 import subprocess
 import time
-import urllib
 from assertpy import assert_that
 from http import HTTPStatus
 

@@ -29,6 +29,7 @@ func fileInfoToMeta(ctx context.Context, info fs.FileInfo) (meta FileMeta) {
 }
 
 func GetFileMetas(ctx context.Context, path string, listIfDir bool) (metas []FileMeta, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting file meta: path=%v, listIfDir=%v", path, listIfDir))
 	metas = make([]FileMeta, 0)
 
 	// Get file info of the path
@@ -60,6 +61,7 @@ func GetFileMetas(ctx context.Context, path string, listIfDir bool) (metas []Fil
 }
 
 func GetFileContent(ctx context.Context, path string) (content []byte, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting file content: path=%v", path))
 	content, err = ioutil.ReadFile(path)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -68,6 +70,12 @@ func GetFileContent(ctx context.Context, path string) (content []byte, err error
 }
 
 func WriteFile(ctx context.Context, path string, content []byte, isDir bool, overwrite bool) (meta FileMeta, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Writing file: path=%v, len(content)=%v, isDir=%v, overwrite=%v",
+		path,
+		len(content),
+		isDir,
+		overwrite))
+
 	if false == overwrite {
 		// check if file exists
 		_, err = os.Stat(path)
@@ -94,12 +102,16 @@ func WriteFile(ctx context.Context, path string, content []byte, isDir bool, ove
 		metas, err := GetFileMetas(ctx, path, false)
 		if err == nil {
 			meta = metas[0]
+		} else {
+			log.ErrorCtx(ctx, err)
 		}
 	}
 	return
 }
 
 func DeleteFile(ctx context.Context, path string, recursive bool) error {
+	log.InfoCtx(ctx, fmt.Sprintf("Deleting file: path=%v, recursive=%v", path, recursive))
+
 	// Get file info of the path
 	pathInfo, err := os.Stat(path)
 	if nil != err {
@@ -114,5 +126,8 @@ func DeleteFile(ctx context.Context, path string, recursive bool) error {
 		err = os.RemoveAll(path)
 	}
 
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+	}
 	return err
 }

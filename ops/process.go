@@ -48,6 +48,7 @@ func proc2ProcInfo(ctx context.Context, proc *process.Process) (info ProcInfo) {
 }
 
 func GetProcInfoByPid(ctx context.Context, pid int32) (info ProcInfo, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting process info: pid=%v", pid))
 	proc, err := process.NewProcess(pid)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -60,6 +61,7 @@ func GetProcInfoByPid(ctx context.Context, pid int32) (info ProcInfo, err error)
 }
 
 func GetProcInfosByName(ctx context.Context, name string) (infos []ProcInfo, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting process info: name=%v", name))
 	procs, err := process.Processes()
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -86,6 +88,7 @@ func GetProcInfosByName(ctx context.Context, name string) (infos []ProcInfo, err
 }
 
 func KillProcByPid(ctx context.Context, pid int32, signal int) (err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Killing process: pid=%v, signal=%v", pid, signal))
 	proc, err := process.NewProcess(pid)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -97,6 +100,9 @@ func KillProcByPid(ctx context.Context, pid int32, signal int) (err error) {
 		err = proc.Kill()
 	} else {
 		err = proc.SendSignal(syscall.Signal(signal))
+	}
+	if nil != err {
+		log.ErrorCtx(ctx, err)
 	}
 	return
 }

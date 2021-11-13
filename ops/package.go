@@ -86,7 +86,9 @@ func getPackageArchiveInfo(ctx context.Context, path string) (pkgInfo PackageInf
 }
 
 func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting package info: name=%v", name))
 	if err = checkOsType(); nil != err {
+		log.ErrorCtx(ctx, err)
 		return
 	}
 
@@ -113,7 +115,9 @@ func GetPackageInfo(ctx context.Context, name string) (pkgInfo PackageInfo, err 
 }
 
 func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgradeIfAlreadyInstalled bool) (pkgInfo PackageInfo, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Installing package: nameOrPath=%v, byFile=%v", nameOrPath, byFile))
 	if err = checkOsType(); nil != err {
+		log.ErrorCtx(ctx, err)
 		return
 	}
 
@@ -125,6 +129,7 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 		var archiveInfo PackageInfo
 		archiveInfo, err = getPackageArchiveInfo(ctx, nameOrPath)
 		if nil != err {
+			log.ErrorCtx(ctx, err)
 			return
 		}
 		name = archiveInfo.Name
@@ -136,6 +141,7 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 	if !upgradeIfAlreadyInstalled && nil == err {
 		msg := fmt.Sprintf("Package \"%s\" is already installed", name)
 		err = common.NewError(common.ErrorUnexpected, msg)
+		log.ErrorCtx(ctx, err)
 		return
 	}
 
@@ -156,13 +162,16 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 	if upgradeIfAlreadyInstalled && originPkgInfo.Version == pkgInfo.Version {
 		msg := "The selected package has lower version than the installed one. Downgrade is not supported"
 		err = common.NewError(common.ErrorUnexpected, msg)
+		log.ErrorCtx(ctx, err)
 	}
 	return
 }
 
 func UninstallPackage(ctx context.Context, name string) error {
+	log.InfoCtx(ctx, fmt.Sprintf("Uninstalling package: name=%v", name))
 	err := checkOsType()
 	if nil != err {
+		log.ErrorCtx(ctx, err)
 		return err
 	}
 
@@ -174,6 +183,7 @@ func UninstallPackage(ctx context.Context, name string) error {
 			_, cmdFailed := err.(*exec.ExitError)
 			if cmdFailed {
 				err = common.NewError(common.ErrorUnexpected, string(output))
+				log.ErrorCtx(ctx, err)
 			}
 		}
 	}

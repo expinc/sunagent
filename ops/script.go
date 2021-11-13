@@ -5,6 +5,7 @@ import (
 	"expinc/sunagent/command"
 	"expinc/sunagent/common"
 	"expinc/sunagent/log"
+	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -28,6 +29,8 @@ type SeparateScriptResult struct {
 	ExitStatus int    `json:"exitStatus"`
 	Error      string `json:"error"`
 }
+
+const scriptLogLimit = 32
 
 func execScript(ctx context.Context, program string, script string, waitSeconds int64, separateOutput bool) (result interface{}, err error) {
 	// check parameters
@@ -112,16 +115,42 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 	return result, err
 }
 
+func getScriptPreSnippet(script string) string {
+	var scriptSnippet string
+	if len(script) <= scriptLogLimit {
+		scriptSnippet = script
+	} else {
+		scriptSnippet = script[:scriptLogLimit] + "..."
+	}
+	return scriptSnippet
+}
+
 func ExecScriptWithCombinedOutput(ctx context.Context, program string, script string, waitSeconds int64) (result CombinedScriptResult, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Executing script to get combined output: program=%v, script=%q, waitSeconds=%v",
+		program,
+		getScriptPreSnippet(script),
+		waitSeconds,
+	))
 	var combinedResult interface{}
 	combinedResult, err = execScript(ctx, program, script, waitSeconds, false)
 	result, _ = combinedResult.(CombinedScriptResult)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+	}
 	return
 }
 
 func ExecScriptWithSeparateOutput(ctx context.Context, program string, script string, waitSeconds int64) (result SeparateScriptResult, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Executing script to get separate output: program=%v, script=%q, waitSeconds=%v",
+		program,
+		getScriptPreSnippet(script),
+		waitSeconds,
+	))
 	var separateResult interface{}
 	separateResult, err = execScript(ctx, program, script, waitSeconds, true)
 	result, _ = separateResult.(SeparateScriptResult)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+	}
 	return
 }

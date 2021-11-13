@@ -3,6 +3,7 @@ package ops
 import (
 	"context"
 	"expinc/sunagent/log"
+	"fmt"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -93,14 +94,17 @@ func init() {
 }
 
 func GetNodeInfo(ctx context.Context) NodeInfo {
+	log.InfoCtx(ctx, "Getting node info...")
 	return nodeInfo
 }
 
 func GetCpuInfo(ctx context.Context) CpuInfo {
+	log.InfoCtx(ctx, "Getting CPU info...")
 	return cpuInfo
 }
 
 func GetCpuStat(ctx context.Context, perCpu bool) (stat CpuStat, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting CPU statistics: perCpu=%v", perCpu))
 	usages, err := cpu.Percent(time.Second, perCpu)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -120,6 +124,7 @@ func GetCpuStat(ctx context.Context, perCpu bool) (stat CpuStat, err error) {
 }
 
 func GetMemStat(ctx context.Context) (stat MemStat, err error) {
+	log.InfoCtx(ctx, "Getting memory statistics...")
 	memStat, err := mem.VirtualMemory()
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -133,6 +138,7 @@ func GetMemStat(ctx context.Context) (stat MemStat, err error) {
 }
 
 func GetDiskInfo(ctx context.Context) (infos []DiskInfo, err error) {
+	log.InfoCtx(ctx, "Getting disk info...")
 	partitions, err := disk.Partitions(false)
 	if nil != err {
 		log.ErrorCtx(ctx, err)
@@ -160,6 +166,7 @@ func GetDiskInfo(ctx context.Context) (infos []DiskInfo, err error) {
 }
 
 func GetNetInfo(ctx context.Context) (infos []NetInfo, err error) {
+	log.InfoCtx(ctx, "Getting network info...")
 	stats, err := net.Interfaces()
 	if nil != err {
 		log.ErrorCtx(ctx, err)

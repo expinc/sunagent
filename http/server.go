@@ -138,11 +138,12 @@ func handlerProxy(handler gin.HandlerFunc) gin.HandlerFunc {
 }
 
 func (server *Server) initAuth() error {
-	if "" == strings.TrimSpace(server.authMethod) {
+	methodStr := strings.TrimSpace(server.authMethod)
+	if "" == methodStr || "none" == methodStr {
 		return nil
 	}
 
-	if "basic" == server.authMethod {
+	if "basic" == methodStr {
 		cred, ok := server.authCred.(BasicAuthCred)
 		invalidAuthCredMsg := "Invalid authentication credential type"
 		if !ok {

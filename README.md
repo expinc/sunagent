@@ -22,10 +22,10 @@ make.bat
 Run below command to start the process.
 ```
 # Linux:
-./gen/sunagentd
+./gen/sunagentd --config=gen/config.conf
 
 # Windows:
-gen\sunagentd.exe
+gen\sunagentd.exe --config=gen\config.conf
 ```
 
 ## Configuration

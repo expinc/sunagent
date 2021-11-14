@@ -129,6 +129,7 @@ func InstallPackage(ctx context.Context, nameOrPath string, byFile bool, upgrade
 		var archiveInfo PackageInfo
 		archiveInfo, err = getPackageArchiveInfo(ctx, nameOrPath)
 		if nil != err {
+			err = common.NewError(common.ErrorNotFound, fmt.Sprintf("File %v is not found", nameOrPath))
 			log.ErrorCtx(ctx, err)
 			return
 		}
@@ -183,9 +184,15 @@ func UninstallPackage(ctx context.Context, name string) error {
 			_, cmdFailed := err.(*exec.ExitError)
 			if cmdFailed {
 				err = common.NewError(common.ErrorUnexpected, string(output))
-				log.ErrorCtx(ctx, err)
 			}
 		}
+	} else {
+		msg := fmt.Sprintf("Package \"%s\" is not installed", name)
+		err = common.NewError(common.ErrorNotFound, msg)
+	}
+
+	if nil != err {
+		log.ErrorCtx(ctx, err)
 	}
 	return err
 }

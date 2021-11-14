@@ -95,7 +95,7 @@ class TestPackageInstall:
             url = "/api/v1/package?" + params
             conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            common.assert_failed_response(response, HTTPStatus.INTERNAL_SERVER_ERROR)
+            common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
         finally:
             conn.close()
 
@@ -116,7 +116,7 @@ class TestPackageInstall:
 
         try:
             conn = http.client.HTTPConnection(common.HOST, common.PORT)
-            file_path = os.path.join(common.TEST_TMP_DIR, "nonexist")
+            file_path = os.path.join(common.TEST_TMP_DIR, common.TEST_PKGS[distro.id()]["file"])
             params = urllib.parse.urlencode({"path":file_path})
             url = "/api/v1/package?" + params
             conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})

@@ -47,7 +47,13 @@ func InstallPackage(ctx *gin.Context) {
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
 	} else {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
+		status := http.StatusInternalServerError
+		if internalErr, ok := err.(common.Error); ok {
+			if common.ErrorNotFound == internalErr.Code() {
+				status = http.StatusNotFound
+			}
+		}
+		RespondFailedJson(ctx, status, err, nil)
 	}
 }
 
@@ -84,6 +90,12 @@ func UninstallPackage(ctx *gin.Context) {
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, nil)
 	} else {
-		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
+		status := http.StatusInternalServerError
+		if internalErr, ok := err.(common.Error); ok {
+			if common.ErrorNotFound == internalErr.Code() {
+				status = http.StatusNotFound
+			}
+		}
+		RespondFailedJson(ctx, status, err, nil)
 	}
 }

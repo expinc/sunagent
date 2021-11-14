@@ -34,6 +34,6 @@ class TestPackageInstall:
             conn.request("DELETE", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
 
-            common.assert_failed_response(response, HTTPStatus.INTERNAL_SERVER_ERROR)
+            common.assert_failed_response(response, HTTPStatus.NOT_FOUND)
         finally:
             conn.close()

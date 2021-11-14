@@ -56,7 +56,7 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 		log.ErrorCtx(ctx, err)
 		return
 	}
-	scriptFilePath := filepath.Join(common.CurrentDir, uuid.New().String())
+	scriptFilePath := filepath.Join(common.TmpFolder, uuid.New().String())
 	params := []string{scriptFilePath}
 	// windows cmd must have parameter /C to execute the .bat file as script
 	// parameter /Q is also added to avoid printing command lines

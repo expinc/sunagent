@@ -65,6 +65,10 @@ Note:
 * *test.py* requires python 3.8 and packages illustrated in *requirements.txt*.
 * Your python 3 must use "python3" as the python executable name (either the binary file or a symbolic link to it) instead of "python". This restriction is to avoid disrupting RPM, which depends on python 2.
 
+## Architecture
+
+Please refer to [here](docs/ARCHITECTURE_SPECIFICATION.md)
+
 ## Extensibility
 
 TBD

@@ -11,7 +11,7 @@ SunAgent exposes its functionality by common protocals. Currently there is only 
 ## Build & Run
 
 Run below command to build the executable. The executable and other files necessary to run it will be output to path *gen*.
-```
+```sh
 # Linux:
 ./make.sh
 
@@ -20,7 +20,7 @@ make.bat
 ```
 
 Run below command to start the process.
-```
+```sh
 # Linux:
 ./gen/sunagentd --config=gen/config.conf
 
@@ -30,7 +30,7 @@ gen\sunagentd.exe --config=gen\config.conf
 
 ## Configuration
 
-Configuration is defined by *config.conf*.
+Configuration is defined by [etc/config.conf](etc/config.conf).
 
 *GO* section defines behaviors of the process. They are all go related parameters since SunAgent is implemented by go:
 
@@ -67,8 +67,8 @@ Note:
 
 ## Architecture
 
-Please refer to [here](docs/ARCHITECTURE_SPECIFICATION.md)
+Please refer to [here](docs/ARCHITECTURE_SPECIFICATION.md).
 
 ## Extensibility
 
-TBD
+Please refer to [here](docs/EXTENSIBILITY.md).

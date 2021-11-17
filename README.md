@@ -1,5 +1,7 @@
 # SunAgent
 
+| [License: MIT](LICENSE) | [Language: Go](https://golang.org/) | [Release: 1.0.0](docs/RELEASE_NOTES.md) |
+
 SunAgent is a lightweight cross-platform remote node operation service.
 
 Clients of SunAgent could get system information, execute scripts, create files, etc., remotely. Clients only need to care about what to do, but care little about how to do, especially how to accomplish the same task on different platforms. For example, installing software "foobar" should do "apt-get install foobar" on debian but "yum install foobar" on redhat. Clients only tell SunAgent to "install a software foobar" regardless of the node should install it by apt-get or by yum. SunAgent encapsulates the actual way to accomplish the installation.

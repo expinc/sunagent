@@ -53,6 +53,16 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 
 Please refer to [here](docs/API_REFERENCE.md).
 
+## Support Matrix
+
+| Operation          | Windows | Ubuntu | CentOS | Debian | OpenSUSE |
+| ------------------ | ------- | ------ | ------ | ------ | -------- |
+| File Management    | x       | x      | x      | x      | x        |
+| Process Management | x       | x      | x      | x      | x        |
+| System Information | x       | x      | x      | x      | x        |
+| Script Execution   | x       | x      | x      | x      | x        |
+| Package Management |         | x      | x      | x      | x        |
+
 ## Test
 
 To run tests, use *test.py*:

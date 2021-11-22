@@ -46,7 +46,7 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 * user: User of the basic authorization.
 * password: Password of the basic authorization.
 
-*LOG* sectino defines behaviors of logging.
+*LOG* section defines behaviors of logging.
 
 * level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
 * filelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
@@ -79,8 +79,14 @@ Note:
 
 ## Architecture
 
-Please refer to [here](docs/ARCHITECTURE_SPECIFICATION.md).
+Please refer to [here](docs/ARCHITECTURE_SPECIFICATION.md) for the architectural design.
 
 ## Extensibility
 
-Please refer to [here](docs/EXTENSIBILITY.md).
+Please refer to [here](docs/EXTENSIBILITY.md) for how to extend the features.
+
+## Versioning
+
+The version of SunAgent has the format of *major.minor.patch*. If some fixes are patched, *patch* component of the version will increase. If new features are introduced, *minor* component of the version will increase and *patch* component will return zero. If the new version introduced change that is not backward compatible, *major* component of the version will increase while *minor* component and *patch* component will return zero.
+
+For the details of the changes, please refer to the [release notes](docs/RELEASE_NOTES.md).

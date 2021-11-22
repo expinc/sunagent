@@ -516,7 +516,8 @@ Response:
     "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
     "beginTime": "Local wall clock time when this job begins executing",
     "finishTime": "Local wall clock time when this job ends executing",
-    "progress": 100 // the percentage of job progress
+    "progress": 100, // the percentage of job progress
+    "result": "Result of the job"
 }
 ```
 
@@ -535,6 +536,7 @@ Response:
     "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
     "beginTime": "Local wall clock time when this job begins executing",
     "finishTime": "Local wall clock time when this job ends executing",
-    "progress": 100 // the percentage of job progress
+    "progress": 100, // the percentage of job progress
+    "result": "Result of the job"
 }
 ```

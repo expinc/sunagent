@@ -18,6 +18,10 @@ For a textual response, the response body example is:
 
 For a binary response, the response body is the binary content.
 
+Some of the APIs could be called asynchronously. The request will create a corresponding background job, and response the ID and status of the job. You may check the status or cancel the job. For a asynchronous call, your request will get a response payload the same as the API of [getting job status](#get-job-status).
+
+The status of background job is not persistent. If SunAgent is restarted, the status will be lost. However, the ID of the job is unique even if SunAgent is restarted.
+
 ## Table of Content
 
 * [SunAgent Management](#sunagent-management)
@@ -46,6 +50,9 @@ For a binary response, the response body is the binary content.
     - [Install Package](#install-package)
     - [Upgrade Package](#upgrade-package)
     - [Uninstall Package](#uninstall-package)
+* [Background Job](#background-job)
+    - [Get Job Status](#get-job-status)
+    - [Cancel Job](#cancel-job)
 
 ## SunAgent Management
 
@@ -491,3 +498,43 @@ Response:
 ### Uninstall Package
 
 Method: ```DELETE /package/{name}```
+
+## Background Job
+
+### Get Job Status
+
+Get the status of a background job.
+
+Method: ```GET /job/{ID}```
+
+Response:
+
+```json
+{
+    "name": "Name of the job",
+    "id": "ID of the job",
+    "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
+    "beginTime": "Local wall clock time when this job begins executing",
+    "finishTime": "Local wall clock time when this job ends executing",
+    "progress": 100 // the percentage of job progress
+}
+```
+
+### Cancel Job
+
+Cancel an executing job.
+
+Method: ```DELETE /job/{ID}```
+
+Response:
+
+```json
+{
+    "name": "Name of the job",
+    "id": "ID of the job",
+    "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
+    "beginTime": "Local wall clock time when this job begins executing",
+    "finishTime": "Local wall clock time when this job ends executing",
+    "progress": 100 // the percentage of job progress
+}
+```

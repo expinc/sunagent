@@ -51,7 +51,8 @@ The status of background job is not persistent. If SunAgent is restarted, the st
     - [Upgrade Package](#upgrade-package)
     - [Uninstall Package](#uninstall-package)
 * [Background Job](#background-job)
-    - [Get Job Status](#get-job-status)
+    - [Get Job Information](#get-job-information)
+    - [List Jobs](#list-jobs)
     - [Cancel Job](#cancel-job)
 
 ## SunAgent Management
@@ -501,41 +502,71 @@ Method: ```DELETE /package/{name}```
 
 ## Background Job
 
-### Get Job Status
+### Get Job Information
 
-Get the status of a background job.
+Get the information of a background job.
 
-Method: ```GET /job/{ID}```
+Method: ```GET /jobs/{ID}```
 
 Response:
 
 ```json
 {
-    "name": "Name of the job",
+    "type": "Type of the job",
     "id": "ID of the job",
     "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
     "beginTime": "Local wall clock time when this job begins executing",
-    "finishTime": "Local wall clock time when this job ends executing",
+    "endTime": "Local wall clock time when this job ends executing",
     "progress": 100, // the percentage of job progress
     "result": "Result of the job"
 }
+```
+
+### List Jobs
+
+List all jobs. Some early ended jobs may not listed according to the configuration *CORE.retainjobs*.
+
+Method: ```GET /jobs```
+
+Response:
+```json
+[
+    {
+        "type": "Type of the job",
+        "id": "ID of the job",
+        "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
+        "beginTime": "Local wall clock time when this job begins executing",
+        "endTime": "Local wall clock time when this job ends executing",
+        "progress": 100, // the percentage of job progress
+        "result": "Result of the job"
+    },
+    {
+        "type": "Type of the job",
+        "id": "ID of the job",
+        "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
+        "beginTime": "Local wall clock time when this job begins executing",
+        "endTime": "Local wall clock time when this job ends executing",
+        "progress": 100, // the percentage of job progress
+        "result": "Result of the job"
+    }
+]
 ```
 
 ### Cancel Job
 
 Cancel an executing job.
 
-Method: ```DELETE /job/{ID}```
+Method: ```DELETE /jobs/{ID}```
 
 Response:
 
 ```json
 {
-    "name": "Name of the job",
+    "type": "Type of the job",
     "id": "ID of the job",
     "status": "Status of the job. It could be EXECUTING, SUCCESSFUL, FAILED or CANCELED",
     "beginTime": "Local wall clock time when this job begins executing",
-    "finishTime": "Local wall clock time when this job ends executing",
+    "endTime": "Local wall clock time when this job ends executing",
     "progress": 100, // the percentage of job progress
     "result": "Result of the job"
 }

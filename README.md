@@ -38,6 +38,10 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 
 * gomaxprocs: The maximum processors used.
 
+*CORE* section defines behaviors of the framework.
+
+* retainjobs: Number of jobs whose info retained. In-proguress jobs will always retained. Therefore the actual number retained may be bigger than the configured value.
+
 *HTTP* section defines the parameters of the HTTP server who exposes HTTP APIs:
 
 * ip: IP address of the HTTP server. This option is introduced because there may be multiple network adaptors with different IP addresses in the node.

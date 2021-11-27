@@ -49,7 +49,7 @@ func (base *jobBase) getInfo() *JobInfo {
 }
 
 // all jobs:
-var id2Jobs map[string]Job
+var id2Jobs map[string]Job = make(map[string]Job)
 var jobMutex = sync.RWMutex{}
 
 // a concrete job for test
@@ -62,15 +62,32 @@ type dummyJob struct {
 func (job *dummyJob) execute() error {
 	job.canceled = make(chan bool, 1)
 
-	for i := 0; i < 10; i++ {
+	expectedResult, ok := job.params["expectedResult"]
+	if ok {
+		if JobStatusFailed == expectedResult {
+			return common.NewError(common.ErrorUnknown, "Fake error")
+		} else if "panic" == expectedResult {
+			panic(common.NewError(common.ErrorUnknown, "Fake panic"))
+		}
+	}
+
+	execSeconds := 10
+	execSecondsObj, ok := job.params["execSeconds"]
+	if ok {
+		execSeconds, _ = execSecondsObj.(int)
+	}
+
+	for i := 0; i < execSeconds; i++ {
 		select {
 		case <-job.canceled:
-			break
+			job.info.Status = JobStatusCanceled
+			return nil
 		default:
 			time.Sleep(1 * time.Second)
 			job.info.Progress += 10
 		}
 	}
+	job.info.Result = "Successful"
 	return nil
 }
 
@@ -78,7 +95,9 @@ func (job *dummyJob) cancel() {
 	job.canceled <- true
 }
 
-func (job *dummyJob) dispose() {}
+func (job *dummyJob) dispose() {
+	close(job.canceled)
+}
 
 func generateJobId() string {
 	uuidValue := uuid.New()
@@ -111,6 +130,16 @@ func StartJob(typ string, params map[string]interface{}) (info JobInfo, err erro
 		job.getInfo().Status = JobStatusExecuting
 		job.getInfo().BeginTime = time.Now()
 
+		defer func(job Job) {
+			job.getInfo().EndTime = time.Now()
+
+			// if a panic occurs when executing, the job should be failed
+			if p := recover(); nil != p {
+				job.getInfo().Status = JobStatusFailed
+				job.getInfo().Result = p
+			}
+		}(job)
+
 		err := job.execute()
 		if nil != err {
 			job.getInfo().Status = JobStatusFailed
@@ -120,7 +149,6 @@ func StartJob(typ string, params map[string]interface{}) (info JobInfo, err erro
 			// otherwise, the job should be finished successfully, the status should be set as SUCCESSFUL
 			job.getInfo().Status = JobStatusSuccessful
 		}
-		job.getInfo().EndTime = time.Now()
 	}(job)
 
 	// add job to list
@@ -169,8 +197,13 @@ func CancelJob(id string) (info JobInfo, err error) {
 
 	job, ok := id2Jobs[id]
 	if ok {
-		job.cancel()
-		info = *job.getInfo()
+		if JobStatusExecuting == job.getInfo().Status {
+			job.cancel()
+			info = *job.getInfo()
+		} else {
+			errMsg := fmt.Sprintf("Job %s has been finished", id)
+			err = common.NewError(common.ErrorNotAllowed, errMsg)
+		}
 	} else {
 		errMsg := fmt.Sprintf("No job with ID=%s", id)
 		err = common.NewError(common.ErrorNotFound, errMsg)

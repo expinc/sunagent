@@ -524,7 +524,7 @@ Response:
 
 ### List Jobs
 
-List all jobs. Some early ended jobs may not listed according to the configuration *CORE.retainjobs*.
+List all jobs. Some early ended jobs may not listed according to the configuration *CORE.jobCleanThreshold*.
 
 Method: ```GET /jobs```
 

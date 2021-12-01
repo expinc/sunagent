@@ -40,7 +40,7 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 
 *CORE* section defines behaviors of the framework.
 
-* retainjobs: Number of jobs whose info retained. In-proguress jobs will always retained. Therefore the actual number retained may be bigger than the configured value.
+* jobCleanThreshold: Threshold of when job clean should occur. If the number of jobs exceeds the threshold, half of the finished jobs with earliest creation time will be removed, i.e., could get their info no more. In-proguress jobs will not be removed.
 
 *HTTP* section defines the parameters of the HTTP server who exposes HTTP APIs:
 

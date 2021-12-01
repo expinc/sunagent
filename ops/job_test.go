@@ -135,3 +135,32 @@ func TestListJobs(t *testing.T) {
 		assert.NotEmpty(t, job.Id)
 	}
 }
+
+func TestCleanFinishedJobs(t *testing.T) {
+	// Clear jobs and set an invalid clean threshold, which makes threshold as 5
+	id2Jobs = make(map[string]Job)
+	SetJobCleanThreshold(1)
+
+	// Add 5 jobs to trigger a job clean.
+	// There should be 2 jobs left.
+	params := map[string]interface{}{
+		"expectedResult": JobStatusFailed,
+	}
+	for i := 0; i < 5; i++ {
+		StartJob("dummy", params)
+		time.Sleep(time.Second)
+	}
+	assert.Equal(t, 2, len(id2Jobs))
+
+	// Add 6 jobs that will execute for a longer period.
+	// The former finished jobs will be cleaned.
+	// The 6 executing jobs will be left.
+	params = map[string]interface{}{
+		"execSeconds": 10,
+	}
+	for i := 0; i < 6; i++ {
+		StartJob("dummy", params)
+	}
+	time.Sleep(time.Second)
+	assert.Equal(t, 6, len(id2Jobs))
+}

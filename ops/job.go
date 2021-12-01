@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"expinc/sunagent/common"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -17,6 +18,19 @@ const (
 	JobStatusFailed     = "FAILED"
 	JobStatusCanceled   = "CANCELED"
 )
+
+func IsFinshedJobStatus(status string) bool {
+	switch status {
+	case JobStatusSuccessful:
+		return true
+	case JobStatusFailed:
+		return true
+	case JobStatusCanceled:
+		return true
+	default:
+		return false
+	}
+}
 
 type JobInfo struct {
 	Name      string      `json:"name"`
@@ -51,6 +65,7 @@ func (base *jobBase) getInfo() *JobInfo {
 // all jobs:
 var id2Jobs map[string]Job = make(map[string]Job)
 var jobMutex = sync.RWMutex{}
+var jobCleanThreshold = 100
 
 // a concrete job for test
 type dummyJob struct {
@@ -61,20 +76,22 @@ type dummyJob struct {
 
 func (job *dummyJob) execute() error {
 	job.canceled = make(chan bool, 1)
-
-	expectedResult, ok := job.params["expectedResult"]
-	if ok {
-		if JobStatusFailed == expectedResult {
-			return common.NewError(common.ErrorUnknown, "Fake error")
-		} else if "panic" == expectedResult {
-			panic(common.NewError(common.ErrorUnknown, "Fake panic"))
-		}
-	}
-
 	execSeconds := 10
-	execSecondsObj, ok := job.params["execSeconds"]
-	if ok {
-		execSeconds, _ = execSecondsObj.(int)
+
+	if nil != job.params {
+		expectedResult, ok := job.params["expectedResult"]
+		if ok {
+			if JobStatusFailed == expectedResult {
+				return common.NewError(common.ErrorUnknown, "Fake error")
+			} else if "panic" == expectedResult {
+				panic(common.NewError(common.ErrorUnknown, "Fake panic"))
+			}
+		}
+
+		execSecondsObj, ok := job.params["execSeconds"]
+		if ok {
+			execSeconds, _ = execSecondsObj.(int)
+		}
 	}
 
 	for i := 0; i < execSeconds; i++ {
@@ -102,6 +119,31 @@ func (job *dummyJob) dispose() {
 func generateJobId() string {
 	uuidValue := uuid.New()
 	return base64.URLEncoding.EncodeToString(uuidValue[:])
+}
+
+func cleanFinishedJobs() {
+	var jobInfoList []JobInfo
+	for _, job := range id2Jobs {
+		jobInfoList = append(jobInfoList, *job.getInfo())
+	}
+	sort.Slice(jobInfoList, func(i, j int) bool {
+		if jobInfoList[i].BeginTime.Before(jobInfoList[j].BeginTime) {
+			return true
+		}
+		return false
+	})
+
+	cntRemain := len(jobInfoList)
+	for _, info := range jobInfoList {
+		if IsFinshedJobStatus(info.Status) {
+			delete(id2Jobs, info.Id)
+			cntRemain--
+		}
+
+		if cntRemain <= jobCleanThreshold/2 {
+			break
+		}
+	}
 }
 
 func StartJob(typ string, params map[string]interface{}) (info JobInfo, err error) {
@@ -154,7 +196,9 @@ func StartJob(typ string, params map[string]interface{}) (info JobInfo, err erro
 	// add job to list
 	jobMutex.Lock()
 	id2Jobs[info.Id] = job
-	// TODO: clean finished jobs
+	if jobCleanThreshold <= len(id2Jobs) {
+		cleanFinishedJobs()
+	}
 	jobMutex.Unlock()
 
 	return
@@ -209,4 +253,16 @@ func CancelJob(id string) (info JobInfo, err error) {
 		err = common.NewError(common.ErrorNotFound, errMsg)
 	}
 	return
+}
+
+func SetJobCleanThreshold(num int) {
+	jobMutex.Lock()
+	defer func() {
+		jobMutex.Unlock()
+	}()
+
+	jobCleanThreshold = num
+	if jobCleanThreshold < 5 {
+		jobCleanThreshold = 5
+	}
 }

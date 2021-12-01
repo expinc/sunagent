@@ -45,6 +45,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// setup core behaviors
+	ops.SetJobCleanThreshold(config.Section("CORE").Key("jobCleanThreshold").MustInt())
+
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()
 	port := config.Section("HTTP").Key("port").MustUint()

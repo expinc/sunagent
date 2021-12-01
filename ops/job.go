@@ -1,8 +1,10 @@
 package ops
 
 import (
+	"context"
 	"encoding/base64"
 	"expinc/sunagent/common"
+	"expinc/sunagent/log"
 	"fmt"
 	"sort"
 	"sync"
@@ -54,6 +56,7 @@ type Job interface {
 
 // all concrete job should combine jobBase
 type jobBase struct {
+	ctx    context.Context
 	info   *JobInfo
 	params map[string]interface{}
 }
@@ -146,16 +149,18 @@ func cleanFinishedJobs() {
 	}
 }
 
-func StartJob(typ string, params map[string]interface{}) (info JobInfo, err error) {
+func StartJob(ctx context.Context, typ string, params map[string]interface{}) (info JobInfo, err error) {
 	// create job
 	var job Job
 	info.Id = generateJobId()
+	log.InfoCtx(ctx, fmt.Sprintf("Creating job: type=%v, id=%v", typ, info.Id))
 	info.Status = JobStatusSpawned
 	switch typ {
 	case "dummy":
 		info.Name = "dummy"
 		job = &dummyJob{
 			jobBase: jobBase{
+				ctx:    ctx,
 				info:   &info,
 				params: params,
 			},
@@ -163,6 +168,7 @@ func StartJob(typ string, params map[string]interface{}) (info JobInfo, err erro
 		}
 	default:
 		errMsg := fmt.Sprintf("Invalid job type: %s", typ)
+		log.ErrorCtx(ctx, errMsg)
 		err = common.NewError(common.ErrorInvalidParameter, errMsg)
 		return
 	}
@@ -182,6 +188,7 @@ func StartJob(typ string, params map[string]interface{}) (info JobInfo, err erro
 			}
 		}(job)
 
+		log.InfoCtx(ctx, fmt.Sprintf("Executing job: id=%v", job.getInfo().Id))
 		err := job.execute()
 		if nil != err {
 			job.getInfo().Status = JobStatusFailed
@@ -191,20 +198,24 @@ func StartJob(typ string, params map[string]interface{}) (info JobInfo, err erro
 			// otherwise, the job should be finished successfully, the status should be set as SUCCESSFUL
 			job.getInfo().Status = JobStatusSuccessful
 		}
+		log.InfoCtx(ctx, fmt.Sprintf("Finished job: id=%v, status=%v", job.getInfo().Id, job.getInfo().Status))
 	}(job)
 
 	// add job to list
 	jobMutex.Lock()
 	id2Jobs[info.Id] = job
 	if jobCleanThreshold <= len(id2Jobs) {
+		log.InfoCtx(ctx, fmt.Sprintf("Cleaning finished jobs: currentJobs=%v", len(id2Jobs)))
 		cleanFinishedJobs()
+		log.InfoCtx(ctx, fmt.Sprintf("Cleaned finished jobs: currentJobs=%v", len(id2Jobs)))
 	}
 	jobMutex.Unlock()
 
 	return
 }
 
-func GetJobInfo(id string) (info JobInfo, err error) {
+func GetJobInfo(ctx context.Context, id string) (info JobInfo, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Getting job: id=%v", id))
 	jobMutex.RLock()
 	defer func() {
 		jobMutex.RUnlock()
@@ -215,12 +226,14 @@ func GetJobInfo(id string) (info JobInfo, err error) {
 		info = *job.getInfo()
 	} else {
 		errMsg := fmt.Sprintf("No job with ID=%s", id)
+		log.ErrorCtx(ctx, errMsg)
 		err = common.NewError(common.ErrorNotFound, errMsg)
 	}
 	return
 }
 
-func ListJobInfo() []JobInfo {
+func ListJobInfo(ctx context.Context) []JobInfo {
+	log.InfoCtx(ctx, "Listing jobs")
 	jobMutex.RLock()
 	defer func() {
 		jobMutex.RUnlock()
@@ -233,7 +246,8 @@ func ListJobInfo() []JobInfo {
 	return result
 }
 
-func CancelJob(id string) (info JobInfo, err error) {
+func CancelJob(ctx context.Context, id string) (info JobInfo, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Canceling job: id=%v", id))
 	jobMutex.RLock()
 	defer func() {
 		jobMutex.RUnlock()
@@ -245,17 +259,20 @@ func CancelJob(id string) (info JobInfo, err error) {
 			job.cancel()
 			info = *job.getInfo()
 		} else {
-			errMsg := fmt.Sprintf("Job %s has been finished", id)
+			errMsg := fmt.Sprintf("Cannot cancel finished job: id=%v", id)
+			log.ErrorCtx(ctx, errMsg)
 			err = common.NewError(common.ErrorNotAllowed, errMsg)
 		}
 	} else {
 		errMsg := fmt.Sprintf("No job with ID=%s", id)
+		log.ErrorCtx(ctx, errMsg)
 		err = common.NewError(common.ErrorNotFound, errMsg)
 	}
 	return
 }
 
-func SetJobCleanThreshold(num int) {
+func SetJobCleanThreshold(ctx context.Context, num int) {
+	log.InfoCtx(ctx, fmt.Sprintf("Setting job clean threshold as %v", num))
 	jobMutex.Lock()
 	defer func() {
 		jobMutex.Unlock()
@@ -264,5 +281,6 @@ func SetJobCleanThreshold(num int) {
 	jobCleanThreshold = num
 	if jobCleanThreshold < 5 {
 		jobCleanThreshold = 5
+		log.WarnCtx(ctx, "Cannot set job clean threshold below 5. Fallback it as 5")
 	}
 }

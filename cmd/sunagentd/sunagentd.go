@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"expinc/sunagent/common"
 	"expinc/sunagent/http"
 	"expinc/sunagent/log"
@@ -46,7 +47,7 @@ func main() {
 	}
 
 	// setup core behaviors
-	ops.SetJobCleanThreshold(config.Section("CORE").Key("jobCleanThreshold").MustInt())
+	ops.SetJobCleanThreshold(context.Background(), config.Section("CORE").Key("jobCleanThreshold").MustInt())
 
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()

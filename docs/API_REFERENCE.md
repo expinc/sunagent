@@ -407,6 +407,7 @@ Parameters:
 * program: The program to execute the script, e.g., bash, python.
 * separateOutput: *false* to return all output together (default). *true* to return stdout and stderr separately.
 * waitSeconds: Seconds to wait for the script execution to complete. If timeout, the script process will be killed. The default value is 60. Set it as 0 if wait until the script completes execution.
+* async: *true* to make this request be handled by a background job. *false* to make this request be handled synchronously as usual. Default is *false*.
 
 Body: script content.
 

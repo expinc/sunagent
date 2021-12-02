@@ -1,6 +1,8 @@
 package command
 
 import (
+	"context"
+	"expinc/sunagent/common"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,8 +10,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"expinc/sunagent/common"
 
 	"github.com/shirou/gopsutil/host"
 	"github.com/stretchr/testify/assert"
@@ -109,4 +109,46 @@ func TestCheckSeparateOutput_Timeout(t *testing.T) {
 	assert.Equal(t, common.ErrorTimeout, err.(common.Error).Code())
 	assert.Equal(t, fmt.Sprintf(sleepOutputPattern, 10), string(stdout))
 	assert.Equal(t, "", string(stderr))
+}
+
+func TestCheckCallContext_Cancel(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	var err error
+	startTime := time.Now()
+	go func(ctx context.Context) {
+		err = CheckCallContext(ctx, "python3", []string{sleepScript, "10"}, DefaultTimeout)
+	}(ctx)
+	cancel()
+	endTime := time.Now()
+
+	assert.Equal(t, nil, err)
+	assert.Less(t, endTime.Sub(startTime), 5*time.Second)
+}
+
+func TestCheckCombinedOutput_Cancel(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	var err error
+	startTime := time.Now()
+	go func(ctx context.Context) {
+		_, err = CheckCombinedOutputContext(ctx, "python3", []string{sleepScript, "10"}, DefaultTimeout)
+	}(ctx)
+	cancel()
+	endTime := time.Now()
+
+	assert.Equal(t, nil, err)
+	assert.Less(t, endTime.Sub(startTime), 5*time.Second)
+}
+
+func TestCheckSeparateOutput_Cancel(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	var err error
+	startTime := time.Now()
+	go func(ctx context.Context) {
+		_, _, err = CheckSeparateOutputContext(ctx, "python3", []string{sleepScript, "10"}, DefaultTimeout)
+	}(ctx)
+	cancel()
+	endTime := time.Now()
+
+	assert.Equal(t, nil, err)
+	assert.Less(t, endTime.Sub(startTime), 5*time.Second)
 }

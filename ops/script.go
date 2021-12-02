@@ -115,7 +115,7 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 	return result, err
 }
 
-func getScriptPreSnippet(script string) string {
+func getScriptPreview(script string) string {
 	var scriptSnippet string
 	if len(script) <= scriptLogLimit {
 		scriptSnippet = script
@@ -128,7 +128,7 @@ func getScriptPreSnippet(script string) string {
 func ExecScriptWithCombinedOutput(ctx context.Context, program string, script string, waitSeconds int64) (result CombinedScriptResult, err error) {
 	log.InfoCtx(ctx, fmt.Sprintf("Executing script to get combined output: program=%v, script=%q, waitSeconds=%v",
 		program,
-		getScriptPreSnippet(script),
+		getScriptPreview(script),
 		waitSeconds,
 	))
 	var combinedResult interface{}
@@ -143,7 +143,7 @@ func ExecScriptWithCombinedOutput(ctx context.Context, program string, script st
 func ExecScriptWithSeparateOutput(ctx context.Context, program string, script string, waitSeconds int64) (result SeparateScriptResult, err error) {
 	log.InfoCtx(ctx, fmt.Sprintf("Executing script to get separate output: program=%v, script=%q, waitSeconds=%v",
 		program,
-		getScriptPreSnippet(script),
+		getScriptPreview(script),
 		waitSeconds,
 	))
 	var separateResult interface{}

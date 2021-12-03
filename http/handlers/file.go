@@ -19,7 +19,7 @@ func GetFileMeta(ctx *gin.Context) {
 
 	_, listIfDir := ctx.Request.URL.Query()["list"]
 
-	metas, err := ops.GetFileMetas(createCancellableContext(ctx), path[0], listIfDir)
+	metas, err := ops.GetFileMetas(createStandardContext(ctx), path[0], listIfDir)
 	if nil != err {
 		status := http.StatusInternalServerError
 		if os.IsNotExist(err) {
@@ -38,7 +38,7 @@ func GetFileContent(ctx *gin.Context) {
 		return
 	}
 
-	content, err := ops.GetFileContent(createCancellableContext(ctx), path[0])
+	content, err := ops.GetFileContent(createStandardContext(ctx), path[0])
 	if nil != err {
 		status := http.StatusInternalServerError
 		if os.IsNotExist(err) {
@@ -68,7 +68,7 @@ func writeFile(ctx *gin.Context, overwrite bool) {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 	}
 
-	meta, err := ops.WriteFile(createCancellableContext(ctx), path[0], content, isDir, overwrite)
+	meta, err := ops.WriteFile(createStandardContext(ctx), path[0], content, isDir, overwrite)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
@@ -97,7 +97,7 @@ func DeleteFile(ctx *gin.Context) {
 		recursive, _ = strconv.ParseBool(recursiveStr[0])
 	}
 
-	err := ops.DeleteFile(createCancellableContext(ctx), path[0], recursive)
+	err := ops.DeleteFile(createStandardContext(ctx), path[0], recursive)
 	if nil != err {
 		status := http.StatusInternalServerError
 		if os.IsNotExist(err) {

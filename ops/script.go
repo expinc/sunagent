@@ -154,3 +154,30 @@ func ExecScriptWithSeparateOutput(ctx context.Context, program string, script st
 	}
 	return
 }
+
+type ExecScriptJob struct {
+	jobBase
+
+	cancelFunc context.CancelFunc
+}
+
+func (job *ExecScriptJob) execute() error {
+	program := job.jobBase.params["program"].(string)
+	script := job.jobBase.params["script"].(string)
+	waitSeconds := job.jobBase.params["waitSeconds"].(int64)
+	ifSeparateOutput := job.jobBase.params["ifSeparateOutput"].(bool)
+
+	var err error
+	if ifSeparateOutput {
+		job.jobBase.getInfo().Result, err = ExecScriptWithSeparateOutput(job.jobBase.ctx, program, script, waitSeconds)
+	} else {
+		job.jobBase.getInfo().Result, err = ExecScriptWithCombinedOutput(job.jobBase.ctx, program, script, waitSeconds)
+	}
+	return err
+}
+
+func (job *ExecScriptJob) cancel() {
+	job.cancelFunc()
+}
+
+func (job *ExecScriptJob) dispose() {}

@@ -25,12 +25,12 @@ func GetProcInfo(ctx *gin.Context) {
 	var infos []ops.ProcInfo
 	if nil == err {
 		var info ops.ProcInfo
-		info, err = ops.GetProcInfoByPid(createCancellableContext(ctx), int32(pid))
+		info, err = ops.GetProcInfoByPid(createStandardContext(ctx), int32(pid))
 		if nil == err {
 			infos = append(infos, info)
 		}
 	} else {
-		infos, err = ops.GetProcInfosByName(createCancellableContext(ctx), pidOrNameStr)
+		infos, err = ops.GetProcInfosByName(createStandardContext(ctx), pidOrNameStr)
 	}
 
 	// Render response
@@ -69,16 +69,16 @@ func KillProc(ctx *gin.Context) {
 	pid, err := strconv.ParseInt(pidOrNameStr, 10, 32)
 	var pids []int64
 	if nil == err {
-		err = ops.KillProcByPid(createCancellableContext(ctx), int32(pid), int(signal))
+		err = ops.KillProcByPid(createStandardContext(ctx), int32(pid), int(signal))
 		if nil == err {
 			pids = append(pids, pid)
 		}
 	} else {
 		var infos []ops.ProcInfo
-		infos, err = ops.GetProcInfosByName(createCancellableContext(ctx), pidOrNameStr)
+		infos, err = ops.GetProcInfosByName(createStandardContext(ctx), pidOrNameStr)
 		for _, info := range infos {
 			pid = int64(info.Pid)
-			err = ops.KillProcByPid(createCancellableContext(ctx), int32(pid), int(signal))
+			err = ops.KillProcByPid(createStandardContext(ctx), int32(pid), int(signal))
 			if nil == err {
 				pids = append(pids, pid)
 			} else {
@@ -121,16 +121,16 @@ func TermProc(ctx *gin.Context) {
 	pid, err := strconv.ParseInt(pidOrNameStr, 10, 32)
 	var pids []int64
 	if nil == err {
-		err = ops.KillProcByPid(createCancellableContext(ctx), int32(pid), int(signal))
+		err = ops.KillProcByPid(createStandardContext(ctx), int32(pid), int(signal))
 		if nil == err {
 			pids = append(pids, pid)
 		}
 	} else {
 		var infos []ops.ProcInfo
-		infos, err = ops.GetProcInfosByName(createCancellableContext(ctx), pidOrNameStr)
+		infos, err = ops.GetProcInfosByName(createStandardContext(ctx), pidOrNameStr)
 		for _, info := range infos {
 			pid = int64(info.Pid)
-			err = ops.KillProcByPid(createCancellableContext(ctx), int32(pid), int(signal))
+			err = ops.KillProcByPid(createStandardContext(ctx), int32(pid), int(signal))
 			if nil == err {
 				pids = append(pids, pid)
 			} else {

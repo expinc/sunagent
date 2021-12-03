@@ -21,6 +21,11 @@ const (
 	JobStatusCanceled   = "CANCELED"
 )
 
+const (
+	JobTypeDummy      = "dummy"
+	JobTypeExecScript = "ExecScript"
+)
+
 func IsFinshedJobStatus(status string) bool {
 	switch status {
 	case JobStatusSuccessful:
@@ -149,15 +154,15 @@ func cleanFinishedJobs() {
 	}
 }
 
-func StartJob(ctx context.Context, typ string, params map[string]interface{}) (info JobInfo, err error) {
-	// create job
-	var job Job
+func createJob(ctx context.Context, typ string, params map[string]interface{}) (job Job, err error) {
+	var info JobInfo
+	info.Name = typ
 	info.Id = generateJobId()
 	log.InfoCtx(ctx, fmt.Sprintf("Creating job: type=%v, id=%v", typ, info.Id))
 	info.Status = JobStatusSpawned
+
 	switch typ {
-	case "dummy":
-		info.Name = "dummy"
+	case JobTypeDummy:
 		job = &dummyJob{
 			jobBase: jobBase{
 				ctx:    ctx,
@@ -166,10 +171,31 @@ func StartJob(ctx context.Context, typ string, params map[string]interface{}) (i
 			},
 			canceled: make(chan bool),
 		}
+	case JobTypeExecScript:
+		cancelableCtx, cancelFunc := context.WithCancel(ctx)
+		job = &ExecScriptJob{
+			jobBase: jobBase{
+				ctx:    cancelableCtx,
+				info:   &info,
+				params: params,
+			},
+			cancelFunc: cancelFunc,
+		}
 	default:
 		errMsg := fmt.Sprintf("Invalid job type: %s", typ)
 		log.ErrorCtx(ctx, errMsg)
 		err = common.NewError(common.ErrorInvalidParameter, errMsg)
+	}
+	return
+}
+
+func StartJob(ctx context.Context, typ string, params map[string]interface{}) (info JobInfo, err error) {
+	// create job
+	var job Job
+	job, err = createJob(ctx, typ, params)
+	if nil == err {
+		info = *job.getInfo()
+	} else {
 		return
 	}
 

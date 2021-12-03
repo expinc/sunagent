@@ -30,18 +30,42 @@ func ExecScript(ctx *gin.Context) {
 	if ok {
 		waitSeconds, _ = strconv.ParseInt(waitSecondsParams[0], 10, 64)
 	}
+	async := false
+	asyncParams, ok := ctx.Request.URL.Query()["async"]
+	if ok {
+		async, _ = strconv.ParseBool(asyncParams[0])
+	}
 
-	// execute operation
+	// get body
 	var result interface{}
 	var err error
 	script, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 	}
+
+	// create background job if async == true
+	if async {
+		params := make(map[string]interface{})
+		params["program"] = program
+		params["script"] = string(script)
+		params["waitSeconds"] = waitSeconds
+		params["ifSeparateOutput"] = separateOutput
+		var jobInfo ops.JobInfo
+		jobInfo, err = ops.StartJob(createStandardContext(ctx), ops.JobTypeExecScript, params)
+		if nil == err {
+			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+		} else {
+			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		}
+		return
+	}
+
+	// execute operation
 	if separateOutput {
-		result, err = ops.ExecScriptWithSeparateOutput(createCancellableContext(ctx), program, string(script), waitSeconds)
+		result, err = ops.ExecScriptWithSeparateOutput(createStandardContext(ctx), program, string(script), waitSeconds)
 	} else {
-		result, err = ops.ExecScriptWithCombinedOutput(createCancellableContext(ctx), program, string(script), waitSeconds)
+		result, err = ops.ExecScriptWithCombinedOutput(createStandardContext(ctx), program, string(script), waitSeconds)
 	}
 
 	// response

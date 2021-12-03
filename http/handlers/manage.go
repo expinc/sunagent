@@ -8,6 +8,6 @@ import (
 )
 
 func GetInfo(ctx *gin.Context) {
-	info := ops.GetInfo(createCancellableContext(ctx))
+	info := ops.GetInfo(createStandardContext(ctx))
 	RespondSuccessfulJson(ctx, http.StatusOK, info)
 }

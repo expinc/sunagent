@@ -15,7 +15,7 @@ func GetPackageInfo(ctx *gin.Context) {
 		return
 	}
 
-	pkgInfo, err := ops.GetPackageInfo(createCancellableContext(ctx), name)
+	pkgInfo, err := ops.GetPackageInfo(createStandardContext(ctx), name)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
 	} else {
@@ -43,7 +43,7 @@ func InstallPackage(ctx *gin.Context) {
 		}
 	}
 
-	pkgInfo, err := ops.InstallPackage(createCancellableContext(ctx), nameOrPath, byFile, false)
+	pkgInfo, err := ops.InstallPackage(createStandardContext(ctx), nameOrPath, byFile, false)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
 	} else {
@@ -71,7 +71,7 @@ func UpgradePackage(ctx *gin.Context) {
 		}
 	}
 
-	pkgInfo, err := ops.InstallPackage(createCancellableContext(ctx), nameOrPath, byFile, true)
+	pkgInfo, err := ops.InstallPackage(createStandardContext(ctx), nameOrPath, byFile, true)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
 	} else {
@@ -86,7 +86,7 @@ func UninstallPackage(ctx *gin.Context) {
 		return
 	}
 
-	err := ops.UninstallPackage(createCancellableContext(ctx), name)
+	err := ops.UninstallPackage(createStandardContext(ctx), name)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, nil)
 	} else {

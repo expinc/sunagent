@@ -9,12 +9,12 @@ import (
 )
 
 func GetNodeInfo(ctx *gin.Context) {
-	info := ops.GetNodeInfo(createCancellableContext(ctx))
+	info := ops.GetNodeInfo(createStandardContext(ctx))
 	RespondSuccessfulJson(ctx, http.StatusOK, info)
 }
 
 func GetCpuInfo(ctx *gin.Context) {
-	info := ops.GetCpuInfo(createCancellableContext(ctx))
+	info := ops.GetCpuInfo(createStandardContext(ctx))
 	RespondSuccessfulJson(ctx, http.StatusOK, info)
 }
 
@@ -25,7 +25,7 @@ func GetCpuStat(ctx *gin.Context) {
 		perCpu, _ = strconv.ParseBool(perCpuStr[0])
 	}
 
-	stat, err := ops.GetCpuStat(createCancellableContext(ctx), perCpu)
+	stat, err := ops.GetCpuStat(createStandardContext(ctx), perCpu)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
@@ -34,7 +34,7 @@ func GetCpuStat(ctx *gin.Context) {
 }
 
 func GetMemStat(ctx *gin.Context) {
-	stat, err := ops.GetMemStat(createCancellableContext(ctx))
+	stat, err := ops.GetMemStat(createStandardContext(ctx))
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
@@ -43,7 +43,7 @@ func GetMemStat(ctx *gin.Context) {
 }
 
 func GetDiskInfo(ctx *gin.Context) {
-	info, err := ops.GetDiskInfo(createCancellableContext(ctx))
+	info, err := ops.GetDiskInfo(createStandardContext(ctx))
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
@@ -52,7 +52,7 @@ func GetDiskInfo(ctx *gin.Context) {
 }
 
 func GetNetInfo(ctx *gin.Context) {
-	info, err := ops.GetNetInfo(createCancellableContext(ctx))
+	info, err := ops.GetNetInfo(createStandardContext(ctx))
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {

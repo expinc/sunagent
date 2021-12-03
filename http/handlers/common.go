@@ -10,8 +10,8 @@ import (
 )
 
 // create standard context from gin.Context to support request cancellation like Done()
-// functions called by handlers should use context this function returns instead of gin.Context
-func createCancellableContext(ginCtx *gin.Context) context.Context {
+// functions called by gin handlers should use context this function returns instead of gin.Context
+func createStandardContext(ginCtx *gin.Context) context.Context {
 	if nil != ginCtx {
 		traceId := ginCtx.Value(common.TraceIdContextKey)
 		return context.WithValue(context.Background(), common.TraceIdContextKey, traceId)

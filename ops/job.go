@@ -210,21 +210,25 @@ func StartJob(ctx context.Context, typ string, params map[string]interface{}) (i
 			// if a panic occurs when executing, the job should be failed
 			if p := recover(); nil != p {
 				job.getInfo().Status = JobStatusFailed
-				job.getInfo().Result = p
+				job.getInfo().Result = fmt.Sprint(p)
 			}
+
+			log.InfoCtx(ctx, fmt.Sprintf("Finished job: id=%v, status=%v", job.getInfo().Id, job.getInfo().Status))
 		}(job)
 
 		log.InfoCtx(ctx, fmt.Sprintf("Executing job: id=%v", job.getInfo().Id))
 		err := job.execute()
 		if nil != err {
 			job.getInfo().Status = JobStatusFailed
-			job.getInfo().Result = err
+			job.getInfo().Result = err.Error()
 		} else if JobStatusCanceled != job.getInfo().Status {
 			// if the status is CANCELED, the job should be canceled, no need to change the status
 			// otherwise, the job should be finished successfully, the status should be set as SUCCESSFUL
 			job.getInfo().Status = JobStatusSuccessful
+
+			// a successful job execution should end up with 100% progress
+			job.getInfo().Progress = 100
 		}
-		log.InfoCtx(ctx, fmt.Sprintf("Finished job: id=%v, status=%v", job.getInfo().Id, job.getInfo().Status))
 	}(job)
 
 	// add job to list

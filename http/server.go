@@ -216,6 +216,10 @@ func (server *Server) registerHandlers() error {
 	routerGroup.PUT("", handlerProxy(handlers.UpgradePackage))        // upgrade by file
 	routerGroup.DELETE("/:name", handlerProxy(handlers.UninstallPackage))
 
+	// job
+	routerGroup = server.engine.Group(urlPrefix+"/jobs", middlewares...)
+	routerGroup.GET("/:id", handlerProxy(handlers.GetJobInfo))
+
 	return nil
 }
 

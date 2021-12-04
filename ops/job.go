@@ -172,14 +172,14 @@ func createJob(ctx context.Context, typ string, params map[string]interface{}) (
 			canceled: make(chan bool),
 		}
 	case JobTypeExecScript:
-		cancelableCtx, cancelFunc := context.WithCancel(ctx)
+		cancelableCtx, cancelFunction := context.WithCancel(ctx)
 		job = &ExecScriptJob{
 			jobBase: jobBase{
 				ctx:    cancelableCtx,
 				info:   &info,
 				params: params,
 			},
-			cancelFunc: cancelFunc,
+			cancelFunc: cancelFunction,
 		}
 	default:
 		errMsg := fmt.Sprintf("Invalid job type: %s", typ)

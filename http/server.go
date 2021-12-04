@@ -219,6 +219,8 @@ func (server *Server) registerHandlers() error {
 	// job
 	routerGroup = server.engine.Group(urlPrefix+"/jobs", middlewares...)
 	routerGroup.GET("/:id", handlerProxy(handlers.GetJobInfo))
+	routerGroup.GET("", handlerProxy(handlers.GetAllJobInfo))
+	routerGroup.POST("/:id/cancel", handlerProxy(handlers.CancelJob))
 
 	return nil
 }

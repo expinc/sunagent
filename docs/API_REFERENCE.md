@@ -557,7 +557,7 @@ Response:
 
 Cancel an executing job.
 
-Method: ```DELETE /jobs/{ID}```
+Method: ```POST /jobs/{ID}/cancel```
 
 Response:
 

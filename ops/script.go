@@ -85,7 +85,7 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 	if separateOutput {
 		var stdout []byte
 		var stderr []byte
-		stdout, stderr, err = command.CheckSeparateOutput(program, params, timeout)
+		stdout, stderr, err = command.CheckSeparateOutputContext(ctx, program, params, timeout)
 		separateResult := SeparateScriptResult{
 			Stdout: string(stdout),
 			Stderr: string(stderr),
@@ -100,7 +100,7 @@ func execScript(ctx context.Context, program string, script string, waitSeconds 
 		result = separateResult
 	} else {
 		var output []byte
-		output, err = command.CheckCombinedOutput(program, params, timeout)
+		output, err = command.CheckCombinedOutputContext(ctx, program, params, timeout)
 		combinedResult := CombinedScriptResult{
 			Output: string(output),
 		}

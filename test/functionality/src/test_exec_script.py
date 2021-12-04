@@ -3,11 +3,13 @@ import http.client
 import os
 import platform
 import pytest
+import time
 import urllib
 from assertpy import assert_that
 from http import HTTPStatus
 
 class TestExecScript:
+
     def test_combined_output(self):
         try:
             # prepare script
@@ -154,5 +156,76 @@ class TestExecScript:
             assert_that(data["error"]).is_equal_to("")
             expected_output_pattern = r"Python \d+.\d+.\d+\n"
             assert_that(data["output"]).matches(expected_output_pattern)
+        finally:
+            conn.close()
+
+    def test_execute_async_successful(self):
+        try:
+            # prepare script
+            scriptContent = "import time\nprint(\"sleeping\", flush=True)\ntime.sleep(1)"
+
+            # send request
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            params = urllib.parse.urlencode({"program":"python3", "async":"true"})
+            url = "/api/v1/script/execute?" + params
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify response
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            assert_that(data["name"]).is_equal_to("ExecScript")
+            assert_that(data["status"]).is_equal_to("SPAWNED")
+
+            # get result
+            time.sleep(3)
+            id = data["id"]
+            url = "/api/v1/jobs/" + id
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify job status
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            assert_that(data["status"]).is_equal_to("SUCCESSFUL")
+
+            # verify result
+            expected_output = "sleeping\n"
+            if "Windows" == platform.system():
+                expected_output = expected_output.replace("\n", "\r\n")
+            assert_that(data["result"]["output"]).is_equal_to(expected_output)
+        finally:
+            conn.close()
+
+    def test_execute_async_cancel(self):
+        try:
+            # prepare script
+            scriptContent = "import time\nprint(\"sleeping\", flush=True)\ntime.sleep(10)"
+
+            # send request
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            params = urllib.parse.urlencode({"program":"python3", "async":"true"})
+            url = "/api/v1/script/execute?" + params
+            conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify response
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            assert_that(data["name"]).is_equal_to("ExecScript")
+            assert_that(data["status"]).is_equal_to("SPAWNED")
+
+            # cancel job
+            id = data["id"]
+            url = "/api/v1/jobs/" + id + "/cancel"
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            conn.getresponse().read()
+
+            # get new job status
+            time.sleep(1)
+            url = "/api/v1/jobs/" + id
+            conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify response
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            assert_that(data["status"]).is_equal_to("CANCELED")
         finally:
             conn.close()

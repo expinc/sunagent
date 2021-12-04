@@ -2,6 +2,7 @@ package ops
 
 import (
 	"context"
+	"encoding/json"
 	"expinc/sunagent/command"
 	"expinc/sunagent/common"
 	"expinc/sunagent/log"
@@ -172,6 +173,12 @@ func (job *ExecScriptJob) execute() error {
 		job.jobBase.getInfo().Result, err = ExecScriptWithSeparateOutput(job.jobBase.ctx, program, script, waitSeconds)
 	} else {
 		job.jobBase.getInfo().Result, err = ExecScriptWithCombinedOutput(job.jobBase.ctx, program, script, waitSeconds)
+	}
+
+	if nil != err {
+		result, _ := json.Marshal(job.jobBase.info.Result)
+		errMsg := fmt.Sprintf("Execute script failed: err=%s, output=%s", err.Error(), result)
+		err = common.NewError(common.ErrorUnexpected, errMsg)
 	}
 	return err
 }

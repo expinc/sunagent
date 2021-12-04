@@ -160,6 +160,7 @@ type ExecScriptJob struct {
 	jobBase
 
 	cancelFunc context.CancelFunc
+	canceled   bool
 }
 
 func (job *ExecScriptJob) execute() error {
@@ -175,6 +176,11 @@ func (job *ExecScriptJob) execute() error {
 		job.jobBase.getInfo().Result, err = ExecScriptWithCombinedOutput(job.jobBase.ctx, program, script, waitSeconds)
 	}
 
+	if job.canceled {
+		// If the job is canceled, it should not be considered as failed job.
+		// Therefore override the error as nil if any
+		err = nil
+	}
 	if nil != err {
 		result, _ := json.Marshal(job.jobBase.info.Result)
 		errMsg := fmt.Sprintf("Execute script failed: err=%s, output=%s", err.Error(), result)
@@ -184,6 +190,8 @@ func (job *ExecScriptJob) execute() error {
 }
 
 func (job *ExecScriptJob) cancel() {
+	job.canceled = true
+	job.getInfo().Status = JobStatusCanceled
 	job.cancelFunc()
 }
 

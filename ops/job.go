@@ -180,6 +180,7 @@ func createJob(ctx context.Context, typ string, params map[string]interface{}) (
 				params: params,
 			},
 			cancelFunc: cancelFunction,
+			canceled:   false,
 		}
 	default:
 		errMsg := fmt.Sprintf("Invalid job type: %s", typ)

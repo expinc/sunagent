@@ -39,7 +39,7 @@ func logOnExecFinish(ctx context.Context, program string, args []string, timeout
 // if the context becomes done before the command completes on its own.
 func CheckCallContext(ctx context.Context, program string, args []string, timeout time.Duration) error {
 	logOnExecStart(ctx, program, args, timeout)
-	cmd := exec.Command(program, args...)
+	cmd := exec.CommandContext(ctx, program, args...)
 	err := cmd.Start()
 	if nil == err {
 		err = waitForTimeout(cmd, timeout)
@@ -63,7 +63,7 @@ func CheckCall(program string, args []string, timeout time.Duration) error {
 // if the context becomes done before the command completes on its own.
 func CheckCombinedOutputContext(ctx context.Context, program string, args []string, timeout time.Duration) (output []byte, err error) {
 	logOnExecStart(ctx, program, args, timeout)
-	cmd := exec.Command(program, args...)
+	cmd := exec.CommandContext(ctx, program, args...)
 	var buffer bytes.Buffer
 	cmd.Stdout = &buffer
 	cmd.Stderr = &buffer
@@ -93,7 +93,7 @@ func CheckCombinedOutput(program string, args []string, timeout time.Duration) (
 // if the context becomes done before the command completes on its own.
 func CheckSeparateOutputContext(ctx context.Context, program string, args []string, timeout time.Duration) (stdout []byte, stderr []byte, err error) {
 	logOnExecStart(ctx, program, args, timeout)
-	cmd := exec.Command(program, args...)
+	cmd := exec.CommandContext(ctx, program, args...)
 	var bufferOut bytes.Buffer
 	var bufferErr bytes.Buffer
 	cmd.Stdout = &bufferOut

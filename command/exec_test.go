@@ -114,41 +114,50 @@ func TestCheckSeparateOutput_Timeout(t *testing.T) {
 func TestCheckCallContext_Cancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var err error
+	execFinished := make(chan struct{}, 1)
 	startTime := time.Now()
 	go func(ctx context.Context) {
 		err = CheckCallContext(ctx, "python3", []string{sleepScript, "10"}, DefaultTimeout)
+		execFinished <- struct{}{}
 	}(ctx)
 	cancel()
+	<-execFinished
 	endTime := time.Now()
 
-	assert.Equal(t, nil, err)
+	assert.NotEqual(t, nil, err)
 	assert.Less(t, endTime.Sub(startTime), 5*time.Second)
 }
 
 func TestCheckCombinedOutput_Cancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var err error
+	execFinished := make(chan struct{}, 1)
 	startTime := time.Now()
 	go func(ctx context.Context) {
 		_, err = CheckCombinedOutputContext(ctx, "python3", []string{sleepScript, "10"}, DefaultTimeout)
+		execFinished <- struct{}{}
 	}(ctx)
 	cancel()
+	<-execFinished
 	endTime := time.Now()
 
-	assert.Equal(t, nil, err)
+	assert.NotEqual(t, nil, err)
 	assert.Less(t, endTime.Sub(startTime), 5*time.Second)
 }
 
 func TestCheckSeparateOutput_Cancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var err error
+	execFinished := make(chan struct{}, 1)
 	startTime := time.Now()
 	go func(ctx context.Context) {
 		_, _, err = CheckSeparateOutputContext(ctx, "python3", []string{sleepScript, "10"}, DefaultTimeout)
+		execFinished <- struct{}{}
 	}(ctx)
 	cancel()
+	<-execFinished
 	endTime := time.Now()
 
-	assert.Equal(t, nil, err)
+	assert.NotEqual(t, nil, err)
 	assert.Less(t, endTime.Sub(startTime), 5*time.Second)
 }

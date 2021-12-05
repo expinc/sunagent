@@ -1,6 +1,7 @@
 package grimoire
 
 import (
+	"context"
 	"expinc/sunagent/command"
 	"expinc/sunagent/common"
 	"strings"
@@ -9,6 +10,7 @@ import (
 
 // a specific command
 type Spell interface {
+	CastContext(ctx context.Context, args ...string) ([]byte, error)
 	Cast(args ...string) ([]byte, error)
 }
 
@@ -31,7 +33,7 @@ func newSpell(args []string, timeout time.Duration) (spell Spell, err error) {
 	return
 }
 
-func (spell *spellImpl) Cast(args ...string) (output []byte, err error) {
+func (spell *spellImpl) CastContext(ctx context.Context, args ...string) (output []byte, err error) {
 	program := spell.args[0]
 
 	// {} in the spell will be replaced by the args in order
@@ -56,6 +58,11 @@ func (spell *spellImpl) Cast(args ...string) (output []byte, err error) {
 		}
 	}
 
-	output, err = command.CheckCombinedOutput(program, actualArgs, spell.timeout)
+	output, err = command.CheckCombinedOutputContext(ctx, program, actualArgs, spell.timeout)
+	return
+}
+
+func (spell *spellImpl) Cast(args ...string) (output []byte, err error) {
+	output, err = spell.CastContext(context.Background(), args...)
 	return
 }

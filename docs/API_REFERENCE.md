@@ -464,6 +464,7 @@ Method: ```POST /package/{name}```
 Parameters:
 
 * path: Package file path. This parameter works only if the url parameter *name* is not specified.
+* async: *true* to make this request be handled by a background job. *false* to make this request be handled synchronously as usual. Default is *false*.
 
 Response:
 

@@ -4,6 +4,7 @@ import (
 	"expinc/sunagent/common"
 	"expinc/sunagent/ops"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +31,7 @@ func GetPackageInfo(ctx *gin.Context) {
 }
 
 func InstallPackage(ctx *gin.Context) {
+	// get params
 	byFile := false
 	nameOrPath, ok := ctx.Params.Get("name")
 	if !ok {
@@ -42,7 +44,28 @@ func InstallPackage(ctx *gin.Context) {
 			return
 		}
 	}
+	async := false
+	asyncParams, ok := ctx.Request.URL.Query()["async"]
+	if ok {
+		async, _ = strconv.ParseBool(asyncParams[0])
+	}
 
+	// create background job if async == true
+	if async {
+		params := make(map[string]interface{})
+		params["nameOrPath"] = nameOrPath
+		params["byFile"] = byFile
+		params["upgradeIfAlreadyInstalled"] = false
+		jobInfo, err := ops.StartJob(createStandardContext(ctx), ops.JobTypeInstallPackage, params)
+		if nil == err {
+			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+		} else {
+			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		}
+		return
+	}
+
+	// execute operation
 	pkgInfo, err := ops.InstallPackage(createStandardContext(ctx), nameOrPath, byFile, false)
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
@@ -69,6 +92,26 @@ func UpgradePackage(ctx *gin.Context) {
 			RespondMissingParams(ctx, []string{"path"})
 			return
 		}
+	}
+	async := false
+	asyncParams, ok := ctx.Request.URL.Query()["async"]
+	if ok {
+		async, _ = strconv.ParseBool(asyncParams[0])
+	}
+
+	// create background job if async == true
+	if async {
+		params := make(map[string]interface{})
+		params["nameOrPath"] = nameOrPath
+		params["byFile"] = byFile
+		params["upgradeIfAlreadyInstalled"] = true
+		jobInfo, err := ops.StartJob(createStandardContext(ctx), ops.JobTypeInstallPackage, params)
+		if nil == err {
+			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+		} else {
+			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		}
+		return
 	}
 
 	pkgInfo, err := ops.InstallPackage(createStandardContext(ctx), nameOrPath, byFile, true)

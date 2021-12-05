@@ -1,6 +1,7 @@
 package ops
 
 import (
+	"context"
 	"expinc/sunagent/common"
 	"expinc/sunagent/grimoire"
 	"fmt"
@@ -17,7 +18,7 @@ func ReloadGrimoireFromFile() error {
 	return err
 }
 
-func castGrimoireArcane(arcaneName string, args ...string) (output []byte, err error) {
+func castGrimoireArcaneContext(ctx context.Context, arcaneName string, args ...string) (output []byte, err error) {
 	var arcane grimoire.Arcane
 	arcane, err = opsGrimoire.GetArcane(arcaneName)
 	if nil != err {
@@ -30,6 +31,11 @@ func castGrimoireArcane(arcaneName string, args ...string) (output []byte, err e
 		return
 	}
 
-	output, err = spell.Cast(args...)
+	output, err = spell.CastContext(ctx, args...)
+	return
+}
+
+func castGrimoireArcane(arcaneName string, args ...string) (output []byte, err error) {
+	output, err = castGrimoireArcaneContext(context.Background(), arcaneName, args...)
 	return
 }

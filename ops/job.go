@@ -22,8 +22,9 @@ const (
 )
 
 const (
-	JobTypeDummy      = "dummy"
-	JobTypeExecScript = "ExecScript"
+	JobTypeDummy          = "dummy"
+	JobTypeExecScript     = "ExecScript"
+	JobTypeInstallPackage = "InstallPackage"
 )
 
 func IsFinshedJobStatus(status string) bool {
@@ -174,6 +175,17 @@ func createJob(ctx context.Context, typ string, params map[string]interface{}) (
 	case JobTypeExecScript:
 		cancelableCtx, cancelFunction := context.WithCancel(ctx)
 		job = &ExecScriptJob{
+			jobBase: jobBase{
+				ctx:    cancelableCtx,
+				info:   &info,
+				params: params,
+			},
+			cancelFunc: cancelFunction,
+			canceled:   false,
+		}
+	case JobTypeInstallPackage:
+		cancelableCtx, cancelFunction := context.WithCancel(ctx)
+		job = &InstallPackageJob{
 			jobBase: jobBase{
 				ctx:    cancelableCtx,
 				info:   &info,

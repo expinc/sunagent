@@ -196,3 +196,33 @@ func UninstallPackage(ctx context.Context, name string) error {
 	}
 	return err
 }
+
+type InstallPackageJob struct {
+	jobBase
+
+	cancelFunc context.CancelFunc
+	canceled   bool
+}
+
+func (job *InstallPackageJob) execute() error {
+	nameOrPath := job.jobBase.params["nameOrPath"].(string)
+	byFile := job.jobBase.params["byFile"].(bool)
+	upgradeIfAlreadyInstalled := job.jobBase.params["upgradeIfAlreadyInstalled"].(bool)
+
+	var err error
+	job.jobBase.getInfo().Result, err = InstallPackage(job.ctx, nameOrPath, byFile, upgradeIfAlreadyInstalled)
+	if job.canceled {
+		// If the job is canceled, it should not be considered as failed job.
+		// Therefore override the error as nil if any
+		err = nil
+	}
+	return err
+}
+
+func (job *InstallPackageJob) cancel() {
+	job.canceled = true
+	job.getInfo().Status = JobStatusCanceled
+	job.cancelFunc()
+}
+
+func (job *InstallPackageJob) dispose() {}

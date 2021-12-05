@@ -144,9 +144,9 @@ def download_file(url, target_path):
 
 def get_package_version(name):
     if "ubuntu" == distro.id() or "debian" == distro.id():
-        output = subprocess.check_output("dpkg -s {} | grep Version".format(name), shell=True)
+        output = subprocess.check_output("dpkg -s {} | grep ^Version".format(name), shell=True)
     elif "centos" == distro.id() or "opensuse" in distro.id():
-        output = subprocess.check_output("rpm -qi {} | grep Version".format(name), shell=True)
+        output = subprocess.check_output("rpm -qi {} | grep ^Version".format(name), shell=True)
     else:
         raise Exception("Not supported")
 

@@ -5,6 +5,7 @@ import os
 import platform
 import pytest
 import shutil
+import time
 import urllib.parse
 from assertpy import assert_that
 from http import HTTPStatus
@@ -29,6 +30,11 @@ class TestPackageInstall:
     @classmethod
     def teardown_class(cls):
         shutil.rmtree(common.TEST_TMP_DIR)
+
+    def _get_job(self, conn, id):
+        url = "/api/v1/jobs/" + id
+        conn.request("GET", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+        return common.get_successful_response(conn.getresponse(), HTTPStatus.OK)
 
     def test_ordinary(self):
         test_package = common.TEST_PKGS[distro.id()]["name"]
@@ -122,6 +128,66 @@ class TestPackageInstall:
             conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
             common.assert_failed_response(response, HTTPStatus.INTERNAL_SERVER_ERROR)
+        finally:
+            conn.close()
+            common.remove_package(test_package)
+
+    def test_async_successful(self):
+        test_package = common.TEST_PKGS[distro.id()]["name"]
+        common.remove_package(test_package)
+
+        try:
+            # create job
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            params = urllib.parse.urlencode({"async":"true"})
+            url = "/api/v1/package/" + test_package + "?" + params
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            id = data["id"]
+            assert_that(data["name"]).is_equal_to("InstallPackage")
+
+            # wait for job finish
+            is_finished = False
+            while not is_finished:
+                time.sleep(3)
+                data = self._get_job(conn, id)
+                if "EXECUTING" != data["status"]:
+                    is_finished = True
+
+            # verify result
+            assert_that(data["status"]).is_equal_to("SUCCESSFUL")
+            installed = common.is_package_installed(test_package)
+            assert_that(installed).is_equal_to(True)
+        finally:
+            conn.close()
+            common.remove_package(test_package)
+
+    def test_async_cancel(self):
+        test_package = common.TEST_PKGS[distro.id()]["name"]
+        common.remove_package(test_package)
+
+        try:
+            # create job
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            params = urllib.parse.urlencode({"async":"true"})
+            url = "/api/v1/package/" + test_package + "?" + params
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+            data = common.get_successful_response(response, HTTPStatus.OK)
+            id = data["id"]
+            assert_that(data["name"]).is_equal_to("InstallPackage")
+
+            # cancel job
+            url = "/api/v1/jobs/" + id + "/cancel"
+            conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            conn.getresponse().read()
+
+            # verify result
+            time.sleep(1)
+            data = self._get_job(conn, id)
+            assert_that(data["status"]).is_equal_to("CANCELED")
+            installed = common.is_package_installed(test_package)
         finally:
             conn.close()
             common.remove_package(test_package)

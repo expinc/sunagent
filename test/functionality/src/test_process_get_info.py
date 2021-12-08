@@ -56,8 +56,13 @@ class TestGetProcInfo:
             response = conn.getresponse()
             
             data = common.get_successful_response(response, HTTPStatus.OK)
-            print("data: {}".format(data))
-            assert_that(2 + common.TEST_SCRIPT_PYTHON_PROC_COUNT).is_equal_to(len(data))
+            # cnt_dummy_proc = 0
+            dummy_procs = [proc for proc in data if "dummy-proc" in proc["cmd"]]
+            # for proc in data:
+            #     if "dummy_proc" in proc["cmd"]:
+            #         cnt_dummy_proc += 1
+            # assert_that(2).is_equal_to(cnt_dummy_proc)
+            assert_that(2).is_equal_to(len(dummy_procs))
             pids = [info["pid"] for info in data]
             assert_that(pids).contains(self.dummy_proc1.pid, self.dummy_proc2.pid)
         finally:

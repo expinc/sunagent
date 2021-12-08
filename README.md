@@ -1,6 +1,6 @@
 # SunAgent
 
-| [License: MIT](LICENSE) | [Language: Go](https://golang.org/) | [Release: 1.0.0](docs/RELEASE_NOTES.md) |
+| [License: MIT](LICENSE) | [Language: Go](https://golang.org/) | [Release: 1.1.0](docs/RELEASE_NOTES.md) |
 
 SunAgent is a lightweight cross-platform remote node operation service.
 

@@ -31,3 +31,19 @@ If the operations are implemented by system commands that are configured in grim
 ## Expose by More Protocals
 
 *ops* package just includes a set of functions that could be called by other packages. You could add packages of the protocals what ever you want, like gRPC. You route the requests of the protocals to the operations, then fabricate the response by the operation results. In function ```main.main()```, you start the servers of your protocals. Additionally, you may define more configuration options for your protocals in [etc/config.conf](../etc/config.conf).
+
+## Background Job
+
+If you are going to add operations that could be executed in the background, i.e., supporting asynchronous requests, then you could leverage built-in job framework.
+
+First, you create a struct type that consists of struct *ops.jobBase*.
+
+Then, you implement the functions of interface *ops.Job*, except ```getInfo() *JobInfo``` that has already been implemented by *ops.jobBase*.
+
+* ```execute() error```: You implement how to execute the operation in this function. An error should be returned in case of failure. You may change the progress during execution by modifying *ops.jobBase.info.Progress*, which is the percentage in 0~100 of how much the job is accomplished.
+* ```cancel()```: You implement the cancel logics in this function. You may leverage *ops.jobBase.ctx* to implement it. Note that **You must set job status as CANCELED by yourself. Otherwise, the job status will end up with SUCCESSFUL or FAILED**. If the operation could not be canceled, just leave it empty.
+* ```dispose()```: You release delegated resources, e.g., close files opened by the job, in this function. If nothing to release, just leave it empty.
+
+Finally, you specify how the job is created in function *ops.createJob*. You may initialize *ops.jobBase.params* to specify the parameters necessary to the job.
+
+You may refer to *ops.dummyJob* to see how a job should be implemented.

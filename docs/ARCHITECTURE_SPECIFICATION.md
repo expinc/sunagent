@@ -33,3 +33,19 @@ An arcane is a specific operation. It defines the timeout by seconds and a set o
 A spell defines a specific system command to be executed. The parameters take *{}* as the place holder. If the spell contains literal *{}*, use *{{}}* to escape it.
 
 When an operation is executed, the corresponding system command of the running OS type and family configured by the grimoire file will be called.
+
+## Background Job
+
+Some operations could be executed as background jobs. So that a request could get response immediately instead of waiting for a long period. A background job is nothing more than an executing operation. It has following status:
+
+* SPAWNED: The job is just created and about to execute. When it starts executing, it will have a status of EXECUTING.
+* EXECUTING: The job is executing. When it is finished, it will have different status according to how it is finished.
+* SUCCESSFUL: The job has finished and the execution was successful.
+* FAILED: The job has finished and the execution was failed.
+* CANCELED: The job was canceled during execution.
+
+![](../pics/job-status.png)
+
+The job status could be retrieved after its creation. However, if the number of jobs exceeds the value of configuration *CORE.jobCleanThreshold*, part of the finished job status will be cleaned. Therefore, only the status of latest finished jobs and all executing jobs could be retrieved.
+
+The job status is not persistent. All jobs will be lost after SunAgent is restarted. However, job IDs are guaranteed to be unique even if Sunagent is restarted.

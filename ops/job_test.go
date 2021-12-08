@@ -44,9 +44,7 @@ func TestRunJob_Failed(t *testing.T) {
 	info, err = GetJobInfo(context.Background(), info.Id)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, JobStatusFailed, info.Status)
-	resultErr, ok := info.Result.(common.Error)
-	assert.Equal(t, true, ok)
-	assert.Equal(t, common.ErrorUnknown, resultErr.Code())
+	assert.Equal(t, "-1 - Fake error", info.Result.(string))
 }
 
 func TestCancelJob_Ordinary(t *testing.T) {
@@ -108,9 +106,7 @@ func TestRunJob_Panic(t *testing.T) {
 	info, err = GetJobInfo(context.Background(), info.Id)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, JobStatusFailed, info.Status)
-	resultErr, ok := info.Result.(common.Error)
-	assert.Equal(t, true, ok)
-	assert.Equal(t, common.ErrorUnknown, resultErr.Code())
+	assert.Equal(t, "-1 - Fake panic", info.Result.(string))
 }
 
 func TestAccessJob_NonExist(t *testing.T) {

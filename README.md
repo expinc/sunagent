@@ -4,7 +4,7 @@
 
 SunAgent is a lightweight cross-platform remote node operation service.
 
-Clients of SunAgent could get system information, execute scripts, create files, etc., remotely. Clients only need to care about what to do, but care little about how to do, especially how to accomplish the same task on different platforms. For example, installing software "foobar" should do "apt-get install foobar" on debian but "yum install foobar" on redhat. Clients only tell SunAgent to "install a software foobar" regardless of the node should install it by apt-get or by yum. SunAgent encapsulates the actual way to accomplish the installation.
+Clients of SunAgent (typically a distributed system management and monitoring service) could get system information, execute scripts, create files, etc., remotely. Clients only need to care about what to do, but care little about how to do, especially how to accomplish the same task on different platforms. For example, installing software "foobar" should do "apt-get install foobar" on debian but "yum install foobar" on redhat. Clients only tell SunAgent to "install a software foobar" regardless of the node should install it by apt-get or by yum. SunAgent encapsulates the actual way to accomplish the installation.
 
 A node infer to some computing resource. It may be a host, a virtual machine, or a container. Different kind of node could do different operations. For example, you cannot call systemctl in docker container without setting docker entrypoint as /usr/sbin/init. SunAgent provides functionalities that work on a host, though some of them may fail in a container.
 
@@ -57,7 +57,7 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 
 ## API Reference
 
-Please refer to [here](docs/API_REFERENCE.md).
+Please refer to [here](docs/API_REFERENCE.md) for the APIs provided by SunAgent.
 
 ## Support Matrix
 
@@ -91,6 +91,10 @@ Please refer to [here](docs/EXTENSIBILITY.md) for how to extend the features.
 
 ## Versioning
 
-The version of SunAgent has the format of *major.minor.patch*. If some fixes are patched, *patch* component of the version will increase. If new features are introduced, *minor* component of the version will increase and *patch* component will return zero. If the new version introduced change that is not backward compatible, *major* component of the version will increase while *minor* component and *patch* component will return zero.
+The version of SunAgent has the format of *major.minor.patch*.
+
+* If some fixes are patched, *patch* component of the version will increase.
+* If new features are introduced, *minor* component of the version will increase and *patch* component will return zero.
+* If the new version introduced change that is not backward compatible, *major* component of the version will increase while *minor* component and *patch* component will return zero.
 
 For the details of the changes, please refer to the [release notes](docs/RELEASE_NOTES.md).

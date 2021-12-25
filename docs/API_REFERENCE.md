@@ -54,6 +54,11 @@ The status of background job is not persistent. If SunAgent is restarted, the st
     - [Get Job Information](#get-job-information)
     - [List Jobs](#list-jobs)
     - [Cancel Job](#cancel-job)
+* [Grimoire Management](#grimoire-management)
+    - [Get Grimoire](#get-grimoire)
+    - [Cast Arcane](#cast-arcane)
+    - [Set Arcane](#set-arcane)
+    - [Remove Arcane](#remove-arcane)
 
 ## SunAgent Management
 
@@ -573,3 +578,90 @@ Response:
     "result": "Result of the job"
 }
 ```
+
+## Grimoire Management
+
+### Get Grimoire
+
+Get the content of the grimoire of specified platform.
+
+You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+
+Method: ```GET /grimoires/{platform}```
+
+Response: The content of the grimoire.
+
+### Cast Arcane
+
+Execute the command specified by an arcane.
+
+You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+
+Method: ```POST /grimoires/{platform}/arcanes/{arcaneName}```
+
+Parameters:
+
+* separateOutput: *false* to return all output together (default). *true* to return stdout and stderr separately.
+* waitSeconds: Seconds to wait for the script execution to complete. If timeout, the script process will be killed. The default value is 60. Set it as 0 if wait until the script completes execution.
+* async: *true* to make this request be handled by a background job. *false* to make this request be handled synchronously as usual. Default is *false*.
+
+Body:
+
+```
+parameter1
+parameter2
+parameter3
+```
+
+Response:
+
+When *separateOutput=false*, it will be like below:
+
+```json
+{
+    "output": "combined stdout and stderr",
+    "exitStatus": 0,
+    "error": "error message if error occurs, otherwise empty"
+}
+```
+
+When *separateOutput=true*, it will be like below:
+
+```json
+{
+    "stdout": "stdout content",
+    "stderr": "stderr content",
+    "exitStatus": 0,
+    "error": "error message if error occurs, otherwise empty"
+}
+```
+
+### Set Arcane
+
+Set an arcane in the grimoire. It will override the existing one if there is already an arcane has the same name as the one that is being set.
+
+You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+
+Method: ```PUT /grimoires/{platform}/arcanes/{arcaneName}```
+
+Body:
+
+```yaml
+arcaneName:
+    timeout: 60 # timeout in seconds
+    spells:
+        platform1:
+            args: command arguments for platform1   # use {} as parameter place holder, use {{}} as literal {}
+        platform2:
+            args: command arguments for platform2   # use {} as parameter place holder, use {{}} as literal {}
+        platform3:
+            args: command arguments for platform3   # use {} as parameter place holder, use {{}} as literal {}
+```
+
+### Remove Arcane
+
+Remove an arcane.
+
+You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+
+Method: ```DELETE /grimoires/{platform}/arcanes/{arcaneName}```

@@ -4,7 +4,11 @@ SunAgent has an extensible architecture. You could contribute more features by a
 
 ## Add More Operations
 
-To add operations, first, you add functions in *ops* package with below signature:
+You could add more operations by either adding more functions or adding arcanes in grimoire.
+
+### Add Operation by Function
+
+To add operations by functions, first, you add functions in *ops* package with below signature:
 ```go
 func function_name(ctx context.Context, other_argument type_of_other_argument...) (return_value return_type...)
 ```
@@ -18,7 +22,9 @@ Finally, register the handler in function ```http.registerHandlers()```. You mus
 
 For other protocals that you add to SunAgent, just expose the operations in the way of your protocals.
 
-If the operations you are going to add could be implemented by system command, leverage grimoire, which is illustrated in [Architecture Specification](ARCHITECTURE_SPECIFICATION.md).
+### Add Operation by Grimoire
+
+If the operations you are going to add could be implemented by system command, leverage grimoire, which is illustrated in [Architecture Specification](ARCHITECTURE_SPECIFICATION.md#grimoire). Besides extend grimoires statically by the configuration illustreated in [Architecture Specification](ARCHITECTURE_SPECIFICATION.md#grimoire), you could also extend girmoires dynamically by APIs that are specified in [API Reference](API_REFERENCE.md#grimoire-management).
 
 ## Support More Platforms
 

@@ -26,13 +26,13 @@ The access layer includes packages that expose the functions of SunAgent by comm
 
 ## Grimoire
 
-A grimoire is a set of operations for a specific OS type. It could be configured by a YAML file that is named as *{OS type}.yaml*. You could refer to [linux.yaml](../etc/grimoires/linux.yaml) for the syntax.
+A grimoire is a set of operations implemented by system commands for a specific OS type. It could be configured by a YAML file that is named as *{OS type}.yaml*. You could refer to [linux.yaml](../etc/grimoires/linux.yaml) for the syntax.
 
 An arcane is a specific operation. It defines the timeout by seconds and a set of spells that correspond to OS families
 
 A spell defines a specific system command to be executed. The parameters take *{}* as the place holder. If the spell contains literal *{}*, use *{{}}* to escape it.
 
-When an operation is executed, the corresponding system command of the running OS type and family configured by the grimoire file will be called.
+When an operation is executed, the corresponding system command of the running OS type and family configured by the grimoire file will be called. Since the cross-platform mechanism depends on [gopsutil](https://github.com/shirou/gopsutil), refer to [GOOS](https://pkg.go.dev/runtime#pkg-constants) for the literals of OS types and refer to [here](https://github.com/shirou/gopsutil/blob/master/host/host_linux.go#L281) for the literals of OS families.
 
 ## Background Job
 

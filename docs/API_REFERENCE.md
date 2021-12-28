@@ -583,11 +583,11 @@ Response:
 
 ### Get Grimoire
 
-Get the content of the grimoire of specified platform.
+Get the content of the grimoire of specified OS.
 
-You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+You could specify path parameter *osType* as "default" to specify it as the OS that SunAgent is currently running on.
 
-Method: ```GET /grimoires/{platform}```
+Method: ```GET /grimoires/{osType}```
 
 Response: The content of the grimoire.
 
@@ -595,9 +595,9 @@ Response: The content of the grimoire.
 
 Execute the command specified by an arcane.
 
-You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+You could specify path parameter *osType* as "default" to specify it as the OS that SunAgent is currently running on.
 
-Method: ```POST /grimoires/{platform}/arcanes/{arcaneName}```
+Method: ```POST /grimoires/{osType}/arcanes/{arcaneName}```
 
 Parameters:
 
@@ -640,9 +640,9 @@ When *separateOutput=true*, it will be like below:
 
 Set an arcane in the grimoire. It will override the existing one if there is already an arcane has the same name as the one that is being set.
 
-You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+You could specify path parameter *osType* as "default" to specify it as the OS that SunAgent is currently running on.
 
-Method: ```PUT /grimoires/{platform}/arcanes/{arcaneName}```
+Method: ```PUT /grimoires/{osType}/arcanes/{arcaneName}```
 
 Body:
 
@@ -650,18 +650,18 @@ Body:
 arcaneName:
     timeout: 60 # timeout in seconds
     spells:
-        platform1:
-            args: command arguments for platform1   # use {} as parameter place holder, use {{}} as literal {}
-        platform2:
-            args: command arguments for platform2   # use {} as parameter place holder, use {{}} as literal {}
-        platform3:
-            args: command arguments for platform3   # use {} as parameter place holder, use {{}} as literal {}
+        osFamily1:
+            args: command arguments for osFamily1   # use {} as parameter place holder, use {{}} as literal {}
+        osFamily2:
+            args: command arguments for osFamily2   # use {} as parameter place holder, use {{}} as literal {}
+        osFamily3:
+            args: command arguments for osFamily3   # use {} as parameter place holder, use {{}} as literal {}
 ```
 
 ### Remove Arcane
 
 Remove an arcane.
 
-You could specify path parameter *platform* as "default" to specify it as the platform that SunAgent is currently running on.
+You could specify path parameter *osType* as "default" to specify it as the OS that SunAgent is currently running on.
 
-Method: ```DELETE /grimoires/{platform}/arcanes/{arcaneName}```
+Method: ```DELETE /grimoires/{osType}/arcanes/{arcaneName}```

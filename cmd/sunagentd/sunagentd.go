@@ -41,7 +41,7 @@ func main() {
 	log.Info(fmt.Sprintf("%s started: pid=%d", common.ProcName, common.Pid))
 
 	// load grimoire
-	err = ops.ReloadGrimoireFromFile()
+	err = ops.ReloadGrimoire(context.Background())
 	if nil != err {
 		log.Fatal(err)
 	}

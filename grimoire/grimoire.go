@@ -92,3 +92,29 @@ func NewGrimoireFromYamlBytes(bytes []byte) (grimoire Grimoire, err error) {
 	}
 	return
 }
+
+func Grimoire2Yaml(grimoire Grimoire) (yamlBytes []byte, err error) {
+	grimoireImpl := grimoire.(*grimoireImpl)
+	grimoireStruct := GrimoireStruct{
+		Arcanes: make(map[string]ArcaneStruct),
+	}
+	for key, val := range grimoireImpl.arcanes {
+		arcane := val.(*arcaneImpl)
+		arcaneStruct := ArcaneStruct{
+			Timeout: uint(arcane.timeout / time.Second),
+			Spells:  make(map[string]SpellStruct),
+		}
+
+		for key2, val2 := range arcane.spells {
+			spell := val2.(*spellImpl)
+			spellStruct := SpellStruct{
+				Args: strings.Join(spell.args, " "),
+			}
+			arcaneStruct.Spells[key2] = spellStruct
+		}
+		grimoireStruct.Arcanes[key] = arcaneStruct
+	}
+
+	yamlBytes, err = yaml.Marshal(grimoireStruct)
+	return
+}

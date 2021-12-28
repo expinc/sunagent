@@ -222,6 +222,10 @@ func (server *Server) registerHandlers() error {
 	routerGroup.GET("", handlerProxy(handlers.GetAllJobInfo))
 	routerGroup.POST("/:id/cancel", handlerProxy(handlers.CancelJob))
 
+	// grimoire
+	routerGroup = server.engine.Group(urlPrefix+"/grimoires", middlewares...)
+	routerGroup.GET("/:osType", handlerProxy(handlers.GetGrimoire))
+
 	return nil
 }
 

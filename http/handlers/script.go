@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"expinc/sunagent/command"
 	"expinc/sunagent/common"
 	"expinc/sunagent/ops"
 	"io/ioutil"
@@ -25,7 +26,7 @@ func ExecScript(ctx *gin.Context) {
 	if ok {
 		separateOutput, _ = strconv.ParseBool(separateOutputParams[0])
 	}
-	waitSeconds := int64(60)
+	waitSeconds := int64(command.DefaultTimeoutSeconds)
 	waitSecondsParams, ok := ctx.Request.URL.Query()["waitSeconds"]
 	if ok {
 		waitSeconds, _ = strconv.ParseInt(waitSecondsParams[0], 10, 64)

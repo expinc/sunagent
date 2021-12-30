@@ -595,14 +595,12 @@ Response: The content of the grimoire.
 
 Execute the command specified by an arcane.
 
-You could specify path parameter *osType* as "default" to specify it as the OS that SunAgent is currently running on.
+You must specify path parameter *osType* as "default" or as the OS that SunAgent is currently running on.
 
-Method: ```POST /grimoires/{osType}/arcanes/{arcaneName}```
+Method: ```POST /grimoires/{osType}/arcanes/{arcaneName}/cast```
 
 Parameters:
 
-* separateOutput: *false* to return all output together (default). *true* to return stdout and stderr separately.
-* waitSeconds: Seconds to wait for the script execution to complete. If timeout, the script process will be killed. The default value is 60. Set it as 0 if wait until the script completes execution.
 * async: *true* to make this request be handled by a background job. *false* to make this request be handled synchronously as usual. Default is *false*.
 
 Body:

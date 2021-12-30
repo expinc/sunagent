@@ -225,6 +225,7 @@ func (server *Server) registerHandlers() error {
 	// grimoire
 	routerGroup = server.engine.Group(urlPrefix+"/grimoires", middlewares...)
 	routerGroup.GET("/:osType", handlerProxy(handlers.GetGrimoire))
+	routerGroup.POST("/:osType/arcanes/:arcaneName/cast", handlerProxy(handlers.CastArcane))
 
 	return nil
 }

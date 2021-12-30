@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	DefaultTimeout = 60 * time.Second
-	NoTimeout      = (1<<63 - 1) * time.Nanosecond
+	DefaultTimeoutSeconds = 60
+	DefaultTimeout        = DefaultTimeoutSeconds * time.Second
+	NoTimeout             = (1<<63 - 1) * time.Nanosecond
 )
 
 func logOnExecStart(ctx context.Context, program string, args []string, timeout time.Duration) {

@@ -23,7 +23,7 @@ func ReloadGrimoire(ctx context.Context) error {
 	return err
 }
 
-func castGrimoireArcaneContext(ctx context.Context, arcaneName string, args ...string) (output []byte, err error) {
+func CastGrimoireArcaneContext(ctx context.Context, arcaneName string, args ...string) (output []byte, err error) {
 	var arcane grimoire.Arcane
 	arcane, err = opsGrimoire.GetArcane(arcaneName)
 	if nil != err {
@@ -41,7 +41,7 @@ func castGrimoireArcaneContext(ctx context.Context, arcaneName string, args ...s
 }
 
 func castGrimoireArcane(arcaneName string, args ...string) (output []byte, err error) {
-	output, err = castGrimoireArcaneContext(context.Background(), arcaneName, args...)
+	output, err = CastGrimoireArcaneContext(context.Background(), arcaneName, args...)
 	return
 }
 

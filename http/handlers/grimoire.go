@@ -63,19 +63,25 @@ func CastArcane(ctx *gin.Context) {
 	if nil == err {
 		RespondSuccessfulJson(ctx, http.StatusOK, result)
 	} else {
+		result.Error = err.Error()
+
 		// defaultly, should respond InternalServerError and no data
 		status := http.StatusInternalServerError
 		var data interface{}
 		data = nil
 
-		// if the execution timeout, respond RequestTimeout and execution result
+		// handle errors of timeout and arcane not found
 		internalErr, ok := err.(common.Error)
-		if ok && common.ErrorTimeout == internalErr.Code() {
-			status = http.StatusRequestTimeout
+		if ok {
+			if common.ErrorTimeout == internalErr.Code() {
+				status = http.StatusRequestTimeout
+			} else if common.ErrorNotFound == internalErr.Code() {
+				status = http.StatusNotFound
+			}
 			data = result
 		}
 
-		// if the execution returns non-zero, respond InternalServerError and execution result
+		// handle command execution failure
 		exitError, ok := err.(*exec.ExitError)
 		if ok {
 			result.ExitStatus = exitError.ExitCode()

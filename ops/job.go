@@ -25,6 +25,7 @@ const (
 	JobTypeDummy          = "dummy"
 	JobTypeExecScript     = "ExecScript"
 	JobTypeInstallPackage = "InstallPackage"
+	JobTypeCastArcane     = "CastArcane"
 )
 
 func IsFinshedJobStatus(status string) bool {
@@ -186,6 +187,17 @@ func createJob(ctx context.Context, typ string, params map[string]interface{}) (
 	case JobTypeInstallPackage:
 		cancelableCtx, cancelFunction := context.WithCancel(ctx)
 		job = &InstallPackageJob{
+			jobBase: jobBase{
+				ctx:    cancelableCtx,
+				info:   &info,
+				params: params,
+			},
+			cancelFunc: cancelFunction,
+			canceled:   false,
+		}
+	case JobTypeCastArcane:
+		cancelableCtx, cancelFunction := context.WithCancel(ctx)
+		job = &CastArcaneJob{
 			jobBase: jobBase{
 				ctx:    cancelableCtx,
 				info:   &info,

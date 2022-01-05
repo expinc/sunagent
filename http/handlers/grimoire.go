@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,25 @@ func CastArcane(ctx *gin.Context) {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 	}
 	args := strings.Split(string(body), "\n")
+
+	// create background job if async == true
+	async := false
+	asyncParams, ok := ctx.Request.URL.Query()["async"]
+	if ok {
+		async, _ = strconv.ParseBool(asyncParams[0])
+	}
+	if async {
+		params := make(map[string]interface{})
+		params["arcaneName"] = arcaneName
+		params["args"] = args
+		jobInfo, err := ops.StartJob(createStandardContext(ctx), ops.JobTypeCastArcane, params)
+		if nil == err {
+			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+		} else {
+			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		}
+		return
+	}
 
 	// execute and get output
 	output, err := ops.CastGrimoireArcaneContext(createStandardContext(ctx), arcaneName, args...)

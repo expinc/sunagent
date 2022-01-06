@@ -51,6 +51,7 @@ func CastArcane(ctx *gin.Context) {
 	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		return
 	}
 	args := strings.Split(string(body), "\n")
 
@@ -109,5 +110,32 @@ func CastArcane(ctx *gin.Context) {
 		}
 
 		RespondFailedJson(ctx, status, err, data)
+	}
+}
+
+func SetArcane(ctx *gin.Context) {
+	// Get parameters and body
+	osType, ok := ctx.Params.Get("osType")
+	if !ok {
+		RespondMissingParams(ctx, []string{"osType"})
+		return
+	}
+	arcaneName, ok := ctx.Params.Get("arcaneName")
+	if !ok {
+		RespondMissingParams(ctx, []string{"arcaneName"})
+		return
+	}
+	body, err := ioutil.ReadAll(ctx.Request.Body)
+	if nil != err {
+		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		return
+	}
+
+	// Execute operation and respond
+	err = ops.SetGrimoireArcane(createStandardContext(ctx), osType, arcaneName, body)
+	if nil == err {
+		RespondSuccessfulJson(ctx, http.StatusOK, nil)
+	} else {
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	}
 }

@@ -3,6 +3,7 @@ package grimoire
 import (
 	"expinc/sunagent/common"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"strings"
 	"time"
@@ -117,4 +118,16 @@ func Grimoire2Yaml(grimoire Grimoire) (yamlBytes []byte, err error) {
 
 	yamlBytes, err = yaml.Marshal(grimoireStruct)
 	return
+}
+
+func WriteGrimioreToYamlFile(grimoire Grimoire, filePath string) error {
+	// Transform to yaml
+	yamlBytes, err := Grimoire2Yaml(grimoire)
+	if nil != err {
+		return err
+	}
+
+	// Write to file
+	err = ioutil.WriteFile(filePath, yamlBytes, fs.ModePerm)
+	return err
 }

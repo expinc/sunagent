@@ -8,6 +8,9 @@ import (
 	"expinc/sunagent/util"
 	"fmt"
 	"path/filepath"
+	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -60,6 +63,59 @@ func GetGrimoireAsYaml(ctx context.Context, osType string) (output []byte, err e
 		util.LogErrorIfNotNilCtx(ctx, err)
 	}
 	return
+}
+
+func SetGrimoireArcane(ctx context.Context, osType string, arcaneName string, yamlContent []byte) error {
+	log.InfoCtx(ctx, fmt.Sprintf("Setting grimoire arcane %s of OS type %s", arcaneName, osType))
+
+	// Read origin grimoire
+	isDefault := false
+	if "default" == osType {
+		osType = nodeInfo.OsType
+		isDefault = true
+	}
+	grimoirePath := filepath.Join(common.CurrentDir, "grimoires", fmt.Sprintf("%s.yaml", osType))
+	theGrimoire, err := grimoire.NewGrimoireFromYamlFile(grimoirePath)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// Deserialize content
+	var arcaneStruct grimoire.ArcaneStruct
+	err = yaml.UnmarshalStrict(yamlContent, &arcaneStruct)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// Set arcane
+	err = theGrimoire.SetArcane(arcaneName, time.Second*time.Duration(arcaneStruct.Timeout))
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+	arcane, _ := theGrimoire.GetArcane(arcaneName)
+	for spellIndex, spellStruct := range arcaneStruct.Spells {
+		err = arcane.SetSpell(spellIndex, spellStruct.Args)
+		if nil != err {
+			log.ErrorCtx(ctx, err)
+			return err
+		}
+	}
+
+	// Write to file
+	err = grimoire.WriteGrimioreToYamlFile(theGrimoire, grimoirePath)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// Final step
+	if isDefault {
+		opsGrimoire = theGrimoire
+	}
+	return nil
 }
 
 type CastArcaneJob struct {

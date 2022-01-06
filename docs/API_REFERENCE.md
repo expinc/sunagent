@@ -645,15 +645,14 @@ Method: ```PUT /grimoires/{osType}/arcanes/{arcaneName}```
 Body:
 
 ```yaml
-arcaneName:
-    timeout: 60 # timeout in seconds
-    spells:
-        osFamily1:
-            args: command arguments for osFamily1   # use {} as parameter place holder, use {{}} as literal {}
-        osFamily2:
-            args: command arguments for osFamily2   # use {} as parameter place holder, use {{}} as literal {}
-        osFamily3:
-            args: command arguments for osFamily3   # use {} as parameter place holder, use {{}} as literal {}
+timeout: 60 # timeout in seconds
+spells:
+  osFamily1:
+    args: command arguments for osFamily1   # use {} as parameter place holder, use {{}} as literal {}
+  osFamily2:
+    args: command arguments for osFamily2   # use {} as parameter place holder, use {{}} as literal {}
+  osFamily3:
+    args: command arguments for osFamily3   # use {} as parameter place holder, use {{}} as literal {}
 ```
 
 ### Remove Arcane

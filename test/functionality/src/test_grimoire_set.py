@@ -18,6 +18,8 @@ spells:
 
 OS_TYPE_LIST = ["linux", "windows"]
 
+GRIMOIRE_FOLDER = os.path.join(os.getcwd(), "gen", "grimoires")
+
 class TestGrimoireSet:
 
     def _generate_arcane_name(self):
@@ -40,7 +42,7 @@ class TestGrimoireSet:
 
             # Verify result
             common.assert_successful_response(response, HTTPStatus.OK)
-            grimoire_file = os.path.join(os.getcwd(), "grimoires", self._get_current_os_type() + ".yaml")
+            grimoire_file = os.path.join(GRIMOIRE_FOLDER, self._get_current_os_type() + ".yaml")
             with open(grimoire_file, "r") as f:
                 content = f.read()
             assert_that(content).contains(arcane_name)
@@ -59,7 +61,7 @@ class TestGrimoireSet:
 
                 # Verify result
                 common.assert_successful_response(response, HTTPStatus.OK)
-                grimoire_file = os.path.join(os.getcwd(), "grimoires", os_type + ".yaml")
+                grimoire_file = os.path.join(GRIMOIRE_FOLDER, os_type + ".yaml")
                 with open(grimoire_file, "r") as f:
                     content = f.read()
                 assert_that(content).contains(arcane_name)
@@ -84,7 +86,7 @@ class TestGrimoireSet:
             common.assert_successful_response(response, HTTPStatus.OK)
 
             # Verify result
-            grimoire_file = os.path.join(os.getcwd(), "grimoires", self._get_current_os_type() + ".yaml")
+            grimoire_file = os.path.join(GRIMOIRE_FOLDER, self._get_current_os_type() + ".yaml")
             with open(grimoire_file, "r") as f:
                 content = f.read()
             assert_that(content).contains(additional_arg)

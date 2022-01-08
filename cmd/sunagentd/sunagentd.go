@@ -23,9 +23,12 @@ func main() {
 		log.Info(fmt.Sprintf("%s stopped: pid=%d", common.ProcName, common.Pid))
 	}()
 
-	// load config
+	// parse flags
 	configFile := flag.String("config", "config.conf", "Configuration file")
+	grimoireFolder := flag.String("grimoire", "grimoires", "Grimoire folder path")
 	flag.Parse()
+
+	// load config
 	config, err := ini.Load(*configFile)
 	if nil != err {
 		log.Fatal(err)
@@ -41,6 +44,7 @@ func main() {
 	log.Info(fmt.Sprintf("%s started: pid=%d", common.ProcName, common.Pid))
 
 	// load grimoire
+	ops.GrimoireFolder = *grimoireFolder
 	err = ops.ReloadGrimoire(context.Background())
 	if nil != err {
 		log.Fatal(err)

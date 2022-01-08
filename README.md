@@ -26,10 +26,10 @@ make.bat
 Run below command to start the process.
 ```sh
 # Linux:
-./gen/sunagentd --config=gen/config.conf
+./gen/sunagentd --config=gen/config.conf --grimoire=gen/grimoires
 
 # Windows:
-gen\sunagentd.exe --config=gen\config.conf
+gen\sunagentd.exe --config=gen\config.conf --grimoire=gen\grimoires
 ```
 
 ## Configuration

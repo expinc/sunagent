@@ -14,12 +14,13 @@ import (
 )
 
 var (
-	opsGrimoire grimoire.Grimoire
+	GrimoireFolder string
+	opsGrimoire    grimoire.Grimoire
 )
 
 func ReloadGrimoire(ctx context.Context) error {
 	var err error
-	grimoirePath := filepath.Join(common.CurrentDir, "grimoires", fmt.Sprintf("%s.yaml", nodeInfo.OsType))
+	grimoirePath := filepath.Join(GrimoireFolder, fmt.Sprintf("%s.yaml", nodeInfo.OsType))
 	log.InfoCtx(ctx, "Reloading grimoire from "+grimoirePath)
 	opsGrimoire, err = grimoire.NewGrimoireFromYamlFile(grimoirePath)
 	util.LogErrorIfNotNilCtx(ctx, err)
@@ -54,7 +55,7 @@ func GetGrimoireAsYaml(ctx context.Context, osType string) (output []byte, err e
 		output, err = grimoire.Grimoire2Yaml(opsGrimoire)
 		util.LogErrorIfNotNilCtx(ctx, err)
 	} else {
-		grimoirePath := filepath.Join(common.CurrentDir, "grimoires", fmt.Sprintf("%s.yaml", osType))
+		grimoirePath := filepath.Join(GrimoireFolder, fmt.Sprintf("%s.yaml", osType))
 		var theGrimoire grimoire.Grimoire
 		theGrimoire, err = grimoire.NewGrimoireFromYamlFile(grimoirePath)
 		if nil == err {
@@ -74,7 +75,7 @@ func SetGrimoireArcane(ctx context.Context, osType string, arcaneName string, ya
 		osType = nodeInfo.OsType
 		isDefault = true
 	}
-	grimoirePath := filepath.Join(common.CurrentDir, "grimoires", fmt.Sprintf("%s.yaml", osType))
+	grimoirePath := filepath.Join(GrimoireFolder, fmt.Sprintf("%s.yaml", osType))
 	theGrimoire, err := grimoire.NewGrimoireFromYamlFile(grimoirePath)
 	if nil != err {
 		log.ErrorCtx(ctx, err)

@@ -139,3 +139,30 @@ func SetArcane(ctx *gin.Context) {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	}
 }
+
+func RemoveArcane(ctx *gin.Context) {
+	// Get parameters
+	osType, ok := ctx.Params.Get("osType")
+	if !ok {
+		RespondMissingParams(ctx, []string{"osType"})
+		return
+	}
+	arcaneName, ok := ctx.Params.Get("arcaneName")
+	if !ok {
+		RespondMissingParams(ctx, []string{"arcaneName"})
+		return
+	}
+
+	// Execute operation and respond
+	err := ops.RemoveGrimoireArcane(createStandardContext(ctx), osType, arcaneName)
+	if nil == err {
+		RespondSuccessfulJson(ctx, http.StatusOK, nil)
+	} else {
+		status := http.StatusInternalServerError
+		internalErr, ok := err.(common.Error)
+		if ok && common.ErrorNotFound == internalErr.Code() {
+			status = http.StatusNotFound
+		}
+		RespondFailedJson(ctx, status, err, nil)
+	}
+}

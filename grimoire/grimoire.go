@@ -14,6 +14,7 @@ import (
 type Grimoire interface {
 	SetArcane(name string, timeout time.Duration) error
 	GetArcane(name string) (Arcane, error)
+	RemoveArcane(name string) error
 }
 
 type grimoireImpl struct {
@@ -41,6 +42,16 @@ func (grimoire *grimoireImpl) GetArcane(name string) (arcane Arcane, err error) 
 		err = common.NewError(common.ErrorNotFound, fmt.Sprintf("No arcane \"%s\" in grimoire", name))
 	}
 	return
+}
+
+func (grimoire *grimoireImpl) RemoveArcane(name string) error {
+	_, ok := grimoire.arcanes[name]
+	if ok {
+		delete(grimoire.arcanes, name)
+		return nil
+	} else {
+		return common.NewError(common.ErrorNotFound, fmt.Sprintf("No arcane \"%s\" in grimoire", name))
+	}
 }
 
 type SpellStruct struct {

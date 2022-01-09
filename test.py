@@ -5,6 +5,7 @@ import os
 import platform
 import psutil
 import subprocess
+import time
 
 TEST_OUT_DIR = os.path.join("gen", "test")
 
@@ -65,6 +66,8 @@ def func_test(part):
     elif "Windows" == sys_type:
         process_name = "sunagentd.exe"
         subprocess.check_call("start gen\sunagentd.exe --config=gen\config.conf --grimoire=gen\grimoires", shell=True)
+    # Sleep for 1 second in case of process is not started yet
+    time.sleep(1)
     if not is_process_running_by_name(process_name):
         raise Exception("Executable failed to start")
 

@@ -227,6 +227,7 @@ func (server *Server) registerHandlers() error {
 	routerGroup.GET("/:osType", handlerProxy(handlers.GetGrimoire))
 	routerGroup.POST("/:osType/arcanes/:arcaneName/cast", handlerProxy(handlers.CastArcane))
 	routerGroup.PUT("/:osType/arcanes/:arcaneName", handlerProxy(handlers.SetArcane))
+	routerGroup.DELETE("/:osType/arcanes/:arcaneName", handlerProxy(handlers.RemoveArcane))
 
 	return nil
 }

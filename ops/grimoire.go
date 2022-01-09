@@ -119,6 +119,43 @@ func SetGrimoireArcane(ctx context.Context, osType string, arcaneName string, ya
 	return nil
 }
 
+func RemoveGrimoireArcane(ctx context.Context, osType string, arcaneName string) error {
+	log.InfoCtx(ctx, fmt.Sprintf("Removing grimoire arcane %s of OS type %s", arcaneName, osType))
+
+	// Read origin grimoire
+	isDefault := false
+	if "default" == osType {
+		osType = nodeInfo.OsType
+		isDefault = true
+	}
+	grimoirePath := filepath.Join(GrimoireFolder, fmt.Sprintf("%s.yaml", osType))
+	theGrimoire, err := grimoire.NewGrimoireFromYamlFile(grimoirePath)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// Remove arcane
+	err = theGrimoire.RemoveArcane(arcaneName)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// Write to file
+	err = grimoire.WriteGrimioreToYamlFile(theGrimoire, grimoirePath)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return err
+	}
+
+	// Final step
+	if isDefault {
+		opsGrimoire = theGrimoire
+	}
+	return nil
+}
+
 type CastArcaneJob struct {
 	jobBase
 

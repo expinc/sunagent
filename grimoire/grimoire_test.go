@@ -100,6 +100,32 @@ func TestGrimoire_SetArcane_ReplaceExisting(t *testing.T) {
 	assert.Equal(t, 9*time.Second, arcane.(*arcaneImpl).timeout)
 }
 
+func TestGrimoire_RemoveArcane_Ordinary(t *testing.T) {
+	grimoire := grimoireImpl{
+		arcanes: make(map[string]Arcane),
+	}
+	grimoire.SetArcane("arcane1", command.DefaultTimeout)
+	grimoire.SetArcane("arcane2", command.DefaultTimeout)
+	grimoire.SetArcane("arcane3", command.DefaultTimeout)
+
+	err := grimoire.RemoveArcane("arcane2")
+	assert.Equal(t, nil, err)
+	_, err = grimoire.GetArcane("arcane2")
+	assert.Equal(t, common.ErrorNotFound, err.(common.Error).Code())
+}
+
+func TestGrimoire_RemoveArcane_NotExist(t *testing.T) {
+	grimoire := grimoireImpl{
+		arcanes: make(map[string]Arcane),
+	}
+	grimoire.SetArcane("arcane1", command.DefaultTimeout)
+	grimoire.SetArcane("arcane2", command.DefaultTimeout)
+	grimoire.SetArcane("arcane3", command.DefaultTimeout)
+
+	err := grimoire.RemoveArcane("arcane9")
+	assert.Equal(t, common.ErrorNotFound, err.(common.Error).Code())
+}
+
 func TestNewGrimoireFromYamlBytes_Ordinary(t *testing.T) {
 	grimoire, err := NewGrimoireFromYamlFile(ordinaryGrimoire)
 	assert.Equal(t, nil, err)

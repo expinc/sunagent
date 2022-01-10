@@ -32,6 +32,10 @@ Run below command to start the process.
 gen\sunagentd.exe --config=gen\config.conf --grimoire=gen\grimoires
 ```
 
+## API Reference
+
+All SunAgent features could be consumed by HTTP API. Please refer to [here](docs/API_REFERENCE.md) for the HTTP APIs provided by SunAgent.
+
 ## Configuration
 
 Configuration is defined by [etc/config.conf](etc/config.conf).
@@ -56,10 +60,6 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 
 * level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
 * filelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
-
-## API Reference
-
-Please refer to [here](docs/API_REFERENCE.md) for the APIs provided by SunAgent.
 
 ## Support Matrix
 

@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.2.0 [2022-01-10]
+
+* Add APIs for managing grimoire content.
+* Grimoire folder could be specified by a command flag.
+
 ## 1.1.0 [2021-12-08]
 
 * Add job framework.

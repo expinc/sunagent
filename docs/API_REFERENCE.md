@@ -68,6 +68,9 @@ Get the basic information of SunAgent, etc., version.
 
 Method: ```GET /info```
 
+Status:
+- 200 OK: Request succeeded.
+
 Response:
 
 ```json
@@ -86,6 +89,9 @@ Parameters:
 
 * waitSec: Waiting seconds for gracefully stopping (default is 3). If it is exceeded, SunAgent will be stopped forcibly.
 
+Status:
+- 204 No Content: Request succeeded.
+
 ## File Management
 
 ### Get File Meta
@@ -100,6 +106,11 @@ Parameters:
 
 * path: Absolute path to the file.
 * list: Whether list all the files within the *path* if it is a directory. Valid values: *false* (default), *true*.
+
+Status:
+- 200 OK: Request succeeded.
+- 404 Not Found: File not found.
+- 500 Internal Server Error: Request failed.
 
 Response:
 
@@ -134,6 +145,11 @@ Parameters:
 
 * path: Absolute path to the file.
 
+Status:
+- 200 OK: Request succeeded.
+- 404 Not Found: File not found.
+- 500 Internal Server Error: Request failed.
+
 Response: The binary content of the specified file.
 
 ### Create File
@@ -148,6 +164,11 @@ Parameters:
 * isDir: If the file is a directory.
 
 Body: Binary content of the file if it is a regular file.
+
+Status:
+- 201 Created: File created.
+- 400 Bad Request: Corrupted file content.
+- 500 Internal Server Error: File creation failed.
 
 Response:
 
@@ -174,6 +195,11 @@ Parameters:
 
 Body: Binary content of the file if it is a regular file.
 
+Status:
+- 200 OK: File overwritten.
+- 400 Bad Request: Corrupted file content.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -197,6 +223,11 @@ Parameters:
 * path: Absolute path to the file.
 * recursive: Delete all files under the path if it is a directory.
 
+Status:
+- 200 OK: File deleted.
+- 404 Not Found: File not found.
+- 500 Internal Server Error: Request failed.
+
 ## Process Management
 
 ### Get Process Information
@@ -206,6 +237,11 @@ Get basic information of some processes.
 If the path parameter is pid, only information of one process with the specified pid will be returned. If the path parameter is process name, information of a number of processes with the specified process name will be returned.
 
 Method: ```GET /processes/{pid or name}```
+
+Status:
+- 200 OK: Request succeeded.
+- 404 Not Found: Process not found.
+- 500 Internal Server Error: Request failed.
 
 Response:
 
@@ -236,6 +272,11 @@ Parameters:
 
 * signal: Signal to send to the process. The default value is SIGTERM. (For linux)
 
+Status:
+- 200 OK: Signal sent to process.
+- 404 Not Found: Process not found.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -250,6 +291,11 @@ Response:
 Terminate a process. For windows, it is equivalent to kill process. For linux, it is equivalent to kill process by signal *SIGKILL*.
 
 Method: ```POST /processes/{pid or name}/terminate```
+
+Status:
+- 200 OK: Process is terminated.
+- 404 Not Found: Process not found.
+- 500 Internal Server Error: Request failed.
 
 Response:
 
@@ -267,6 +313,9 @@ Response:
 Get basic information of the node.
 
 Method: ```GET /sys/info```
+
+Status:
+- 200 OK: Request succeeded.
 
 Response:
 
@@ -288,6 +337,9 @@ Get basic informatino of CPUs. The response field *count* is the number of physi
 
 Method: ```GET /sys/cpus/info```
 
+Status:
+- 200 OK: Request succeeded.
+
 Response:
 
 ```json
@@ -308,6 +360,10 @@ Method: ```GET /sys/cpus/stats```
 Parameters:
 
 * perCpu: *true* for getting usage of each CPU (default). *false* for getting total usage of all CPUs.
+
+Status:
+- 200 OK: Request succeeded.
+- 500 Internal Server Error: Request failed.
 
 Response:
 
@@ -331,6 +387,10 @@ The response field *free* is the kernel's notion of free memory, RAM chips whose
 
 Method: ```GET /sys/mem/stats```
 
+Status:
+- 200 OK: Request succeeded.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -347,6 +407,10 @@ Response:
 Get disk information. The values are count by bytes.
 
 Method: ```GET /sys/disks/stats```
+
+Status:
+- 200 OK: Request succeeded.
+- 500 Internal Server Error: Request failed.
 
 Response:
 
@@ -376,6 +440,10 @@ Response:
 Get network interface information.
 
 Method: ```GET /sys/net/info```
+
+Status:
+- 200 OK: Request succeeded.
+- 500 Internal Server Error: Request failed.
 
 Response:
 
@@ -416,6 +484,13 @@ Parameters:
 
 Body: script content.
 
+Status:
+- 200 OK: Script execution succeeded.
+- 202 Accepted: Background job created.
+- 400 Bad Request: Invalid parameters or request body.
+- 408 Request Timeout: Script execution timeout.
+- 500 Internal Server Error: Script execution failed.
+
 Response:
 
 When *separateOutput=false*, it will be like below:
@@ -449,6 +524,11 @@ When *separateOutput=true*, it will be like below:
 
 Method: ```GET /package/{name}```
 
+Status:
+- 200 OK: Request succeeded.
+- 404 Not Found: Package not installed.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -471,6 +551,13 @@ Parameters:
 * path: Package file path. This parameter works only if the url parameter *name* is not specified.
 * async: *true* to make this request be handled by a background job. *false* to make this request be handled synchronously as usual. Default is *false*.
 
+Status:
+- 201 Created: Package installed.
+- 202 Accepted: Background job created.
+- 400 Bad Request: Invalid parameter.
+- 404 Not Found: Archive not found.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -492,6 +579,13 @@ Parameters:
 
 * path: Package file path. This parameter works only if the url parameter *name* is not specified.
 
+Status:
+- 200 OK: Package upgraded.
+- 202 Accepted: Background job created.
+- 400 Bad Request: Invalid parameter.
+- 404 Not Found: Archive not found.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -507,6 +601,11 @@ Response:
 
 Method: ```DELETE /package/{name}```
 
+Status:
+- 200 OK: Package uninstalled.
+- 404 Not Found: Package not installed.
+- 500 Internal Server Error: Request failed.
+
 ## Background Job
 
 ### Get Job Information
@@ -514,6 +613,10 @@ Method: ```DELETE /package/{name}```
 Get the information of a background job.
 
 Method: ```GET /jobs/{ID}```
+
+Status:
+- 200 OK: Request succeeded.
+- 404 Not Found: Job not found.
 
 Response:
 
@@ -534,6 +637,9 @@ Response:
 List all jobs. Some early ended jobs may not listed according to the configuration *CORE.jobCleanThreshold*.
 
 Method: ```GET /jobs```
+
+Status:
+- 200 OK: Request succeeded.
 
 Response:
 ```json
@@ -565,6 +671,11 @@ Cancel an executing job.
 
 Method: ```POST /jobs/{ID}/cancel```
 
+Status:
+- 200 OK: Job cancelled.
+- 404 Not Found: Job not found.
+- 500 Internal Server Error: Request failed.
+
 Response:
 
 ```json
@@ -589,6 +700,10 @@ You could specify path parameter *osType* as "default" to specify it as the OS t
 
 Method: ```GET /grimoires/{osType}```
 
+Status:
+- 200 OK: Request succeeded.
+- 404 Not Found: Grimoire not found.
+
 Response: The content of the grimoire.
 
 ### Cast Arcane
@@ -610,6 +725,15 @@ parameter1
 parameter2
 parameter3
 ```
+
+Status:
+- 200 OK: Arcane casting succeeded.
+- 202 Accepted: Background job created.
+- 400 Bad Request: Invalid parameter or corrupted request body.
+- 404 Not Found: Arcane not found.
+- 406 Not Acceptable: Cannot cast arcane this way.
+- 408 Request Timeout: Arcane casting timeout.
+- 500 Internal Server Error: Arcane casting failed.
 
 Response:
 
@@ -655,6 +779,11 @@ spells:
     args: command arguments for osFamily3   # use {} as parameter place holder, use {{}} as literal {}
 ```
 
+Status:
+- 200 OK: Arcane was set.
+- 400 Bad Request: Corrupted request body.
+- 500 Internal Server Error: Request failed.
+
 ### Remove Arcane
 
 Remove an arcane.
@@ -662,3 +791,8 @@ Remove an arcane.
 You could specify path parameter *osType* as "default" to specify it as the OS that SunAgent is currently running on.
 
 Method: ```DELETE /grimoires/{osType}/arcanes/{arcaneName}```
+
+Status:
+- 200 OK: Arcane removed.
+- 404 Not Found: Arcane not found.
+- 500 Internal Server Error: Request failed.

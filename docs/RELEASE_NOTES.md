@@ -1,14 +1,18 @@
 # Release Notes
 
+## 1.2.1 [2022-01-14]
+
+- Optimize HTTP status codes
+
 ## 1.2.0 [2022-01-10]
 
-* Add APIs for managing grimoire content.
-* Grimoire folder could be specified by a command flag.
+- Add APIs for managing grimoire content.
+- Grimoire folder could be specified by a command flag.
 
 ## 1.1.0 [2021-12-08]
 
-* Add job framework.
-* Support asynchronous request of executing scripts and installing packages.
+- Add job framework.
+- Support asynchronous request of executing scripts and installing packages.
 
 ## 1.0.0 [2021-11-17]
 

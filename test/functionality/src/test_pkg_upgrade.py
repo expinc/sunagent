@@ -119,7 +119,7 @@ class TestPackageUpgrade:
             url = "/api/v1/package?" + params
             conn.request("PUT", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.ACCEPTED)
             id = data["id"]
             assert_that(data["name"]).is_equal_to("InstallPackage")
 
@@ -154,7 +154,7 @@ class TestPackageUpgrade:
             url = "/api/v1/package?" + params
             conn.request("PUT", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.ACCEPTED)
             id = data["id"]
             assert_that(data["name"]).is_equal_to("InstallPackage")
 

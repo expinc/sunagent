@@ -13,7 +13,7 @@ class TestJobGetInfo:
         url = "/api/v1/script/execute?" + params
         conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
         response = conn.getresponse()
-        return common.get_successful_response(response, HTTPStatus.OK)
+        return common.get_successful_response(response, HTTPStatus.ACCEPTED)
 
     def _get_job(self, conn, id):
         url = "/api/v1/jobs/" + id

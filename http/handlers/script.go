@@ -55,7 +55,7 @@ func ExecScript(ctx *gin.Context) {
 		var jobInfo ops.JobInfo
 		jobInfo, err = ops.StartJob(createStandardContext(ctx), ops.JobTypeExecScript, params)
 		if nil == err {
-			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+			RespondSuccessfulJson(ctx, http.StatusAccepted, jobInfo)
 		} else {
 			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 		}

@@ -32,7 +32,7 @@ class TestFileCreate:
             url = "/api/v1/file?" + params
             conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.CREATED)
 
             # verify response
             assert_that("text.txt").is_equal_to(data["name"])
@@ -63,7 +63,7 @@ class TestFileCreate:
             url = "/api/v1/file?" + params
             conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.CREATED)
 
             # verify response
             assert_that("中文.txt").is_equal_to(data["name"])
@@ -94,7 +94,7 @@ class TestFileCreate:
             url = "/api/v1/file?" + params
             conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.CREATED)
 
             # verify response
             assert_that("binary").is_equal_to(data["name"])
@@ -120,7 +120,7 @@ class TestFileCreate:
             url = "/api/v1/file?" + params
             conn.request("POST", url, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.CREATED)
 
             # verify response
             assert_that("subdir").is_equal_to(data["name"])
@@ -147,7 +147,7 @@ class TestFileCreate:
             url = "/api/v1/file?" + params
             conn.request("POST", url, originContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
             response = conn.getresponse()
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.CREATED)
 
             # verify response
             assert_that("empty").is_equal_to(data["name"])

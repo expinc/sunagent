@@ -91,7 +91,7 @@ class TestGrimoireCastArcane:
             response = conn.getresponse()
 
             # verify response
-            data = common.get_successful_response(response, HTTPStatus.OK)
+            data = common.get_successful_response(response, HTTPStatus.ACCEPTED)
             assert_that(data["name"]).is_equal_to("CastArcane")
             assert_that(data["status"]).is_equal_to("SPAWNED")
 

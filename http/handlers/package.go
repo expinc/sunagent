@@ -58,7 +58,7 @@ func InstallPackage(ctx *gin.Context) {
 		params["upgradeIfAlreadyInstalled"] = false
 		jobInfo, err := ops.StartJob(createStandardContext(ctx), ops.JobTypeInstallPackage, params)
 		if nil == err {
-			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+			RespondSuccessfulJson(ctx, http.StatusAccepted, jobInfo)
 		} else {
 			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 		}
@@ -68,7 +68,7 @@ func InstallPackage(ctx *gin.Context) {
 	// execute operation
 	pkgInfo, err := ops.InstallPackage(createStandardContext(ctx), nameOrPath, byFile, false)
 	if nil == err {
-		RespondSuccessfulJson(ctx, http.StatusOK, pkgInfo)
+		RespondSuccessfulJson(ctx, http.StatusCreated, pkgInfo)
 	} else {
 		status := http.StatusInternalServerError
 		if internalErr, ok := err.(common.Error); ok {
@@ -107,7 +107,7 @@ func UpgradePackage(ctx *gin.Context) {
 		params["upgradeIfAlreadyInstalled"] = true
 		jobInfo, err := ops.StartJob(createStandardContext(ctx), ops.JobTypeInstallPackage, params)
 		if nil == err {
-			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+			RespondSuccessfulJson(ctx, http.StatusAccepted, jobInfo)
 		} else {
 			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 		}

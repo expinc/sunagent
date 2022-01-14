@@ -67,7 +67,7 @@ func CastArcane(ctx *gin.Context) {
 		params["args"] = args
 		jobInfo, err := ops.StartJob(createStandardContext(ctx), ops.JobTypeCastArcane, params)
 		if nil == err {
-			RespondSuccessfulJson(ctx, http.StatusOK, jobInfo)
+			RespondSuccessfulJson(ctx, http.StatusAccepted, jobInfo)
 		} else {
 			RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
 		}

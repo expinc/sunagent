@@ -13,7 +13,7 @@ class TestJobListAll:
         url = "/api/v1/script/execute?" + params
         conn.request("POST", url, scriptContent, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
         response = conn.getresponse()
-        return common.get_successful_response(response, HTTPStatus.OK)
+        return common.get_successful_response(response, HTTPStatus.ACCEPTED)
 
     def test_ordinary(self):
         try:

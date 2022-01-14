@@ -72,7 +72,11 @@ func writeFile(ctx *gin.Context, overwrite bool) {
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
 	} else {
-		RespondSuccessfulJson(ctx, http.StatusOK, meta)
+		status := http.StatusOK
+		if !overwrite {
+			status = http.StatusCreated
+		}
+		RespondSuccessfulJson(ctx, status, meta)
 	}
 }
 

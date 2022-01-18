@@ -186,6 +186,7 @@ func (server *Server) registerHandlers() error {
 	routerGroup.GET("", handlerProxy(handlers.GetFileContent))
 	routerGroup.POST("", handlerProxy(handlers.CreateFile))
 	routerGroup.PUT("", handlerProxy(handlers.OverwriteFile))
+	routerGroup.POST("/append", handlerProxy(handlers.AppendFile))
 	routerGroup.DELETE("", handlerProxy(handlers.DeleteFile))
 
 	// processes

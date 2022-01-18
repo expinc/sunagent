@@ -109,6 +109,44 @@ func WriteFile(ctx context.Context, path string, content []byte, isDir bool, ove
 	return
 }
 
+func AppendFile(ctx context.Context, path string, content []byte) (meta FileMeta, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Appending file: path=%v, len(content)=%v", path, len(content)))
+
+	// Check if file exists
+	_, err = os.Stat(path)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+
+	// Append content
+	var file *os.File
+	file, err = os.OpenFile(path, os.O_APPEND|os.O_WRONLY, common.DefaultRegularFileMode)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+	defer file.Close()
+	_, err = file.Write(content)
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+		return
+	}
+
+	// Get new file meta
+	if nil != err {
+		log.ErrorCtx(ctx, err)
+	} else {
+		metas, err := GetFileMetas(ctx, path, false)
+		if err == nil {
+			meta = metas[0]
+		} else {
+			log.ErrorCtx(ctx, err)
+		}
+	}
+	return
+}
+
 func DeleteFile(ctx context.Context, path string, recursive bool) error {
 	log.InfoCtx(ctx, fmt.Sprintf("Deleting file: path=%v, recursive=%v", path, recursive))
 

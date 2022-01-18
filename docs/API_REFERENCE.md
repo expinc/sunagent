@@ -212,6 +212,24 @@ Response:
 }
 ```
 
+### Append File
+
+Append some content to an existing file.
+
+Method: ```POST /file/append```
+
+Parameters:
+
+* path: Absolute path to the file.
+
+Body: Binary content of the file if it is a regular file.
+
+Status:
+- 200 OK: File content appended.
+- 400 Bad Request: Corrupted file content.
+- 404 Not Found: File not found.
+- 500 Internal Server Error: Request failed.
+
 ### Delete File
 
 Delete a file. If the specified path is a directory, the files under it will also be deleted if parameter *recursive* is true, otherwise it will fail.

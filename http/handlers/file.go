@@ -88,6 +88,33 @@ func OverwriteFile(ctx *gin.Context) {
 	writeFile(ctx, true)
 }
 
+func AppendFile(ctx *gin.Context) {
+	// Get parameters
+	path, ok := ctx.Request.URL.Query()["path"]
+	if !ok {
+		RespondMissingParams(ctx, []string{"path"})
+		return
+	}
+
+	// Read content
+	content, err := ioutil.ReadAll(ctx.Request.Body)
+	if nil != err {
+		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+	}
+
+	// Render response
+	meta, err := ops.AppendFile(createStandardContext(ctx), path[0], content)
+	if nil != err {
+		status := http.StatusInternalServerError
+		if os.IsNotExist(err) {
+			status = http.StatusNotFound
+		}
+		RespondFailedJson(ctx, status, err, nil)
+	} else {
+		RespondSuccessfulJson(ctx, http.StatusOK, meta)
+	}
+}
+
 func DeleteFile(ctx *gin.Context) {
 	path, ok := ctx.Request.URL.Query()["path"]
 	if !ok {

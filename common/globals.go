@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	Version           = "1.2.1"
-	TraceIdContextKey = "traceId"
-	ProcName          = "sunagentd"
+	Version                = "1.2.1"
+	TraceIdContextKey      = "traceId"
+	ProcName               = "sunagentd"
+	DefaultRegularFileMode = 0644
 )
 
 var (

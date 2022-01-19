@@ -83,7 +83,7 @@ class TestFileCreate:
     def test_binary_file(self):
         try:
             # read file content
-            originPath = os.path.join(common.TEST_DATA_PATH, "中文.txt")
+            originPath = os.path.join(common.TEST_DATA_PATH, "binary")
             with open(originPath, "rb") as f:
                 originContent = f.read()
 
@@ -98,7 +98,7 @@ class TestFileCreate:
 
             # verify response
             assert_that("binary").is_equal_to(data["name"])
-            assert_that(20).is_equal_to(data["size"])
+            assert_that(4).is_equal_to(data["size"])
             assert_that(data["lastModifiedTime"]).matches(common.TIMESTAMP_PATTERN)
             if "Linux" == platform.system():
                 assert_that(data["owner"]).is_true()

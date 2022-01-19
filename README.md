@@ -42,24 +42,25 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 
 *GO* section defines behaviors of the process. They are all go related parameters since SunAgent is implemented by go:
 
-* gomaxprocs: The maximum processors used.
+- gomaxprocs: The maximum processors used.
 
 *CORE* section defines behaviors of the framework.
 
-* jobCleanThreshold: Threshold of when job clean should occur. If the number of jobs exceeds the threshold, half of the finished jobs with earliest creation time will be removed, i.e., could get their info no more. In-proguress jobs will not be removed.
+- jobCleanThreshold: Threshold of when job clean should occur. If the number of jobs exceeds the threshold, half of the finished jobs with earliest creation time will be removed, i.e., could get their info no more. In-proguress jobs will not be removed.
+- fileUploadLimitMb: Maximum file size that could be uploaded for each request.
 
 *HTTP* section defines the parameters of the HTTP server who exposes HTTP APIs:
 
-* ip: IP address of the HTTP server. This option is introduced because there may be multiple network adaptors with different IP addresses in the node.
-* port: Port number of the HTTP server.
-* auth: The type of authorization. Valid values are *none*, *basic*.
-* user: User of the basic authorization.
-* password: Password of the basic authorization.
+- ip: IP address of the HTTP server. This option is introduced because there may be multiple network adaptors with different IP addresses in the node.
+- port: Port number of the HTTP server.
+- auth: The type of authorization. Valid values are *none*, *basic*.
+- user: User of the basic authorization.
+- password: Password of the basic authorization.
 
 *LOG* section defines behaviors of logging.
 
-* level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
-* filelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
+- level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
+- filelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
 
 ## Support Matrix
 

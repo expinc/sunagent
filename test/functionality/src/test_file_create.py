@@ -200,3 +200,21 @@ class TestFileCreate:
             common.assert_failed_response(response, HTTPStatus.INTERNAL_SERVER_ERROR)
         finally:
             conn.close()
+
+    def test_oversize(self):
+        try:
+            # prepare file content
+            content = bytes(101 * 1024 * 1024)
+            path = os.path.join(common.TEST_TMP_DIR, "myfile")
+
+            # send request
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            params = urllib.parse.urlencode({"path":path, "isDir":False})
+            url = "/api/v1/file?" + params
+            conn.request("POST", url, content, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify response
+            common.assert_failed_response(response, HTTPStatus.BAD_REQUEST)
+        finally:
+            conn.close()

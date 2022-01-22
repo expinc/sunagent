@@ -52,6 +52,7 @@ func main() {
 
 	// setup core behaviors
 	ops.SetJobCleanThreshold(context.Background(), config.Section("CORE").Key("jobCleanThreshold").MustInt())
+	common.FileUploadMaxBytes = config.Section("CORE").Key("FileUploadMaxBytes").MustInt()
 
 	// start HTTP server
 	ip := config.Section("HTTP").Key("ip").String()

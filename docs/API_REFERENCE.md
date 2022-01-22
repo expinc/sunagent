@@ -156,7 +156,7 @@ Response: The binary content of the specified file.
 
 Create a file. It will fail if the file already exists or the parent directory does not exist.
 
-The file size cannot exceed what is specified in configuration *CORE.fileUploadLimitMb*. If you are going to upload a large file, use this API to upload some beginning content within the limited size, then use [appending file API](#append-file) for a number of times to upload the rest content.
+The file size cannot exceed what is specified in configuration *CORE.FileUploadMaxBytes*. If you are going to upload a large file, use this API to upload some beginning content within the limited size, then use [appending file API](#append-file) for a number of times to upload the rest content.
 
 Method: ```POST /file```
 
@@ -188,7 +188,7 @@ Response:
 
 Change the content of a file. Create it if not exists.
 
-The file size cannot exceed what is specified in configuration *CORE.fileUploadLimitMb*. If you are going to upload a large file, use this API to upload some beginning content within the limited size, then use [appending file API](#append-file) for a number of times to upload the rest content.
+The file size cannot exceed what is specified in configuration *CORE.FileUploadMaxBytes*. If you are going to upload a large file, use this API to upload some beginning content within the limited size, then use [appending file API](#append-file) for a number of times to upload the rest content.
 
 Method: ```PUT /file```
 
@@ -218,7 +218,7 @@ Response:
 
 ### Append File
 
-Append some content to an existing file. The content size cannot exceed what is specified in configuration *CORE.fileUploadLimitMb*.
+Append some content to an existing file. The content size cannot exceed what is specified in configuration *CORE.FileUploadMaxBytes*.
 
 Method: ```POST /file/append```
 

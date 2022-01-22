@@ -102,7 +102,7 @@ class TestFileAppend:
         try:
             # read original content
             file_path = os.path.join(common.TEST_TMP_DIR, "binary")
-            shutil.copyfile(os.path.join(common.TEST_DATA_PATH, "binary"), file_path)            
+            shutil.copyfile(os.path.join(common.TEST_DATA_PATH, "binary"), file_path)
             with open(file_path, "rb") as f:
                 originContent = f.read()
 
@@ -127,4 +127,23 @@ class TestFileAppend:
             assert_that(content).is_equal_to(originContent + append_content)
         finally:
             os.remove(file_path)
+            conn.close()
+
+    def test_oversize(self):
+        conn = http.client.HTTPConnection(common.HOST, common.PORT)
+        try:
+            # prepare original file
+            file_path = os.path.join(common.TEST_TMP_DIR, "binary")
+            shutil.copyfile(os.path.join(common.TEST_DATA_PATH, "binary"), file_path)
+
+            # send request
+            params = urllib.parse.urlencode({"path":file_path, "isDir":False})
+            url = "/api/v1/file/append?" + params
+            content = bytes(101 * 1024 * 1024)
+            conn.request("POST", url, content, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify response
+            common.assert_failed_response(response, HTTPStatus.BAD_REQUEST)
+        finally:
             conn.close()

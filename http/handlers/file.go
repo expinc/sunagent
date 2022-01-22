@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"expinc/sunagent/common"
 	"expinc/sunagent/ops"
 	"io/ioutil"
 	"net/http"
@@ -51,23 +52,29 @@ func GetFileContent(ctx *gin.Context) {
 }
 
 func writeFile(ctx *gin.Context, overwrite bool) {
+	// Get parameter "path"
 	path, ok := ctx.Request.URL.Query()["path"]
 	if !ok {
 		RespondMissingParams(ctx, []string{"path"})
 		return
 	}
 
+	// Get parameter "isDir"
 	isDirStr, ok := ctx.Request.URL.Query()["isDir"]
 	isDir := false
 	if ok {
 		isDir, _ = strconv.ParseBool(isDirStr[0])
 	}
 
+	// Get request body
+	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, int64(common.FileUploadMaxBytes))
 	content, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		return
 	}
 
+	// Execute operation & render response
 	meta, err := ops.WriteFile(createStandardContext(ctx), path[0], content, isDir, overwrite)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
@@ -97,9 +104,11 @@ func AppendFile(ctx *gin.Context) {
 	}
 
 	// Read content
+	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, int64(common.FileUploadMaxBytes))
 	content, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
+		return
 	}
 
 	// Render response

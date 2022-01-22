@@ -13,6 +13,7 @@ const (
 	ErrorInsufficientResource = 6
 	ErrorTimeout              = 7
 	ErrorNotImplemented       = 8
+	ErrorOversize             = 9
 )
 
 type Error struct {

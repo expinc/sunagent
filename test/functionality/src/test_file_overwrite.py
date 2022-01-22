@@ -136,3 +136,24 @@ class TestFileOverwrite:
             assert_that(os.path.isfile(filePath)).is_true()
         finally:
             conn.close()
+
+    def test_oversize(self):
+        try:
+            # prepare directory
+            dirPath = os.path.join(common.TEST_TMP_DIR, "dir", "subdir")
+            os.makedirs(common.TEST_TMP_DIR, exist_ok=True)
+            filePath = os.path.join(common.TEST_DATA_PATH, "text.txt")
+            shutil.copy(filePath, dirPath)
+
+            # send request
+            conn = http.client.HTTPConnection(common.HOST, common.PORT)
+            params = urllib.parse.urlencode({"path":filePath, "isDir":False})
+            url = "/api/v1/file?" + params
+            content = bytes(101 * 1024 * 1024)
+            conn.request("PUT", url, content, headers={"Authorization": "Basic " + common.BASIC_AUTH_TOKEN})
+            response = conn.getresponse()
+
+            # verify response
+            common.assert_failed_response(response, HTTPStatus.BAD_REQUEST)
+        finally:
+            conn.close()

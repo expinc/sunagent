@@ -13,7 +13,8 @@ const (
 )
 
 var (
-	Pid           = os.Getpid()
-	CurrentDir, _ = os.Getwd()
-	TmpFolder     = filepath.Join(CurrentDir, "tmp")
+	Pid                = os.Getpid()
+	CurrentDir, _      = os.Getwd()
+	TmpFolder          = filepath.Join(CurrentDir, "tmp")
+	FileUploadMaxBytes = 104857600 // 100 MB
 )

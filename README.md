@@ -47,7 +47,7 @@ Configuration is defined by [etc/config.conf](etc/config.conf).
 *CORE* section defines behaviors of the framework.
 
 - jobCleanThreshold: Threshold of when job clean should occur. If the number of jobs exceeds the threshold, half of the finished jobs with earliest creation time will be removed, i.e., could get their info no more. In-proguress jobs will not be removed.
-- fileUploadLimitMb: Maximum file size that could be uploaded for each request.
+- FileUploadMaxBytes: Maximum file size that could be uploaded for each request.
 
 *HTTP* section defines the parameters of the HTTP server who exposes HTTP APIs:
 

@@ -29,10 +29,12 @@ type stopInfo struct {
 }
 
 type Server struct {
-	ip         string
-	port       uint
-	authMethod string
-	authCred   interface{}
+	ip          string
+	port        uint
+	authMethod  string
+	authCred    interface{}
+	tlsCertFile string
+	tlsKeyFile  string
 
 	engine         *gin.Engine
 	authMiddleware gin.HandlerFunc
@@ -47,12 +49,14 @@ type BasicAuthCred struct {
 	Password string
 }
 
-func New(ip string, port uint, authMethod string, authCred interface{}) *Server {
+func New(ip string, port uint, authMethod string, authCred interface{}, certFile, keyFile string) *Server {
 	return &Server{
-		ip:         ip,
-		port:       port,
-		authMethod: authMethod,
-		authCred:   authCred,
+		ip:          ip,
+		port:        port,
+		authMethod:  authMethod,
+		authCred:    authCred,
+		tlsCertFile: certFile,
+		tlsKeyFile:  keyFile,
 	}
 }
 
@@ -88,7 +92,13 @@ func (server *Server) Run() error {
 	srvErr := make(chan error, 1)
 	go func() {
 		var err error
-		if err = srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+		if "" != strings.TrimSpace(server.tlsCertFile) && "" != strings.TrimSpace(server.tlsKeyFile) {
+			err = srv.ListenAndServeTLS(server.tlsCertFile, server.tlsKeyFile)
+		} else {
+			err = srv.ListenAndServe()
+		}
+
+		if err != nil && errors.Is(err, http.ErrServerClosed) {
 			log.Info("HTTP server stopped")
 		}
 

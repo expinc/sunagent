@@ -26,6 +26,8 @@ func main() {
 	// parse flags
 	configFile := flag.String("config", "config.conf", "Configuration file")
 	grimoireFolder := flag.String("grimoire", "grimoires", "Grimoire folder path")
+	certFilePath := flag.String("certFile", "", "Certificate file to enable HTTPS")
+	keyFilePath := flag.String("keyFile", "", "Key file to enable HTTPS")
 	flag.Parse()
 
 	// load config
@@ -65,7 +67,7 @@ func main() {
 			Password: config.Section("HTTP").Key("password").String(),
 		}
 	}
-	server := http.New(ip, port, authMethod, authCred)
+	server := http.New(ip, port, authMethod, authCred, *certFilePath, *keyFilePath)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

@@ -26,11 +26,15 @@ make.bat
 Run below command to start the process.
 ```sh
 # Linux:
-./gen/sunagentd --config=gen/config.conf --grimoire=gen/grimoires
+./gen/sunagentd -config=gen/config.conf -grimoire=gen/grimoires
 
 # Windows:
-gen\sunagentd.exe --config=gen\config.conf --grimoire=gen\grimoires
+gen\sunagentd.exe -config=gen\config.conf -grimoire=gen\grimoires
 ```
+
+If you are going to enable HTTPS, you need to specify additional two arguments:
+- certFile: Certificate file to enable HTTPS.
+- keyFile: Key file to enable HTTPS
 
 ## API Reference
 

@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.3.0 [2022-02-01]
+
+- Add API to append file.
+- Add configuration item *CORE.FileUploadMaxBytes* to limit file size of creating file, overwrite file, append file and chunk size of getting file content.
+
 ## 1.2.1 [2022-01-14]
 
 - Optimize HTTP status codes

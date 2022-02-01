@@ -4,7 +4,9 @@ import (
 	"context"
 	"expinc/sunagent/common"
 	"expinc/sunagent/log"
+	"expinc/sunagent/util"
 	"fmt"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -17,6 +19,28 @@ type FileMeta struct {
 	LastModifiedTime time.Time `json:"lastModifiedTime"`
 	Owner            string    `json:"owner"`
 	Mode             string    `json:"mode"`
+}
+
+type FileStreamReader struct {
+	file *os.File
+}
+
+func (reader FileStreamReader) Read(p []byte) (n int, err error) {
+	return reader.file.Read(p)
+}
+
+func (reader FileStreamReader) Close() error {
+	return reader.file.Close()
+}
+
+func NewFileStreamReader(ctx context.Context, filePath string) (reader io.ReadCloser, err error) {
+	log.InfoCtx(ctx, fmt.Sprintf("Creating file stream reader: filePath=%v", filePath))
+	file, err := os.Open(filePath)
+	util.LogErrorIfNotNilCtx(ctx, err)
+	reader = FileStreamReader{
+		file: file,
+	}
+	return
 }
 
 func fileInfoToMeta(ctx context.Context, info fs.FileInfo) (meta FileMeta) {

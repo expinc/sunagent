@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"expinc/sunagent/common"
+	"expinc/sunagent/log"
 	"expinc/sunagent/ops"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -33,21 +36,72 @@ func GetFileMeta(ctx *gin.Context) {
 }
 
 func GetFileContent(ctx *gin.Context) {
+	// Get parameter
 	path, ok := ctx.Request.URL.Query()["path"]
 	if !ok {
 		RespondMissingParams(ctx, []string{"path"})
 		return
 	}
 
-	content, err := ops.GetFileContent(createStandardContext(ctx), path[0])
+	// Get file size
+	metas, err := ops.GetFileMetas(createStandardContext(ctx), path[0], false)
 	if nil != err {
 		status := http.StatusInternalServerError
 		if os.IsNotExist(err) {
 			status = http.StatusNotFound
 		}
 		RespondFailedJson(ctx, status, err, nil)
+		return
+	}
+	ctx.Header("Content-Length", fmt.Sprint(metas[0].Size))
+
+	// Read from file
+	reader, err := ops.NewFileStreamReader(ctx, path[0])
+	defer reader.Close()
+	if nil != err {
+		RespondFailedJson(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	// FIXME: what should be the good chan size?
+	chanStream := make(chan []byte, 10)
+	var readErr error
+	go func() {
+		defer close(chanStream)
+		buffer := make([]byte, common.FileUploadMaxBytes)
+		for {
+			n, readErr := reader.Read(buffer)
+			if nil == readErr {
+				chanStream <- buffer[:n]
+			} else {
+				break
+			}
+		}
+		if io.EOF == readErr {
+			// EOF means finished reading and no problem
+			readErr = nil
+		}
+	}()
+
+	// Write to response
+	var writeErr error
+	ctx.Stream(func(responseWriter io.Writer) bool {
+		chunk, ok := <-chanStream
+		if ok {
+			_, writeErr = responseWriter.Write(chunk)
+		}
+		return ok && nil == writeErr
+	})
+
+	// Handle errors
+	if nil == readErr && nil == writeErr {
+		ctx.Status(http.StatusOK)
 	} else {
-		RespondBinary(ctx, http.StatusOK, content)
+		err = writeErr
+		if nil != readErr {
+			err = readErr
+		}
+		log.ErrorCtx(ctx, err)
+		ctx.Status(http.StatusInternalServerError)
 	}
 }
 

@@ -150,7 +150,9 @@ Status:
 - 404 Not Found: File not found.
 - 500 Internal Server Error: Request failed.
 
-Response: The binary content of the specified file.
+Response:
+- Body: The binary content of the specified file.
+- Header: *Content-Length* indicates the original file size. You may compare this value with the file size you receive to check if the transmission goes well.
 
 ### Create File
 

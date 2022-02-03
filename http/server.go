@@ -44,6 +44,7 @@ type Server struct {
 	quit chan int64
 }
 
+// FIXME: move to a package of security
 type BasicAuthCred struct {
 	User     string
 	Password string

@@ -26,10 +26,10 @@ make.bat
 Run below command to start the process.
 ```sh
 # Linux:
-./gen/sunagentd -config=gen/config.conf -grimoire=gen/grimoires
+./gen/sunagentd -config=gen/config.yml -grimoire=gen/grimoires
 
 # Windows:
-gen\sunagentd.exe -config=gen\config.conf -grimoire=gen\grimoires
+gen\sunagentd.exe -config=gen\config.yml -grimoire=gen\grimoires
 ```
 
 If you are going to enable HTTPS, you need to specify additional two arguments:
@@ -42,29 +42,29 @@ All SunAgent features could be consumed by HTTP API. Please refer to [here](docs
 
 ## Configuration
 
-Configuration is defined by [etc/config.conf](etc/config.conf).
+Configuration is defined by [etc/config.yml](etc/config.yml).
 
-*GO* section defines behaviors of the process. They are all go related parameters since SunAgent is implemented by go:
+*runtime* section defines behaviors of the process.
 
-- gomaxprocs: The maximum processors used.
+- maxCpus: The maximum number of CPUs that can be executing simultaneously.
 
-*CORE* section defines behaviors of the framework.
+*core* section defines behaviors of the framework.
 
 - jobCleanThreshold: Threshold of when job clean should occur. If the number of jobs exceeds the threshold, half of the finished jobs with earliest creation time will be removed, i.e., could get their info no more. In-proguress jobs will not be removed.
-- FileUploadMaxBytes: Maximum file size that could be uploaded for each request.
+- fileTransferSizeLimit: Maximum file size that could be uploaded for each request. You may use *KB*, *MB*, *GB* to denote the unit of the size.
 
-*HTTP* section defines the parameters of the HTTP server who exposes HTTP APIs:
+*http* section defines the parameters of the HTTP server who exposes HTTP APIs:
 
 - ip: IP address of the HTTP server. This option is introduced because there may be multiple network adaptors with different IP addresses in the node.
 - port: Port number of the HTTP server.
-- auth: The type of authorization. Valid values are *none*, *basic*.
-- user: User of the basic authorization.
-- password: Password of the basic authorization.
+- auth: Authentication information.
+    - method: Authentication method. The valid values are "none", "basic".
+    - credential: Authentication credential corresponding to the method.
 
-*LOG* section defines behaviors of logging.
+*log* section defines behaviors of logging.
 
 - level: Log level. Valid values are *debug*, *info*, *warn*, *error*, *fatal* (from lower to higher).
-- filelimitmb: Log file size limit by MB. When the log file exceeds the limit, it will be rotated.
+- fileSizeLimit: Log file size limit. It must be at least 1MB. You may use *MB*, *GB* to denote the unit of the size. When the log file size exceeds the limit, it will be rotated.
 
 ## Support Matrix
 

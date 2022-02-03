@@ -46,6 +46,6 @@ Some operations could be executed as background jobs. So that a request could ge
 
 ![](../pics/job-status.png)
 
-The job status could be retrieved after its creation. However, if the number of jobs exceeds the value of configuration *CORE.jobCleanThreshold*, part of the finished job status will be cleaned. Therefore, only the status of latest finished jobs and all executing jobs could be retrieved.
+The job status could be retrieved after its creation. However, if the number of jobs exceeds the value of configuration *core.jobCleanThreshold*, part of the finished job status will be cleaned. Therefore, only the status of latest finished jobs and all executing jobs could be retrieved.
 
 The job status is not persistent. All jobs will be lost after SunAgent is restarted. However, job IDs are guaranteed to be unique even if Sunagent is restarted.

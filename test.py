@@ -62,10 +62,10 @@ def func_test(part):
     sys_type = platform.system()
     if "Linux" == sys_type:
         process_name = "sunagentd"
-        subprocess.check_call("gen/sunagentd --config=gen/config.conf --grimoire=gen/grimoires &", shell=True)
+        subprocess.check_call("gen/sunagentd --config=gen/config.yml --grimoire=gen/grimoires &", shell=True)
     elif "Windows" == sys_type:
         process_name = "sunagentd.exe"
-        subprocess.check_call("start gen\sunagentd.exe --config=gen\config.conf --grimoire=gen\grimoires", shell=True)
+        subprocess.check_call("start gen\sunagentd.exe --config=gen\config.yml --grimoire=gen\grimoires", shell=True)
     # Sleep for 1 second in case of process is not started yet
     time.sleep(1)
     if not is_process_running_by_name(process_name):

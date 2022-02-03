@@ -67,7 +67,7 @@ func GetFileContent(ctx *gin.Context) {
 	var readErr error
 	go func() {
 		defer close(chanStream)
-		buffer := make([]byte, common.FileUploadMaxBytes)
+		buffer := make([]byte, common.FileTransferSizeLimit)
 		for {
 			n, readErr := reader.Read(buffer)
 			if nil == readErr {
@@ -121,7 +121,7 @@ func writeFile(ctx *gin.Context, overwrite bool) {
 	}
 
 	// Get request body
-	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, int64(common.FileUploadMaxBytes))
+	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, int64(common.FileTransferSizeLimit))
 	content, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)
@@ -158,7 +158,7 @@ func AppendFile(ctx *gin.Context) {
 	}
 
 	// Read content
-	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, int64(common.FileUploadMaxBytes))
+	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, int64(common.FileTransferSizeLimit))
 	content, err := ioutil.ReadAll(ctx.Request.Body)
 	if nil != err {
 		RespondFailedJson(ctx, http.StatusBadRequest, err, nil)

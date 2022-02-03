@@ -36,7 +36,7 @@ func SetLevel(level string) {
 	}
 }
 
-func SetRotateFileOutput(fileName string, filelimitmb int) {
+func SetRotateFileOutput(fileName string, fileSizeLimit int) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -46,7 +46,7 @@ func SetRotateFileOutput(fileName string, filelimitmb int) {
 
 	fileOutput = &lumberjack.Logger{
 		Filename:  fileName,
-		MaxSize:   filelimitmb,
+		MaxSize:   fileSizeLimit,
 		LocalTime: true,
 	}
 

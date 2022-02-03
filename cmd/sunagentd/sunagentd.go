@@ -3,13 +3,15 @@ package main
 import (
 	"context"
 	"expinc/sunagent/common"
+	"expinc/sunagent/config"
 	"expinc/sunagent/http"
 	"expinc/sunagent/log"
 	"expinc/sunagent/ops"
 	"flag"
 	"fmt"
+	"runtime"
 
-	"github.com/go-ini/ini"
+	"github.com/alecthomas/units"
 )
 
 func main() {
@@ -24,25 +26,32 @@ func main() {
 	}()
 
 	// parse flags
-	configFile := flag.String("config", "config.conf", "Configuration file")
+	configFile := flag.String("config", "config.yml", "Configuration file")
 	grimoireFolder := flag.String("grimoire", "grimoires", "Grimoire folder path")
 	certFilePath := flag.String("certFile", "", "Certificate file to enable HTTPS")
 	keyFilePath := flag.String("keyFile", "", "Key file to enable HTTPS")
 	flag.Parse()
 
 	// load config
-	config, err := ini.Load(*configFile)
+	cfg, err := config.LoadConfig(*configFile)
 	if nil != err {
 		log.Fatal(err)
 	}
 
+	// set process behaviors
+	if 0 == cfg.Runtime.MaxCpus {
+		runtime.GOMAXPROCS(runtime.NumCPU())
+	} else {
+		runtime.GOMAXPROCS(int(cfg.Runtime.MaxCpus))
+	}
+
 	// init log
-	log.SetLevel(config.Section("LOG").Key("level").String())
-	fileLimitMb, err := config.Section("LOG").Key("filelimitmb").Int()
+	log.SetLevel(cfg.Log.Level)
+	fileSizeLimit, err := units.ParseBase2Bytes(cfg.Log.FileSizeLimit)
 	if nil != err {
 		log.Fatal(err)
 	}
-	log.SetRotateFileOutput("logs/"+common.ProcName+".log", fileLimitMb)
+	log.SetRotateFileOutput("logs/"+common.ProcName+".log", int(fileSizeLimit/units.MiB))
 	log.Info(fmt.Sprintf("%s started: pid=%d", common.ProcName, common.Pid))
 
 	// load grimoire
@@ -53,21 +62,27 @@ func main() {
 	}
 
 	// setup core behaviors
-	ops.SetJobCleanThreshold(context.Background(), config.Section("CORE").Key("jobCleanThreshold").MustInt())
-	common.FileUploadMaxBytes = config.Section("CORE").Key("FileUploadMaxBytes").MustInt()
+	ops.SetJobCleanThreshold(context.Background(), int(cfg.Core.JobCleanThreshold))
+	fileTransferSizeLimit, err := units.ParseBase2Bytes(cfg.Core.FileTransferSizeLimit)
+	if nil != err {
+		log.Fatal(err)
+	}
+	common.FileTransferSizeLimit = fileTransferSizeLimit
 
 	// start HTTP server
-	ip := config.Section("HTTP").Key("ip").String()
-	port := config.Section("HTTP").Key("port").MustUint()
-	authMethod := config.Section("HTTP").Key("auth").String()
+	ip := cfg.Http.Ip
+	port := cfg.Http.Port
+	actualAuthMethod := ""
 	var authCred interface{}
-	if "basic" == authMethod {
+	// FIXME: add more authentication methods
+	if "basic" == cfg.Http.Auth.Method {
+		actualAuthMethod = cfg.Http.Auth.Method
 		authCred = http.BasicAuthCred{
-			User:     config.Section("HTTP").Key("user").String(),
-			Password: config.Section("HTTP").Key("password").String(),
+			User:     cfg.Http.Auth.Credential["user"].(string),
+			Password: cfg.Http.Auth.Credential["password"].(string),
 		}
 	}
-	server := http.New(ip, port, authMethod, authCred, *certFilePath, *keyFilePath)
+	server := http.New(ip, port, actualAuthMethod, authCred, *certFilePath, *keyFilePath)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

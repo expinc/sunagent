@@ -3,6 +3,8 @@ package common
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/alecthomas/units"
 )
 
 const (
@@ -13,8 +15,8 @@ const (
 )
 
 var (
-	Pid                = os.Getpid()
-	CurrentDir, _      = os.Getwd()
-	TmpFolder          = filepath.Join(CurrentDir, "tmp")
-	FileUploadMaxBytes = 104857600 // 100 MB
+	Pid                   = os.Getpid()
+	CurrentDir, _         = os.Getwd()
+	TmpFolder             = filepath.Join(CurrentDir, "tmp")
+	FileTransferSizeLimit = 100 * units.MiB // 100 MB
 )

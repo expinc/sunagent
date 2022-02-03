@@ -125,7 +125,7 @@ class TestFileGetContent:
         try:
             # Prepare file
             path = os.path.join(common.TEST_TMP_DIR, "mybinary")
-            # Default streaming chunk size is 100 MB (see config CORE.FileUploadMaxBytes)
+            # Default streaming chunk size is 100 MB (see config core.FileTransferSizeLimit)
             # Make file length as 250 MB to make the file transferred by multiple streaming chunks (100 MB, 100 MB, 50 MB)
             file_length = 262144000
             with open(path, "wb") as f:

@@ -36,7 +36,7 @@ If the operations are implemented by system commands that are configured in grim
 
 ## Expose by More Protocals
 
-*ops* package just includes a set of functions that could be called by other packages. You could add packages of the protocals what ever you want, like gRPC. You route the requests of the protocals to the operations, then fabricate the response by the operation results. In function ```main.main()```, you start the servers of your protocals. Additionally, you may define more configuration options for your protocals in [etc/config.conf](../etc/config.conf).
+*ops* package just includes a set of functions that could be called by other packages. You could add packages of the protocals what ever you want, like gRPC. You route the requests of the protocals to the operations, then fabricate the response by the operation results. In function ```main.main()```, you start the servers of your protocals. Additionally, you may define more configuration options for your protocals in [etc/config.yml](../etc/config.yml).
 
 ## Background Job
 

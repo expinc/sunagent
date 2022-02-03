@@ -1,0 +1,16 @@
+runtime:
+  maxCpus: 2
+core:
+  jobCleanThreshold: 100
+  fileTransferSizeLimit: 100MB
+http:
+  ip: 127.0.0.1
+  port: 5000
+  auth:
+    method: basic
+    credential:
+      user: admin
+      password: root
+log:
+  level: info
+  fileSizeLimit: 100MB

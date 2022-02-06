@@ -1,5 +1,12 @@
 # Release Notes
 
+## 2.0.0 [2022-02-06]
+
+- Add server side HTTPS options
+- Refactory configuration:
+    - Change item names
+    - Change file format into yaml
+
 ## 1.3.0 [2022-02-01]
 
 - Add API to append file.

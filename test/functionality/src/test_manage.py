@@ -9,7 +9,7 @@ class TestManage:
             conn.request("GET", "/api/v1/info")
             response = conn.getresponse()
             
-            expected_data = {"version": "1.3.0"}
+            expected_data = {"version": "2.0.0"}
             common.assert_successful_response(response, HTTPStatus.OK, expected_data)
         finally:
             conn.close()

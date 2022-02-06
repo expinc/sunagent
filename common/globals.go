@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	Version                = "1.3.0"
+	Version                = "2.0.0"
 	TraceIdContextKey      = "traceId"
 	ProcName               = "sunagentd"
 	DefaultRegularFileMode = 0644
